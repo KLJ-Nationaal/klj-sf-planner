@@ -1,0 +1,149 @@
+import domain.*;
+import java.util.ArrayList;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+global HardSoftScoreHolder scoreHolder;
+
+/***************************** HARD CONSTRAINTS *********************************/
+// fysieke beperkingen
+
+/* "Twee disciplines kunnen niet tegelijkertijd in dezelfde klasse worden toegewezen" */
+/* Een klas kan alleen een leraar tegelijkertijd ontvangen */
+
+/*rule "Op elk lesrooster kan er maar één leraar in de klas zijn"
+lock-on-active true
+    when
+        $a : Inschrijving(
+            $d : discipline,
+            $h : tijdslot != null,
+            $t : afdeling
+        )
+
+        // Controleren of er twee verschillende docenten in dezelfde klas / kamer zijn en op hetzelfde moment
+        $total : Number( intValue >= 1 )
+            from accumulate(
+                Inschrijving(
+                    tijdslot == $h,
+                    tijdslot != null,
+                    afdeling == $t,
+                    discipline.professor.nome != $d.professor.nome
+                ),
+
+                init( int total = 0; ),
+                action( total += 1;),
+                result(total )
+            )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end*/
+
+
+/* Een docent kan niet tegelijkertijd aan meerdere klassen worden toegewezen */
+/*rule "Op een gegeven moment wordt elke docent in één klas ingedeeld"
+lock-on-active true
+    when
+        $a : Inschrijving(
+            $h : tijdslot != null,
+            $d : discipline,
+            $t : afdeling
+        )
+
+        // Controleren of eenzelfde docent tegelijkertijd in meer dan één klas is ingedeeld
+        $total : Number( intValue >= 1 )
+            from accumulate(
+                Inschrijving(
+                    discipline.professor.nome == $d.professor.nome,
+                    afdeling != $t,
+                    tijdslot != null,
+                    tijdslot == $h
+                ),
+
+                init( int total = 0; ),
+                action( total += 1;),
+                result(total )
+            )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
+rule "Elke klas zou bij elke leerkracht maximaal één klas per dag moeten hebben"
+lock-on-active true
+    when
+        $a: Inschrijving()
+
+        Inschrijving(
+            $t : afdeling != null,
+            $d : discipline,
+            $h : tijdslot != null
+        )
+
+        // Controleren of er nog een toewijzing is voor een leraar op dezelfde dag, in dezelfde klas en op verschillende tijdstippen
+        $total : Number(intValue > 1)
+            from accumulate(
+                Inschrijving(
+                    discipline.professor.nome == $d.professor.nome,
+                    tijdslot != null,
+                    tijdslot.dia == $h.dia,
+                    afdeling == $t
+                ),
+                init(int total = 0;),
+                action(total += 1;),
+                result(total)
+            )
+
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end*/
+
+
+// persoonlijke beperkingen
+/* rule "Prof Geo 01 kan de laatste twee klassen van de zesde niet geven"
+    when
+        $a: Inschrijving()
+
+        Inschrijving(
+            $p : discipline.professor.nome == "Geo 01",
+            $h : tijdslot != null, tijdslot.dia == "sex", tijdslot.id == 24 || tijdslot.id == 25
+        )
+
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
+rule "Prof Geo 02 kan geen lessen geven op maandag, woensdag en donderdag"
+         when
+             $a: Inschrijving()
+
+             Inschrijving(
+                 $p : discipline.professor.nome == "Geo 02",
+                 $h : tijdslot != null, tijdslot.dia == "seg" || tijdslot.dia == "qua" || tijdslot.dia == "qui"
+             )
+
+         then
+             scoreHolder.addHardConstraintMatch(kcontext, -1);
+     end*/
+
+
+/* Prof. Mat 1 kan de laatste lessen 2 dagen van de week of langer niet geven */
+/* Prof Mat 1 kan de laatste lessen alleen op 1 dag van de week geven */
+/* rule "Prof Mat 01 moet aan het einde van de vierde klas minstens 2 dagen per week vertrekken"
+    when
+
+        // Controleren of er profijt 1 in de vijfde klas is binnen 2 dagen of meer
+        Number(intValue >= 2)
+        from accumulate(
+            Inschrijving(
+                discipline.professor.nome == "Mat 01",
+                tijdslot != null, tijdslot.id == 5 || tijdslot.id == 10 || tijdslot.id == 15 || tijdslot.id == 20 || tijdslot.id == 25
+            ),
+
+            init(int total = 0;),
+            action(total += 1;),
+            result(total)
+        )
+
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end*/

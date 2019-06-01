@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sportfeest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Ringen>
+        <Ring>
+            <Naam>Parendans</Naam>
+            <RingIndex>1</RingIndex>
+        </Ring>
+        <Ring>
+            <Naam>Kringdans Meisjes</Naam>
+            <RingIndex>2</RingIndex>
+        </Ring>
+    </Ringen>
+    <Afdelingen>
+        <Afdeling>
+            <Naam>KLJ Ursel</Naam>
+            <Inschrijvingen>
+                <Inschrijving>
+                    <RingIndex>2</RingIndex>
+                </Inschrijving>
+                <Inschrijving>
+                    <RingIndex>1</RingIndex>
+                </Inschrijving>
+            </Inschrijvingen>
+        </Afdeling>
+        <Afdeling>
+            <Naam>KLJ Zomergem</Naam>
+            <Inschrijvingen>
+                <Inschrijving>
+                    <RingIndex>1</RingIndex>
+                </Inschrijving>
+                <Inschrijving>
+                    <RingIndex>2</RingIndex>
+                </Inschrijving>
+            </Inschrijvingen>
+        </Afdeling>
+
+    </Afdelingen>
+    <Tijdslots>
+        <Tijdslot>
+            <Ring>            <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex></Ring>
+            <StartTijd>0</StartTijd>
+            <Duur>3</Duur>
+        </Tijdslot>
+        <Tijdslot>
+            <Ring>            <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex></Ring>
+            <StartTijd>3</StartTijd>
+            <Duur>3</Duur>
+        </Tijdslot>
+        <Tijdslot>
+            <Ring>            <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex></Ring>
+            <StartTijd>0</StartTijd>
+            <Duur>3</Duur>
+        </Tijdslot>
+        <Tijdslot>
+            <Ring>            <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex></Ring>
+            <StartTijd>3</StartTijd>
+            <Duur>3</Duur>
+        </Tijdslot>
+    </Tijdslots>
+</Sportfeest>

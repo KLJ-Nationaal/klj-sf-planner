@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Sportfeest>
+    <Afdelingen>
+        <Afdeling>
+            <Inschrijvingen>
+                <Inschrijving/>
+                <Inschrijving/>
+            </Inschrijvingen>
+            <Naam>KLJ Ursel</Naam>
+        </Afdeling>
+        <Afdeling>
+            <Inschrijvingen>
+                <Inschrijving/>
+                <Inschrijving/>
+            </Inschrijvingen>
+            <Naam>KLJ Zomergem</Naam>
+        </Afdeling>
+    </Afdelingen>
+    <Ringen>
+        <Ring>
+            <DisciplineIndex>0</DisciplineIndex>
+            <Naam>Parendans</Naam>
+            <RingIndex>1</RingIndex>
+        </Ring>
+        <Ring>
+            <DisciplineIndex>0</DisciplineIndex>
+            <Naam>Kringdans Meisjes</Naam>
+            <RingIndex>2</RingIndex>
+        </Ring>
+    </Ringen>
+    <score/>
+    <Tijdslots>
+        <Tijdslot>
+            <Duur>3</Duur>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex>
+            </Ring>
+            <StartTijd>0</StartTijd>
+            <tijdslotIndex>0</tijdslotIndex>
+        </Tijdslot>
+        <Tijdslot>
+            <Duur>3</Duur>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex>
+            </Ring>
+            <StartTijd>3</StartTijd>
+            <tijdslotIndex>3</tijdslotIndex>
+        </Tijdslot>
+        <Tijdslot>
+            <Duur>3</Duur>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex>
+            </Ring>
+            <StartTijd>0</StartTijd>
+            <tijdslotIndex>0</tijdslotIndex>
+        </Tijdslot>
+        <Tijdslot>
+            <Duur>3</Duur>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex>
+            </Ring>
+            <StartTijd>3</StartTijd>
+            <tijdslotIndex>3</tijdslotIndex>
+        </Tijdslot>
+    </Tijdslots>
+</Sportfeest>
