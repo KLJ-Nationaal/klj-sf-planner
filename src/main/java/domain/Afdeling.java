@@ -5,12 +5,18 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "Afdeling")
 public class Afdeling {
     private String naam;
     private List<Inschrijving> inschrijvingen;
+
+    public Afdeling(String afdelingsNaam) {
+        naam = afdelingsNaam;
+        inschrijvingen = new ArrayList<>();
+    }
 
     @XmlElement(name = "Naam")
     public String getNaam() {
@@ -27,5 +33,10 @@ public class Afdeling {
     }
     public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
         this.inschrijvingen = inschrijvingen;
+    }
+
+    @Override
+    public String toString() {
+        return naam;
     }
 }

@@ -3,19 +3,113 @@
     <Afdelingen>
         <Afdeling>
             <Inschrijvingen>
-                <Inschrijving/>
-                <Inschrijving/>
+                <Inschrijving>
+                    <Ring>
+                        <DisciplineIndex>0</DisciplineIndex>
+                        <Naam>Kringdans Meisjes</Naam>
+                        <RingIndex>2</RingIndex>
+                    </Ring>
+                </Inschrijving>
+                <Inschrijving>
+                    <Ring>
+                        <DisciplineIndex>0</DisciplineIndex>
+                        <Naam>Parendans</Naam>
+                        <RingIndex>1</RingIndex>
+                    </Ring>
+                </Inschrijving>
             </Inschrijvingen>
             <Naam>KLJ Ursel</Naam>
         </Afdeling>
         <Afdeling>
             <Inschrijvingen>
-                <Inschrijving/>
-                <Inschrijving/>
+                <Inschrijving>
+                    <Ring>
+                        <DisciplineIndex>0</DisciplineIndex>
+                        <Naam>Parendans</Naam>
+                        <RingIndex>1</RingIndex>
+                    </Ring>
+                </Inschrijving>
+                <Inschrijving>
+                    <Ring>
+                        <DisciplineIndex>0</DisciplineIndex>
+                        <Naam>Kringdans Meisjes</Naam>
+                        <RingIndex>2</RingIndex>
+                    </Ring>
+                </Inschrijving>
             </Inschrijvingen>
             <Naam>KLJ Zomergem</Naam>
         </Afdeling>
     </Afdelingen>
+    <Inschrijvingen>
+        <Inschrijving>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex>
+            </Ring>
+            <Tijdslot>
+                <Duur>3</Duur>
+                <Ring>
+                    <DisciplineIndex>0</DisciplineIndex>
+                    <Naam>Parendans</Naam>
+                    <RingIndex>1</RingIndex>
+                </Ring>
+                <StartTijd>0</StartTijd>
+                <tijdslotIndex>0</tijdslotIndex>
+            </Tijdslot>
+        </Inschrijving>
+        <Inschrijving>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex>
+            </Ring>
+            <Tijdslot>
+                <Duur>3</Duur>
+                <Ring>
+                    <DisciplineIndex>0</DisciplineIndex>
+                    <Naam>Parendans</Naam>
+                    <RingIndex>1</RingIndex>
+                </Ring>
+                <StartTijd>0</StartTijd>
+                <tijdslotIndex>0</tijdslotIndex>
+            </Tijdslot>
+        </Inschrijving>
+        <Inschrijving>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Parendans</Naam>
+                <RingIndex>1</RingIndex>
+            </Ring>
+            <Tijdslot>
+                <Duur>3</Duur>
+                <Ring>
+                    <DisciplineIndex>0</DisciplineIndex>
+                    <Naam>Parendans</Naam>
+                    <RingIndex>1</RingIndex>
+                </Ring>
+                <StartTijd>0</StartTijd>
+                <tijdslotIndex>0</tijdslotIndex>
+            </Tijdslot>
+        </Inschrijving>
+        <Inschrijving>
+            <Ring>
+                <DisciplineIndex>0</DisciplineIndex>
+                <Naam>Kringdans Meisjes</Naam>
+                <RingIndex>2</RingIndex>
+            </Ring>
+            <Tijdslot>
+                <Duur>3</Duur>
+                <Ring>
+                    <DisciplineIndex>0</DisciplineIndex>
+                    <Naam>Parendans</Naam>
+                    <RingIndex>1</RingIndex>
+                </Ring>
+                <StartTijd>0</StartTijd>
+                <tijdslotIndex>0</tijdslotIndex>
+            </Tijdslot>
+        </Inschrijving>
+    </Inschrijvingen>
     <Ringen>
         <Ring>
             <DisciplineIndex>0</DisciplineIndex>

@@ -8,10 +8,10 @@ import persistence.Marshalling;
 public class SportfeestPlannerApp {
     public static void main(String[] args) {
         SolverFactory<Sportfeest> solverFactory = SolverFactory.createFromXmlResource(
-                "sportfeestPlannerSolverConfig.xml");
+                    "sportfeestPlannerSolverConfig.xml");
         Solver<Sportfeest> solver = solverFactory.buildSolver();
 
-        Sportfeest unsolvedSportfeest = Marshalling.unMarshall("data/testsf.xml");
+        Sportfeest unsolvedSportfeest = Marshalling.unMarshall("data/ringverdeling.xlsx");
 
         Sportfeest solvedSportfeest = solver.solve(unsolvedSportfeest);
 
@@ -32,17 +32,10 @@ public class SportfeestPlannerApp {
                 }
             }
         }*/
-        for(Tijdslot tijdslot : sportfeest.getTijdslots()){
-            displayString.append(tijdslot.getLabel());
+        for (Inschrijving inschr : sportfeest.getInschrijvingen()) {
+            displayString.append(" *** ").append(inschr.getLabel()).append(" *** \n");
+            if(inschr.getTijdslot() != null) displayString.append(inschr.getTijdslot().getLabel()).append("\n");
         }
-        /*for (Afdeling afdeling : sportfeest.getAfdelingen()) {
-            displayString.append(" *** ").append(afdeling.getNaam()).append(" *** ");
-            for (Tijdvak tijdvak : afdeling.gettijdvakken()) {
-                CloudComputer computer = afdeling.getComputer();
-                displayString.append("  ").append(process.getLabel()).append(" -> ")
-                        .append(computer == null ? null : computer.getLabel()).append("\n");
-            }
-        }*/
         return displayString.toString();
     }
 }

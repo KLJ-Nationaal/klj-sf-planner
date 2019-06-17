@@ -12,14 +12,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "Inschrijving")
 @PlanningEntity(difficultyComparatorClass = InschrijvingDifficultyComparator.class)
-public class Inschrijving { //analogy period
+public class Inschrijving {
     private Integer id;
     private Afdeling afdeling;
     private Ring ring;
     private Tijdslot tijdslot;
 
     @XmlTransient
-    @PlanningId
+    //@PlanningId
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -40,4 +40,12 @@ public class Inschrijving { //analogy period
     public Ring getRing() { return ring; }
     public void setRing(Ring ring) { this.ring = ring; }
 
+    public String getLabel() {
+        return afdeling.getNaam() + " in " + ring.getLabel();
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(id);
+    }
 }

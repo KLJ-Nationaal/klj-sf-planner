@@ -7,9 +7,12 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 @XmlRootElement(name = "Tijdslot")
-public class Tijdslot {  //Analogy Timeslot
+public class Tijdslot {
     private int startTijd;
     private int eindTijd;
     private int duur;
@@ -48,27 +51,25 @@ public class Tijdslot {  //Analogy Timeslot
         return eindTijd;
     }
 
-    //Legacy
-    public int getTijdslotIndex() {
-        return startTijd;
+    public String getStartTijdFormatted() {
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+            Date d = df.parse("08:00");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            cal.add(Calendar.MINUTE, startTijd);
+            return df.format(cal.getTime());
+        } catch (Exception e) {
+            return String.valueOf(startTijd);
+        }
     }
-    public void setTijdslotIndex(int tijdslotIndex) {
-        this.startTijd = tijdslotIndex;
-    }
-
-    //TODO: verwijderen
-    private static final String[] TIMES = {"08:00", "08:03", "08:06", "08:09", "08:12", "08:15", "08:18", "08:21", "08:24", "08:30"};
 
     public String getLabel() {
-        String time = TIMES[startTijd % TIMES.length];
-        if (startTijd > TIMES.length) {
-            return "Tijdslot " + startTijd;
-        }
-        return ring.getLabel() + " " + time;
+        return ring.getLabel() + " " + getStartTijdFormatted();
     }
-/*
+
     @Override
-    public String toString() { return Integer.toString(startTijd); }
+    public String toString() { return ring.toString() + " " + getStartTijdFormatted(); }
 
     @Override
     public int hashCode() {
@@ -91,5 +92,5 @@ public class Tijdslot {  //Analogy Timeslot
         } else {
             return false;
         }
-    }*/
+    }
 }

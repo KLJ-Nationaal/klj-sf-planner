@@ -5,24 +5,29 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "Ring")
-public class Ring {  //Analogy Day
-    @XmlElement(name = "DisciplineIndex")
-    public int disciplineIndex;
+public class Ring {
     @XmlElement(name = "Naam")
     public String naam;
 
-    private int ringIndex;
+    private int index;
     private List<Tijdslot> tijdslots;
+
+    public Ring(String ringNaam, int ringIndex) {
+        naam = ringNaam;
+        index = ringIndex;
+        tijdslots = new ArrayList<>();
+    }
 
     @XmlElement(name = "RingIndex")
     public int getRingIndex() {
-        return ringIndex;
+        return index;
     }
     public void setRingIndex(int ringIndex) {
-        this.ringIndex = ringIndex;
+        index = ringIndex;
     }
 
     public List<Tijdslot> getTijdslots() {
@@ -37,9 +42,7 @@ public class Ring {  //Analogy Day
     }
 
     @Override
-    public String toString() {
-        return Integer.toString(ringIndex);
-    }
+    public String toString() { return naam; }
 
     @Override
     public int hashCode() {

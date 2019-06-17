@@ -9,32 +9,29 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @XmlRootElement(name = "Sportfeest")
 @PlanningSolution
 public class Sportfeest {
-    private List<Afdeling> afdelingen;
+    private HashSet<Afdeling> afdelingen;
     private List<Inschrijving> inschrijvingen;
-    private List<Ring> ringen;
+    private HashSet<Ring> ringen;
     private List<Tijdslot> tijdslots;
     private HardSoftScore score;
 
     @XmlElementWrapper(name = "Afdelingen")
     @XmlElement(name = "Afdeling")
-    public List<Afdeling> getAfdelingen() {
+    public HashSet<Afdeling> getAfdelingen() {
         return afdelingen;
     }
-    public void setAfdelingen(List<Afdeling> afdelingen) { this.afdelingen = afdelingen;
-        /*this.inschrijvingen = new ArrayList<Inschrijving>();
-        for (Afdeling afdeling : afdelingen){
-            this.inschrijvingen.addAll(afdeling.getInschrijvingen());
-        }*/
-    }
+    public void setAfdelingen(HashSet<Afdeling> afdelingen) { this.afdelingen = afdelingen; }
 
     @ValueRangeProvider(id = "Inschrijving")
     @PlanningEntityCollectionProperty
-    @XmlTransient
+    @XmlElementWrapper(name = "Inschrijvingen")
+    @XmlElement(name = "Inschrijving")
     public List<Inschrijving> getInschrijvingen() {
         return inschrijvingen;
     }
@@ -55,10 +52,10 @@ public class Sportfeest {
 
     @XmlElementWrapper(name = "Ringen")
     @XmlElement(name = "Ring")
-    public List<Ring> getRingen() {
+    public HashSet<Ring> getRingen() {
         return ringen;
     }
-    public void setRingen(List<Ring> ringen) {
+    public void setRingen(HashSet<Ring> ringen) {
         this.ringen = ringen;
     }
 
@@ -70,8 +67,14 @@ public class Sportfeest {
         this.score = score;
     }
 
-    public void addInschrijving(Inschrijving inschr) {
-        if(inschrijvingen == null) inschrijvingen = new ArrayList<Inschrijving>();
-        inschrijvingen.add(inschr);
+    public Sportfeest(HashSet<Afdeling> afdelingen, List<Inschrijving> inschrijvingen, HashSet<Ring> ringen, List<Tijdslot> tijdslots) {
+        this.afdelingen = afdelingen;
+        this.inschrijvingen = inschrijvingen;
+        this.ringen = ringen;
+        this.tijdslots = tijdslots;
+    }
+
+    public Sportfeest(){
+        this(new HashSet<>(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
     }
 }
