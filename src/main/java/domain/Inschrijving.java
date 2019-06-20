@@ -4,11 +4,13 @@ import difficulty.InschrijvingDifficultyComparator;
 import difficulty.TijdslotStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.List;
 
 @XmlRootElement(name = "Inschrijving")
 @PlanningEntity(difficultyComparatorClass = InschrijvingDifficultyComparator.class)
@@ -17,6 +19,7 @@ public class Inschrijving {
     private Afdeling afdeling;
     private Ring ring;
     private Tijdslot tijdslot;
+    private Discipline discipline;
 
     @XmlTransient
     //@PlanningId
@@ -39,6 +42,13 @@ public class Inschrijving {
     @XmlElement(name = "Ring")
     public Ring getRing() { return ring; }
     public void setRing(Ring ring) { this.ring = ring; }
+
+    @XmlElement(name = "Discipline")
+    public Discipline getDiscipline() { return discipline; }
+    public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
+
+    @ValueRangeProvider(id = "Tijdslot")
+    public List<Tijdslot> getTijdslots(){ return ring.getTijdslots(); }
 
     public String getLabel() {
         return afdeling.getNaam() + " in " + ring.getLabel();

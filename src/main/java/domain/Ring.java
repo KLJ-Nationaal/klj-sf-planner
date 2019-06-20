@@ -41,6 +41,13 @@ public class Ring {
         return naam;
     }
 
+    public String getVerkorteNotatie() {
+        return naam
+                .replace("meisjes","")
+                .replace("jongens","")
+                .replace("gemengd","");
+    }
+
     @Override
     public String toString() { return naam; }
 

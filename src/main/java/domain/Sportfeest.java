@@ -18,8 +18,9 @@ public class Sportfeest {
     private HashSet<Afdeling> afdelingen;
     private List<Inschrijving> inschrijvingen;
     private HashSet<Ring> ringen;
-    private List<Tijdslot> tijdslots;
     private HardSoftScore score;
+    private String locatie;
+    private String datum;
 
     @XmlElementWrapper(name = "Afdelingen")
     @XmlElement(name = "Afdeling")
@@ -39,42 +40,40 @@ public class Sportfeest {
         this.inschrijvingen = inschrijvingen;
     }
 
-    @ValueRangeProvider(id = "Tijdslot")
+    //@ValueRangeProvider(id = "Tijdslot")
     @ProblemFactCollectionProperty
     @XmlElementWrapper(name = "Tijdslots")
     @XmlElement(name = "Tijdslot")
     public List<Tijdslot> getTijdslots() {
-        return tijdslots;
-    }
-    public void setTijdslots(List<Tijdslot> tijdslots) {
-        this.tijdslots = tijdslots;
+        List<Tijdslot> all = new ArrayList<>();
+        for(Ring ring : ringen){
+            all.addAll(ring.getTijdslots());
+        }
+        return all;
     }
 
     @XmlElementWrapper(name = "Ringen")
     @XmlElement(name = "Ring")
-    public HashSet<Ring> getRingen() {
-        return ringen;
-    }
-    public void setRingen(HashSet<Ring> ringen) {
-        this.ringen = ringen;
-    }
+    public HashSet<Ring> getRingen() { return ringen; }
+    public void setRingen(HashSet<Ring> ringen) { this.ringen = ringen; }
 
     @PlanningScore
-    public HardSoftScore getScore() {
-        return score;
-    }
-    public void setScore(HardSoftScore score) {
-        this.score = score;
-    }
+    public HardSoftScore getScore() { return score; }
+    public void setScore(HardSoftScore score) { this.score = score; }
 
-    public Sportfeest(HashSet<Afdeling> afdelingen, List<Inschrijving> inschrijvingen, HashSet<Ring> ringen, List<Tijdslot> tijdslots) {
+    public String getLocatie() { return locatie; }
+    public void setLocatie(String locatie) { this.locatie = locatie; }
+
+    public String getDatum() { return datum; }
+    public void setDatum(String datum) { this.datum = datum; }
+
+    public Sportfeest(HashSet<Afdeling> afdelingen, List<Inschrijving> inschrijvingen, HashSet<Ring> ringen) {
         this.afdelingen = afdelingen;
         this.inschrijvingen = inschrijvingen;
         this.ringen = ringen;
-        this.tijdslots = tijdslots;
     }
 
     public Sportfeest(){
-        this(new HashSet<>(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
+        this(new HashSet<>(), new ArrayList<>(), new HashSet<>());
     }
 }

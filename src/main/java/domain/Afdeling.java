@@ -39,4 +39,13 @@ public class Afdeling {
     public String toString() {
         return naam;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Afdeling)) return false;
+
+        Afdeling c = (Afdeling) o;
+        return naam.equals(c.naam);
+    }
 }
