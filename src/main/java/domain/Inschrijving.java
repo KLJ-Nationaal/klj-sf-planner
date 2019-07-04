@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
+import java.util.Objects;
 
 @XmlRootElement(name = "Inschrijving")
 @PlanningEntity(difficultyComparatorClass = InschrijvingDifficultyComparator.class)
@@ -22,7 +23,7 @@ public class Inschrijving {
     private Discipline discipline;
 
     @XmlTransient
-    //@PlanningId
+    @PlanningId
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -51,7 +52,25 @@ public class Inschrijving {
     public List<Tijdslot> getTijdslots(){ return ring.getTijdslots(); }
 
     public String getLabel() {
-        return afdeling.getNaam() + " in " + ring.getLabel();
+        return afdeling.getNaam() + " in " + ring.toString();
+    }
+
+    public int getStartTijd(){
+        if (tijdslot == null) return 0;
+        return tijdslot.getStartTijd();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Inschrijving that = (Inschrijving) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

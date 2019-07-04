@@ -2,11 +2,9 @@ package domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,10 +15,6 @@ public class Tijdslot {
     private int eindTijd;
     private int duur;
     private Ring ring;
-
-    //@XmlTransient
-    //@PlanningId
-    //public Integer getId() { return startTijd + ring.getRingIndex() * 100; }
 
     @XmlElement(name = "Ring")
     public Ring getRing() {
@@ -64,10 +58,6 @@ public class Tijdslot {
         }
     }
 
-    public String getLabel() {
-        return ring.getLabel() + " " + getStartTijdFormatted();
-    }
-
     @Override
     public String toString() { return ring.toString() + " " + getStartTijdFormatted(); }
 
@@ -92,5 +82,11 @@ public class Tijdslot {
         } else {
             return false;
         }
+    }
+
+    public boolean isOverlap(Tijdslot a) {
+        if(a == null) return false;
+        if(a.startTijd < eindTijd && a.eindTijd > startTijd) return true;
+        else return false;
     }
 }

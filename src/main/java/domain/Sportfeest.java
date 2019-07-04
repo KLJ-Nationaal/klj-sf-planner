@@ -4,11 +4,13 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
-import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,31 +18,28 @@ import java.util.List;
 @PlanningSolution
 public class Sportfeest {
     private HashSet<Afdeling> afdelingen;
-    private List<Inschrijving> inschrijvingen;
     private HashSet<Ring> ringen;
+    private HashMap<String, Discipline> disciplines;
     private HardSoftScore score;
     private String locatie;
     private String datum;
 
     @XmlElementWrapper(name = "Afdelingen")
     @XmlElement(name = "Afdeling")
-    public HashSet<Afdeling> getAfdelingen() {
-        return afdelingen;
-    }
+    public HashSet<Afdeling> getAfdelingen() { return afdelingen; }
     public void setAfdelingen(HashSet<Afdeling> afdelingen) { this.afdelingen = afdelingen; }
 
-    @ValueRangeProvider(id = "Inschrijving")
     @PlanningEntityCollectionProperty
     @XmlElementWrapper(name = "Inschrijvingen")
     @XmlElement(name = "Inschrijving")
     public List<Inschrijving> getInschrijvingen() {
-        return inschrijvingen;
-    }
-    public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
-        this.inschrijvingen = inschrijvingen;
+        List<Inschrijving> all = new ArrayList<>();
+        for(Afdeling afdeling : afdelingen){
+            all.addAll(afdeling.getInschrijvingen());
+        }
+        return all;
     }
 
-    //@ValueRangeProvider(id = "Tijdslot")
     @ProblemFactCollectionProperty
     @XmlElementWrapper(name = "Tijdslots")
     @XmlElement(name = "Tijdslot")
@@ -51,6 +50,9 @@ public class Sportfeest {
         }
         return all;
     }
+
+    public HashMap<String, Discipline> getDisciplines() { return disciplines; }
+    public void setDisciplines(HashMap<String, Discipline> disciplines) { this.disciplines = disciplines; }
 
     @XmlElementWrapper(name = "Ringen")
     @XmlElement(name = "Ring")
@@ -67,13 +69,13 @@ public class Sportfeest {
     public String getDatum() { return datum; }
     public void setDatum(String datum) { this.datum = datum; }
 
-    public Sportfeest(HashSet<Afdeling> afdelingen, List<Inschrijving> inschrijvingen, HashSet<Ring> ringen) {
+    public Sportfeest(HashSet<Afdeling> afdelingen, HashSet<Ring> ringen, HashMap<String, Discipline> disciplines) {
         this.afdelingen = afdelingen;
-        this.inschrijvingen = inschrijvingen;
         this.ringen = ringen;
+        this.disciplines = disciplines;
     }
 
     public Sportfeest(){
-        this(new HashSet<>(), new ArrayList<>(), new HashSet<>());
+        this(new HashSet<>(), new HashSet<>(), new HashMap<>());
     }
 }

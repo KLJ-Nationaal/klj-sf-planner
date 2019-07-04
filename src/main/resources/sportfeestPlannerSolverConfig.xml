@@ -6,8 +6,8 @@
   <scanAnnotatedClasses/>
 
   <scoreDirectorFactory>
-    <!--<scoreDrl>rules.drl</scoreDrl>-->
-    <easyScoreCalculatorClass>solver.SportfeestScoreCalculator</easyScoreCalculatorClass>
+    <scoreDrl>rules.drl</scoreDrl>
+<!--    <easyScoreCalculatorClass>solver.SportfeestScoreCalculator</easyScoreCalculatorClass>-->
   </scoreDirectorFactory>
 <!--
   <constructionHeuristic>
@@ -25,12 +25,23 @@
 -->
   <constructionHeuristic/>
   <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector/>
+      <swapMoveSelector/>
+      <pillarSwapMoveSelector/>
+    </unionMoveSelector>
     <termination>
       <terminationCompositionStyle>OR</terminationCompositionStyle>
       <bestScoreLimit>0hard/0soft</bestScoreLimit>
-      <secondsSpentLimit>20</secondsSpentLimit>
+      <secondsSpentLimit>40</secondsSpentLimit>
     </termination>
     <localSearchType>TABU_SEARCH</localSearchType>
+<!--    <acceptor>-->
+<!--      <entityTabuSize>7</entityTabuSize>-->
+<!--    </acceptor>-->
+<!--    <forager>-->
+<!--      <acceptedCountLimit>1000</acceptedCountLimit>-->
+<!--    </forager>-->
   </localSearch>
   <!--
 <localSearch>

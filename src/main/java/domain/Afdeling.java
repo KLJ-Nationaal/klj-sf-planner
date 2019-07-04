@@ -1,12 +1,13 @@
 package domain;
 
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @XmlRootElement(name = "Afdeling")
 public class Afdeling {
@@ -26,6 +27,7 @@ public class Afdeling {
         this.naam = naam;
     }
 
+    @ValueRangeProvider(id = "Inschrijving")
     @XmlElementWrapper(name = "Inschrijvingen")
     @XmlElement(name = "Inschrijving")
     public List<Inschrijving> getInschrijvingen() {
@@ -47,5 +49,10 @@ public class Afdeling {
 
         Afdeling c = (Afdeling) o;
         return naam.equals(c.naam);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(naam);
     }
 }

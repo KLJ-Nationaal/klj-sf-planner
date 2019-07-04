@@ -1,30 +1,30 @@
 package persistence;
 
-import com.sun.istack.internal.logging.Logger;
+import ch.qos.logback.classic.Logger;
 import domain.*;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.event.Level;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Marshalling {
-    final static Logger logger = Logger.getLogger(Marshalling.class);
+    final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
+    public static final int TOTALETIJD = 151;
 
     public static Sportfeest unMarshall(String filename) {
         Sportfeest sf = new Sportfeest();
-        HashMap<String, Discipline> disciplines = new HashMap<>();
 
         try {
             File excelFile = new File(filename);
@@ -40,17 +40,19 @@ public class Marshalling {
 
                 String reeks = row.getCell(0).getStringCellValue();
                 String ringNaam = row.getCell(2).getStringCellValue();
-                int minuten = 12; //standaard 12 minuten (wordt normaal altijd overschreven)
+                int minuten = 30;
                 if(row.getCell(3) != null && row.getCell(3).getCellType() == CellType.NUMERIC) {
                     minuten = (int) row.getCell(3).getNumericCellValue();
                 }
 
                 if(reeks.length() > 12) { //reeksen hebben altijd een naam met meer dan 12 karakters
+                    if(minuten == 30) logger.error("Kon aantal minuten voor discipline " + reeks + " niet bepalen!");
+
                     Discipline discipline = new Discipline();
-                    discipline.naam = reeks;
-                    discipline.ringNaam = ringNaam;
-                    discipline.duur = minuten;
-                    disciplines.put(reeks, discipline);
+                    discipline.setNaam(reeks);
+                    discipline.setRingNaam(ringNaam);
+                    discipline.setDuur(minuten);
+                    sf.getDisciplines().put(reeks, discipline);
                 } else {
                     if(row.getRowNum() > 10) break; //dit is waarschijnlijk het einde van de lijst
                 }
@@ -71,18 +73,18 @@ public class Marshalling {
                 if(row.getCell(2) != null && row.getCell(2).getCellType() == CellType.NUMERIC) {
                     aantal = (int) row.getCell(2).getNumericCellValue();
                 } else {
-                    logger.severe("Kon aantal inschrijvingen niet lezen voor afdeling " + afdelingsNaam +
+                    logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdelingsNaam +
                             ", discipline " + discipline);
                 }
                 String ringIndex = "A";
                 if(row.getCell(3) != null) {
                     ringIndex = row.getCell(3).getStringCellValue();
                 } else {
-                    logger.severe("Inschrijving heeft geen ring toegewijzing gekregen voor afdeling " +
+                    logger.error("Inschrijving heeft geen ring toegewijzing gekregen voor afdeling " +
                             afdelingsNaam + ", discipline " + discipline);
                 }
 
-                String ringNaam = disciplines.get(discipline).ringNaam + " Ring " + ringIndex;
+                String ringNaam = sf.getDisciplines().get(discipline).getRingNaam() + " Ring " + ringIndex;
                 Ring ring = sf.getRingen().stream()
                         .filter(rng -> ringNaam.equals(rng.naam))
                         .findAny()
@@ -91,24 +93,16 @@ public class Marshalling {
                         .filter(afd -> afdelingsNaam.equals(afd.getNaam()))
                         .findAny()
                         .orElse(new Afdeling(afdelingsNaam));
-                //tijdslots voor ring maken als ze nog niet bestaan
-                if(ring.getTijdslots().size() == 0) {
-                    for (int i = 0; i < 151; i = i + disciplines.get(discipline).duur) {  //TODO: property van maken
-                        Tijdslot tijdslot = new Tijdslot();
-                        tijdslot.setStartTijd(i);
-                        tijdslot.setDuur(disciplines.get(discipline).duur);
-                        tijdslot.setRing(ring);
-                        ring.getTijdslots().add(tijdslot);
-                    }
-                }
-                for(int i = 0; i < aantal; i++) {
+                ring.addDiscipline(sf.getDisciplines().get(discipline));
+
+                for(int i = 0; i < aantal; i++) {  //aantal korpsen
                     Inschrijving inschrijving = new Inschrijving();
                     inschrijving.setAfdeling(afdeling);
                     inschrijving.setRing(ring);
                     inschrijving.setId(aantalInschrijvingen);
-                    inschrijving.setDiscipline(disciplines.get(discipline));
+                    inschrijving.setDiscipline(sf.getDisciplines().get(discipline));
                     afdeling.getInschrijvingen().add(inschrijving);
-                    sf.getInschrijvingen().add(inschrijving);
+                    //sf.getInschrijvingen().add(inschrijving);
                     aantalInschrijvingen++;
                 }
                 sf.getRingen().add(ring);
@@ -118,11 +112,9 @@ public class Marshalling {
             workbook.close();
             fis.close();
 
-            for(Ring ring : sf.getRingen()) sf.getTijdslots().addAll(ring.getTijdslots());
-
             return sf;
         } catch (IOException ioe) {
-            logger.severe("KON XLSX NIET NORMAAL INLEZEN");
+            logger.error("KON DATA XLSX NIET INLEZEN");
             ioe.printStackTrace();
 
         }
@@ -160,7 +152,10 @@ public class Marshalling {
             XSSFWorkbook wb = new XSSFWorkbook();
             Map<String, CellStyle> styles = createStyles(wb);
 
-            for(Afdeling afdeling : map.getAfdelingen()) {
+            List<Afdeling> sortedAfdelingen = map.getAfdelingen().stream()
+                    .sorted(Comparator.comparing(Afdeling::getNaam))
+                    .collect(Collectors.toList());
+            for(Afdeling afdeling : sortedAfdelingen) {
                 XSSFSheet sheet = wb.createSheet(afdeling.getNaam());
                 PrintSetup printSetup = sheet.getPrintSetup();
                 printSetup.setLandscape(true);
@@ -171,7 +166,7 @@ public class Marshalling {
                 Row titleRow = sheet.createRow(0);
                 titleRow.setHeightInPoints(20);
                 Cell titleCell = titleRow.createCell(0);
-                titleCell.setCellValue("Afdeling: " + afdeling.getNaam() + " meisjes");
+                titleCell.setCellValue(afdeling.getNaam() + " meisjes");
                 titleCell.setCellStyle(styles.get("hoofding"));
                 sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$D$1"));
                 titleCell = titleRow.createCell(5);
@@ -214,28 +209,33 @@ public class Marshalling {
                 }
 
                 //gegevens invullen
-                for(Inschrijving inschrijving : map.getInschrijvingen()){
-                    if(inschrijving.getAfdeling() == afdeling) {
-                        if (inschrijving.getTijdslot() == null) {
-                            logger.severe("Inschrijving in " + inschrijving.getRing() + " van "
-                                    + inschrijving.getAfdeling() + " heeft geen tijdslot toegewezen!");
-                        } else {
-                            int row = 2 + (inschrijving.getTijdslot().getStartTijd() % 93) / 3;
-                            int column = (inschrijving.getTijdslot().getStartTijd() > 90 ? 3 : 1);
-                            String cell = sheet.getRow(row).getCell(column).getStringCellValue()
-                                    + inschrijving.getRing().getVerkorteNotatie();
-                            if (inschrijving.getDiscipline().isMeisjes())
-                                sheet.getRow(row).getCell(column).setCellValue(cell);
-                            if (inschrijving.getDiscipline().isJongens())
-                                sheet.getRow(row).getCell(column + 5).setCellValue(cell);
-                            if (!inschrijving.getDiscipline().isJongens() && !inschrijving.getDiscipline().isMeisjes()) {
-                                logger.severe("Inschrijving in " + inschrijving.getRing() + " van "
-                                        + inschrijving.getAfdeling() + ": jongens/meisjes kan niet bepaald worden en werd dus overgeslagen!");
-                            }
+                for(Inschrijving inschrijving : afdeling.getInschrijvingen()){
+                    if (inschrijving.getTijdslot() == null) {
+                        logger.error("Inschrijving in " + inschrijving.getRing() + " van "
+                                + inschrijving.getAfdeling() + " heeft geen tijdslot toegewezen!");
+                    } else {
+                        int row = 2 + (inschrijving.getTijdslot().getStartTijd() % 93) / 3;
+                        int column = (inschrijving.getTijdslot().getStartTijd() > 90 ? 3 : 1);
+                        Cell cell = null;
+                        if (inschrijving.getDiscipline().isMeisjes()) {
+                            cell = sheet.getRow(row).getCell(column);
+                            cell.setCellValue(cell.getStringCellValue() + " " + inschrijving.getDiscipline().getNaam());
+                            //TODO ring maar correct
+                        }
+                        if (inschrijving.getDiscipline().isJongens()) {
+                            cell = sheet.getRow(row).getCell(column + 5);
+                            cell.setCellValue(cell.getStringCellValue() + " " + inschrijving.getDiscipline().getNaam());
+                            //TODO ring maar correct
+                        }
+
+                        if (cell == null) {
+                            logger.error("Inschrijving in " + inschrijving.getRing() + " van "
+                                    + inschrijving.getAfdeling() + ": jongens/meisjes kan niet bepaald worden en werd dus overgeslagen!");
                         }
                     }
                 }
 
+                //dikke lijn rondomrond
                 CellRangeAddress region = CellRangeAddress.valueOf("A1:D33");
                 RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, sheet);
                 RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, sheet);
@@ -254,30 +254,137 @@ public class Marshalling {
                 }
             }
 
+            logger.info("Schrijven van bestand data/uurschema-afdelingen.xlsx");
             FileOutputStream out = new FileOutputStream("data/uurschema-afdelingen.xlsx");
             wb.write(out);
             out.close();
 
             try {
                 Desktop.getDesktop().open(new File("data/uurschema-afdelingen.xlsx"));
-            } catch (Exception e) { logger.finer(e.getMessage()); }
+            } catch (Exception e) { logger.warn(e.getMessage()); }
 
             //***********************************
             //Excel-bestand met werkblad per ring
             //***********************************
             wb = new XSSFWorkbook();
+            styles = createStyles(wb);
 
-            for(Ring ring : map.getRingen()) {
-                
+            //TODO: wat betekenen de gele vakken bij basiswimpelen muziekreeks?
+
+            //tabblad groepen maken
+            List<String> ringGroepen = new ArrayList<>();
+            for(Discipline discipline : map.getDisciplines().values()) ringGroepen.add(discipline.getRingNaam());
+            List<String> sortedRingGroepen = ringGroepen.stream().distinct().sorted().collect(Collectors.toList());
+
+            for(String ringGroep : sortedRingGroepen) {
+                XSSFSheet sheet = wb.createSheet(ringGroep);
+                PrintSetup printSetup = sheet.getPrintSetup();
+                printSetup.setLandscape(true);
+                //sheet.setFitToPage(true); //TODO bij >4 probleem, moet enkel fit breedte zijn
+
+                List<Ring> sortedRingen = map.getRingen().stream()
+                        .filter(rng -> ringGroep.equals(rng.getDisciplines().stream().findFirst().get().getRingNaam()))
+                        .sorted(Comparator.comparing(Ring::getVerkorteNotatie))
+                        .collect(Collectors.toList());
+                int ringGroepDuur = sortedRingen.get(0).getTijdslots().get(0).getDuur();
+                //TODO: niet 100% veilig (~sortedRingen leeg, ~verschillende lengtes)
+
+                //creeer eerst de rijen
+                int aantalrijen = (int) Math.ceil(
+                        (3 + (TOTALETIJD / 2f / ringGroepDuur))
+                                * Math.ceil(sortedRingen.size() / 2f));
+                for(int i = 0; i < aantalrijen; i++){
+                    Row titleRow = sheet.createRow(i);
+                    titleRow.setHeightInPoints(20);
+                }
+
+                for(int i = 0; i < sortedRingen.size(); i++) {
+                    Ring currentRing = sortedRingen.get(i);
+                    int tbRowBase = (int) ((i / 2) * (4 + (TOTALETIJD / ringGroepDuur / 2f)));
+                    int tbColBase = (i % 2 ) * 5;
+
+                    //Ringtitel
+                    Cell titleCell = sheet.getRow(tbRowBase).createCell(tbColBase);
+                    titleCell.setCellValue(currentRing.toString());
+                    titleCell.setCellStyle(styles.get("hoofding"));
+                    sheet.addMergedRegion(new CellRangeAddress(tbRowBase, tbRowBase, tbColBase, tbColBase + 3));
+
+                    //Tijden invullen
+                    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+                    Date d = df.parse("08:00");
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(d);
+                    int slots = (TOTALETIJD / ringGroepDuur) + 1;
+                    for (int j = 0; j < slots; j++) {
+                        int relRow = j % (int) Math.ceil(slots / 2f); //helft, afronden naar boven
+                        Row row = sheet.getRow(tbRowBase + 1 + relRow);
+                        int secondCol = (j >= (slots / 2f) ? 2 : 0);
+                        Cell cell = row.createCell(tbColBase + secondCol);
+                        cell.setCellValue(df.format(cal.getTime()));
+                        cell.setCellStyle(styles.get("tijd"));
+                        cell = row.createCell(tbColBase + 1 + secondCol);
+                        cell.setCellStyle(styles.get("ring"));
+
+                        cal.add(Calendar.MINUTE, ringGroepDuur);
+                    }
+
+                    //Data invullen
+                    List<Inschrijving> ringInschrijvingen = map.getAfdelingen().stream()
+                            .map(Afdeling::getInschrijvingen)
+                            .flatMap(Collection::stream)
+                            .filter(inschr -> currentRing.equals(inschr.getRing()))
+                            .collect(Collectors.toList());
+
+                    for(Inschrijving inschrijving : ringInschrijvingen){
+                        if (inschrijving.getTijdslot() == null) {
+                            logger.error("Inschrijving in " + inschrijving.getRing() + " van "
+                                    + inschrijving.getAfdeling() + " heeft geen tijdslot toegewezen!");
+                        } else {
+                            String tijd = inschrijving.getTijdslot().getStartTijdFormatted();
+                            boolean tijdFound = false;
+                            for(int j = 0; j < aantalrijen; j++) {
+                                Row row = sheet.getRow(tbRowBase + j);
+                                Cell cell = row.getCell(tbColBase);
+                                if(cell != null && cell.getStringCellValue().equals(tijd)) {
+                                    String value = row.getCell(tbColBase + 1).getStringCellValue()
+                                            + inschrijving.getAfdeling().getNaam();
+                                    row.getCell(tbColBase + 1).setCellValue(value);
+                                    tijdFound = true;
+                                    break;
+                                }
+                                cell = row.getCell(tbColBase + 2);
+                                if(cell != null && cell.getStringCellValue().equals(tijd)) {
+                                    String value = row.getCell(tbColBase + 3).getStringCellValue()
+                                            + inschrijving.getAfdeling().getNaam();
+                                    row.getCell(tbColBase + 3).setCellValue(value);
+                                    tijdFound = true;
+                                    break;
+                                }
+                            }
+                            if(!tijdFound) logger.error("Inschrijving in " + inschrijving.getRing() + " van "
+                                    + inschrijving.getAfdeling() + ", kon het tijdslot in de ring niet vinden!");
+
+                        }
+                    }
+                    //TODO:  <<<<<<<<<<<<<<<<<<<<<<<<<
+
+                }
+
+                //kolombreedtes instellen
+                int[] columnWidths = {5, 25, 5, 25, 3, 5, 25, 5, 25};
+                for (int i = 0; i < 9; i++) {
+                    sheet.setColumnWidth(i, columnWidths[i]*256);
+                }
             }
 
+            logger.info("Schrijven van bestand data/uurschema-ringen.xlsx");
             out = new FileOutputStream("data/uurschema-ringen.xlsx");
             wb.write(out);
             out.close();
 
             try {
                 Desktop.getDesktop().open(new File("data/uurschema-ringen.xlsx"));
-            } catch (Exception e) { logger.finer(e.getMessage()); }
+            } catch (Exception e) { logger.warn(e.getMessage()); }
         } catch (Exception e) {
             e.printStackTrace();
         }
