@@ -1,30 +1,33 @@
 <configuration>
-    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <conversionRule conversionWord="highlighting" converterClass="logging.Highlighting" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5p) [%logger{0}] %m%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %highlighting(%-5p) [%logger{0}] %highlighting(%m%n)</pattern>
         </encoder>
     </appender>
 
-    <!--<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-    <!--<file>local/log/optaplanner.log</file>-->
-    <!--<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">-->
-    <!--<fileNamePattern>local/log/optaplanner.%i.log.zip</fileNamePattern>-->
-    <!--<minIndex>1</minIndex>-->
-    <!--<maxIndex>3</maxIndex>-->
-    <!--</rollingPolicy>-->
-    <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
-    <!--<maxFileSize>5MB</maxFileSize>-->
-    <!--</triggeringPolicy>-->
-    <!--<encoder>-->
-    <!--<pattern>%d{HH:mm:ss.SSS} [%t] %-5p %m%n</pattern>-->
-    <!--</encoder>-->
-    <!--</appender>-->
+    <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log.txt</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>local/log/log.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5p [%logger{0}] %m%n</pattern>
+        </encoder>
+    </appender>
 
     <!-- To override the debug log level from the command line, use the VM option "-Dlogback.level.org.optaplanner=trace" -->
     <logger name="org.optaplanner" level="${logback.level.org.optaplanner:-debug}"/>
 
     <root level="info">
-        <appender-ref ref="consoleAppender" />
-        <!--<appender-ref ref="fileAppender" />-->
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="fileAppender" />
     </root>
 </configuration>

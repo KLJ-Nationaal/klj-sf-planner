@@ -1,6 +1,7 @@
 dialect "java"
 
 import domain.*;
+import solver.*;
 import java.util.ArrayList;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
@@ -9,9 +10,9 @@ global HardSoftScoreHolder scoreHolder;
 /***************************** HARD CONSTRAINTS *********************************/
 rule "elke inschrijving moet een tijdslot toegewezen hebben"
     when
-        $inschrijving : Inschrijving( tijdslot == null )
+        Inschrijving( tijdslot == null )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -8);
+        scoreHolder.addHardConstraintMatch(kcontext, -16);
 end
 
 rule "geen twee inschrijvingen voor een AFDELING op het zelfde moment"
@@ -35,20 +36,151 @@ rule "geen twee inschrijvingen voor een AFDELING op het zelfde moment"
             ($leftMeisjes == true && $rightMeisjes == true),
             tijdslot.isOverlap($tijdslot))
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -6);
+        scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
 
 rule "geen twee inschrijvingen voor een RING op het zelfde moment"
     when
         $leftInschrijving : Inschrijving(
             tijdslot != null,
-            $leftId : id,
+            $tijdslot : tijdslot,
+            $id : id,
             $ring : ring)
         $rightInschrijving : Inschrijving(
             tijdslot != null,
             ring == $ring,
-            tijdslot.isOverlap($leftInschrijving.tijdslot),
-            id > $leftId)
+			id > $id,
+            tijdslot.isOverlap($tijdslot) )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -4);
+        scoreHolder.addHardConstraintMatch(kcontext, -8);
+end
+
+/***************************** SOFT CONSTRAINTS *********************************/
+rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien verschillende ring"
+	when
+		Inschrijving (
+			$id : id,
+			tijdslot != null,
+			$tijdslot : tijdslot,
+			$afdeling : afdeling,
+			$discipline: discipline)
+		Inschrijving(
+			id > $id,
+			afdeling == $afdeling,
+			tijdslot != null,
+			discipline != $discipline,
+			($discipline.isJongens() == true && discipline.isJongens() == true) ||
+			($discipline.isMeisjes() == true && discipline.isMeisjes() == true),
+			tijdslot.timeBetween($tijdslot) < 6)
+		then
+			scoreHolder.addSoftConstraintMatch(kcontext, -5);
+end
+
+rule "insertAfdelingRingConsecutiveInschrijvingEnd"
+		salience 2
+	when
+		$inschrijving : Inschrijving(
+			$afdeling : afdeling,
+			tijdslot != null,
+			$ring : ring,
+			$tijdslot : tijdslot,
+			$starttijd : tijdslot.startTijd)
+		not Inschrijving(
+			afdeling == $afdeling,
+			tijdslot != null,
+			ring == $ring,
+			tijdslot > $tijdslot)
+	then
+		insertLogical(new AfdelingRingConsecutiveInschrijvingEnd($ring, $afdeling, $starttijd));
+end
+
+rule "insertAfdelingRingConsecutiveInschrijvingStart"
+		salience 2
+	when
+		$inschrijving : Inschrijving(
+			$afdeling : afdeling,
+			tijdslot != null,
+			$ring : ring,
+			$tijdslot : tijdslot,
+			$eindtijd : tijdslot.eindTijd)
+		not Inschrijving(
+			afdeling == $afdeling,
+			tijdslot != null,
+			ring == $ring,
+			tijdslot < $tijdslot)
+	then
+		insertLogical(new AfdelingRingConsecutiveInschrijvingStart($ring, $afdeling, $eindtijd));
+end
+
+rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
+		salience 1
+	when
+		AfdelingRingConsecutiveInschrijvingStart(
+			$afdelingStart : afdeling,
+			$ringStart : ring,
+			$tussentijdStart : startTijd
+		)
+
+		AfdelingRingConsecutiveInschrijvingEnd(
+			ring == $ringStart,
+			afdeling == $afdelingStart,
+			$tussentijdStop : eindTijd
+		)
+
+		// Er zijn inschrijvingen tussen die tijd van een andere afdeling
+		Inschrijving(
+			ring == $ringStart,
+			tijdslot != null,
+			afdeling != $afdelingStart,
+			tijdslot.startTijd > $tussentijdStart,
+			tijdslot.eindTijd < $tussentijdStop
+        )
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -10);
+end
+
+rule "zo weinig mogelijk vendeluniform wissels"
+	when
+		$inschrijving : Inschrijving(
+			$afdeling : afdeling,
+		    tijdslot != null,
+		    $tijdslot1 : tijdslot,
+		    discipline.isJongens() == true,
+		    $uniform : discipline.isVendeluniform() )
+		Inschrijving(
+			afdeling == $afdeling,
+		    tijdslot != null,
+		    $tijdslot2 : tijdslot,
+		    $tijdslot2 > $tijdslot1,
+		    discipline.isJongens() == true,
+			discipline.isVendeluniform() != $uniform )
+		not Inschrijving(
+			afdeling == $afdeling,
+		    tijdslot != null,
+		    tijdslot > $tijdslot1,
+		    tijdslot < $tijdslot2,
+		    discipline.isJongens() == true )
+		exists Inschrijving(
+		    afdeling == $afdeling,
+		    tijdslot != null,
+		    $tijdslot3 : tijdslot,
+		    $tijdslot3 > $tijdslot2,
+		    discipline.isJongens() == true,
+		    discipline.isVendeluniform() == $uniform )
+		/*accumulate (
+			Inschrijving(
+				afdeling == $afdeling,
+		        tijdslot != null,
+		        $nTijdslot : tijdslot > $tijdslot1,
+		        discipline.jongens == true,
+		        discipline.vendeluniform != $uniform);
+			$eerstkomendeWissel : min($nTijdslot)
+		)
+		$inschrijvingWisselList : ArrayList() from collect (
+			Inschrijving(
+				tijdslot == $eerstkomendeWissel,
+				afdeling == $afdeling)
+		)*/
+	then
+		 scoreHolder.addSoftConstraintMatch(kcontext, -3 );
 end

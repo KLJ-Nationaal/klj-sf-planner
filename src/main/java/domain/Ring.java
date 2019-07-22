@@ -1,7 +1,5 @@
 package domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import persistence.Marshalling;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -9,78 +7,74 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @XmlRootElement(name = "Ring")
 public class Ring {
-    @XmlElement(name = "Naam")
-    public String naam;
-    private int index;
-    private List<Tijdslot> tijdslots;
-    private HashSet<Discipline> disciplines;
+	@XmlElement(name = "Naam")
+	private String naam;
+	private String letter;
+	private int index;
+	private List<Tijdslot> tijdslots;
+	private HashSet<Discipline> disciplines;
 
-    public Ring(String ringNaam, int ringIndex) {
-        naam = ringNaam;
-        index = ringIndex;
-        tijdslots = new ArrayList<>();
-        disciplines = new HashSet<>();
-    }
+	public Ring(String ringNaam, String ringLetter, int ringIndex) {
+		naam = ringNaam;
+		letter = ringLetter;
+		index = ringIndex;
+		tijdslots = new ArrayList<>();
+		disciplines = new HashSet<>();
+	}
 
-    @XmlElement(name = "RingIndex")
-    public int getRingIndex() {
-        return index;
-    }
-    public void setRingIndex(int ringIndex) {
-        index = ringIndex;
-    }
+	public String getNaam() { return naam; }
+	public void setNaam(String naam) { this.naam = naam; }
 
-    public List<Tijdslot> getTijdslots() {
-        return tijdslots;
-    }
+	public String getLetter() { return letter; }
+	public void setLetter(String letter) { this.letter = letter; }
 
-    public HashSet<Discipline> getDisciplines() { return disciplines;}
-    public void addDiscipline(Discipline discipline) {
-        disciplines.add(discipline);
-        //tijdslots voor ring maken als ze nog niet bestaan
-        if(tijdslots.size() == 0) {
-            for (int i = 0; i < Marshalling.TOTALETIJD; i = i + discipline.getDuur()) {  //TODO: property van maken
-                Tijdslot tijdslot = new Tijdslot();
-                tijdslot.setStartTijd(i);
-                tijdslot.setDuur(discipline.getDuur());
-                tijdslot.setRing(this);
-                tijdslots.add(tijdslot);
-            }
-        }
-    }
+	@XmlElement(name = "RingIndex")
+	public int getRingIndex() { return index; }
+	public void setRingIndex(int ringIndex) { index = ringIndex; }
 
-    public String getVerkorteNotatie() {
-        return naam
-                .replace("meisjes","")
-                .replace("jongens","")
-                .replace("gemengd","");
-    }
+	public List<Tijdslot> getTijdslots() {
+		return tijdslots;
+	}
 
-    @Override
-    public String toString() { return naam; }
+	public HashSet<Discipline> getDisciplines() { return disciplines;}
+	public void addDiscipline(Discipline discipline) {
+		disciplines.add(discipline);
+		//tijdslots voor ring maken als ze nog niet bestaan
+		if(tijdslots.size() == 0) {
+			for (int i = 0; i < Marshalling.TOTALETIJD; i = i + discipline.getDuur()) {  //TODO: property van maken
+				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
+				tijdslots.add(tijdslot);
+			}
+		}
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getRingIndex())
-                .toHashCode();
-    }
+	public String getVerkorteNotatie() {
+		return naam
+				.replace("meisjes","")
+				.replace("jongens","")
+				.replace("gemengd","");
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o instanceof Ring) {
-            Ring other = (Ring) o;
-            return new EqualsBuilder()
-                    .append(getRingIndex(), other.getRingIndex())
-                    .isEquals();
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public String toString() { return naam; }
+
+	@Override
+	public int hashCode() { return Objects.hash(getRingIndex()); }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (o instanceof Ring) {
+			Ring other = (Ring) o;
+			return getRingIndex() == other.getRingIndex();
+		} else {
+			return false;
+		}
+	}
 
 }

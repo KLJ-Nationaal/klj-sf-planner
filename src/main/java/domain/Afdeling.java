@@ -11,48 +11,48 @@ import java.util.Objects;
 
 @XmlRootElement(name = "Afdeling")
 public class Afdeling {
-    private String naam;
-    private List<Inschrijving> inschrijvingen;
+	private String naam;
+	private List<Inschrijving> inschrijvingen;
 
-    public Afdeling(String afdelingsNaam) {
-        naam = afdelingsNaam;
-        inschrijvingen = new ArrayList<>();
-    }
+	public Afdeling(String afdelingsNaam) {
+		naam = afdelingsNaam;
+		inschrijvingen = new ArrayList<>();
+	}
 
-    @XmlElement(name = "Naam")
-    public String getNaam() {
-        return naam;
-    }
-    public void setNaam(String naam) {
-        this.naam = naam;
-    }
+	@XmlElement(name = "Naam")
+	public String getNaam() {
+		return naam;
+	}
+	public void setNaam(String naam) {
+		this.naam = naam;
+	}
 
-    @ValueRangeProvider(id = "Inschrijving")
-    @XmlElementWrapper(name = "Inschrijvingen")
-    @XmlElement(name = "Inschrijving")
-    public List<Inschrijving> getInschrijvingen() {
-        return inschrijvingen;
-    }
-    public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
-        this.inschrijvingen = inschrijvingen;
-    }
+	@ValueRangeProvider(id = "Inschrijving")
+	@XmlElementWrapper(name = "Inschrijvingen")
+	@XmlElement(name = "Inschrijving")
+	public List<Inschrijving> getInschrijvingen() {
+		return inschrijvingen;
+	}
+	public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
+		this.inschrijvingen = inschrijvingen;
+	}
 
-    @Override
-    public String toString() {
-        return naam;
-    }
+	@Override
+	public String toString() {
+		return naam;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Afdeling)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) return true;
+		if (!(o instanceof Afdeling)) return false;
 
-        Afdeling c = (Afdeling) o;
-        return naam.equals(c.naam);
-    }
+		Afdeling c = (Afdeling) o;
+		return naam.equals(c.naam);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(naam);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(naam);
+	}
 }
