@@ -2,8 +2,6 @@ package domain;
 
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +11,16 @@ import java.util.Objects;
 public class Afdeling {
 	private String naam;
 	private List<Inschrijving> inschrijvingen;
+	private boolean meisjesDansenVendelen;
 
 	public Afdeling(String afdelingsNaam) {
 		naam = afdelingsNaam;
 		inschrijvingen = new ArrayList<>();
+		meisjesDansenVendelen = false;
+		if(afdelingsNaam.toLowerCase().contains("kluizen")) meisjesDansenVendelen = true;
+		if(afdelingsNaam.toLowerCase().contains("ertvelde")) meisjesDansenVendelen = true;
 	}
 
-	@XmlElement(name = "Naam")
 	public String getNaam() {
 		return naam;
 	}
@@ -28,14 +29,14 @@ public class Afdeling {
 	}
 
 	@ValueRangeProvider(id = "Inschrijving")
-	@XmlElementWrapper(name = "Inschrijvingen")
-	@XmlElement(name = "Inschrijving")
 	public List<Inschrijving> getInschrijvingen() {
 		return inschrijvingen;
 	}
 	public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
 		this.inschrijvingen = inschrijvingen;
 	}
+
+	public boolean isMeisjesDansenVendelen() { return meisjesDansenVendelen; }
 
 	@Override
 	public String toString() {

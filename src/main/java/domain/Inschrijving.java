@@ -77,4 +77,5 @@ public class Inschrijving {
 	public String toString() {
 		return "[" + id + "] " + afdeling.getNaam() + " in " + ring.getVerkorteNotatie();
 	}
+
 }

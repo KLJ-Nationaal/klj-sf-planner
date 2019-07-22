@@ -156,6 +156,7 @@ public class Marshalling {
 	}
 
 	public static void marshall(Sportfeest map){
+		fixRingNumbersOrder(map);
 		try {
 			//***************************************
 			//Excel-bestand met werkblad per afdeling
@@ -232,42 +233,6 @@ public class Marshalling {
 						}
 					}
 				}
-				/*
-				for(Inschrijving inschrijving : afdeling.getInschrijvingen()){
-					if (inschrijving.getTijdslot() == null) {
-						logger.error("Inschrijving in " + inschrijving.getRing() + " van "
-								+ inschrijving.getAfdeling() + " heeft geen tijdslot toegewezen!");
-					} else {
-						int row = 2 + (inschrijving.getTijdslot().getStartTijd() % 93) / 3;
-						int column = (inschrijving.getTijdslot().getStartTijd() > 90 ? 3 : 1);
-						Cell cell = null;
-						if (inschrijving.getDiscipline().isMeisjes()) {
-							cell = sheet.getRow(row).getCell(column);
-							cell.setCellValue((cell.getStringCellValue() != "" ? cell.getStringCellValue() + " " : "" )
-									+ inschrijving.getDiscipline().getVerkorteNaam()
-									+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "")
-									+ Optional
-									.ofNullable(inschrijving.getRing().getLetter())
-									.map(a -> new String(" ring " + a))
-									.orElse(""));
-						}
-						if (inschrijving.getDiscipline().isJongens()) {
-							cell = sheet.getRow(row).getCell(column + 5);
-							cell.setCellValue((cell.getStringCellValue() != "" ? cell.getStringCellValue() + " " : "" )
-									+ inschrijving.getDiscipline().getVerkorteNaam()
-									+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "")
-									+ Optional
-									.ofNullable(inschrijving.getRing().getLetter())
-									.map(a -> new String(" ring " + a))
-									.orElse(""));
-						}
-
-						if (cell == null) {
-							logger.error("Inschrijving in " + inschrijving.getRing() + " van "
-									+ inschrijving.getAfdeling() + ": jongens/meisjes kan niet bepaald worden en werd dus overgeslagen!");
-						}
-					}
-				}*/
 
 				//SF informatie
 				SimpleDateFormat formatter = new SimpleDateFormat("d/MM/yyyy");
@@ -465,6 +430,22 @@ public class Marshalling {
 			} catch (Exception e) { logger.warn(e.getMessage()); }
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void fixRingNumbersOrder(Sportfeest map) {
+		for(Afdeling afdeling : map.getAfdelingen()) {
+			List<Inschrijving> sortedInschrijvingen = afdeling.getInschrijvingen().stream()
+					.sorted(Comparator.comparing(Inschrijving::getTijdslot))
+					.collect(Collectors.toList());
+			HashMap<Discipline, Integer> ringCounter = new HashMap<>();
+			for(Inschrijving inschrijving : sortedInschrijvingen) {
+				int count = 1;
+				if(ringCounter.containsKey(inschrijving.getDiscipline()))
+					count += ringCounter.get(inschrijving.getDiscipline());
+				inschrijving.setKorps(count);
+				ringCounter.put(inschrijving.getDiscipline(), count);
+			}
 		}
 	}
 

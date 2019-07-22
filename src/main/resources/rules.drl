@@ -167,20 +167,23 @@ rule "zo weinig mogelijk vendeluniform wissels"
 		    $tijdslot3 > $tijdslot2,
 		    discipline.isJongens() == true,
 		    discipline.isVendeluniform() == $uniform )
-		/*accumulate (
-			Inschrijving(
-				afdeling == $afdeling,
-		        tijdslot != null,
-		        $nTijdslot : tijdslot > $tijdslot1,
-		        discipline.jongens == true,
-		        discipline.vendeluniform != $uniform);
-			$eerstkomendeWissel : min($nTijdslot)
-		)
-		$inschrijvingWisselList : ArrayList() from collect (
-			Inschrijving(
-				tijdslot == $eerstkomendeWissel,
-				afdeling == $afdeling)
-		)*/
 	then
 		 scoreHolder.addSoftConstraintMatch(kcontext, -3 );
+end
+
+rule "meisjes die vendelen en dansen"
+	when
+		Inschrijving (
+			tijdslot != null,
+			$tijdslot : tijdslot,
+			$afdeling : afdeling,
+			afdeling.isMeisjesDansenVendelen() == true,
+			discipline.isMeisjes() == true)
+		Inschrijving(
+			afdeling == $afdeling,
+			tijdslot != null,
+			discipline.isVendeluniform() == true,
+			tijdslot.isOverlap($tijdslot))
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
