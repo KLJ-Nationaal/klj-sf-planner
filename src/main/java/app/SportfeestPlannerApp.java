@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 
 public class SportfeestPlannerApp {
-	final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerApp.class);
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerApp.class);
 
 	public static void main(String[] args) {
 		SolverFactory<Sportfeest> solverFactory = SolverFactory.createFromXmlResource("solverConfig.xml");
@@ -33,14 +33,14 @@ public class SportfeestPlannerApp {
 		ScoreDirector<Sportfeest> scoreDirector = solver.getScoreDirectorFactory().buildScoreDirector();
 		scoreDirector.setWorkingSolution(solvedSportfeest);
 		for(ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()){
-			Consumer<String> c = s -> logger.info(s);
-			if( ((HardSoftScore)cmt.getScore()).getHardScore() != 0) c = s -> logger.warn(s);
+			Consumer<String> c = logger::info;
+			if( ((HardSoftScore)cmt.getScore()).getHardScore() != 0) c = logger::warn;
 
 			c.accept("  Voorwaarde: " + cmt.getConstraintName());
 			c.accept("  Gewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount());
 			for(ConstraintMatch cm : cmt.getConstraintMatchSet()){
 				c.accept("    " + cm.getJustificationList().stream()
-						.map( n -> n.toString() )
+						.map(Object::toString)
 						.collect( Collectors.joining( ", " ) ));
 			}
 		}

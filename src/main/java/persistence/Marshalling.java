@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 
 public class Marshalling {
 	public static final int MINMINUTEN = 3;
-	final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 	public static final int TOTALETIJD = 151;
 	public static final int ROW_HEIGHT = 18;
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
 	public static Sportfeest unMarshall(String filename) {
 		Sportfeest sf = new Sportfeest();

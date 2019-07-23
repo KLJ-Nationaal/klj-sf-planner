@@ -2,12 +2,10 @@ package domain;
 
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@XmlRootElement(name = "Afdeling")
 public class Afdeling {
 	private String naam;
 	private List<Inschrijving> inschrijvingen;
