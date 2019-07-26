@@ -139,15 +139,8 @@ public class Marshalling {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			//m.marshal(map, System.out);
 
-			Writer w = null;
-			try {
-				w = new FileWriter(filename);
+			try (Writer w = new FileWriter(filename)) {
 				m.marshal(map, w);
-			} finally {
-				try {
-					w.close();
-				} catch (Exception e) {
-				}
 			}
 
 		} catch (Exception e) {
@@ -450,17 +443,17 @@ public class Marshalling {
 	}
 
 	private static boolean setCellInschrijvingForAfdeling(Map<String, CellStyle> styles, XSSFRow row, int column, int i, Inschrijving inschrijving) {
-		Cell cell = null;
+		Cell cell;
 		if (i == inschrijving.getTijdslot().getStartTijd()) {
 			cell = row.getCell(column-1);
 			cell.setCellStyle(styles.get("tijdonderleeg"));
 			cell = row.getCell(column);
-			cell.setCellValue((cell.getStringCellValue() != "" ? cell.getStringCellValue() + " " : "")
+			cell.setCellValue((!cell.getStringCellValue().equals("") ? cell.getStringCellValue() + " " : "")
 					+ inschrijving.getDiscipline().getVerkorteNaam()
 					+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "")
 					+ Optional
 					.ofNullable(inschrijving.getRing().getLetter())
-					.map(a -> new String(" ring " + a))
+					.map(a -> " ring " + a)
 					.orElse(""));
 			cell.setCellStyle(styles.get("ringonderleeg"));
 		} else {
