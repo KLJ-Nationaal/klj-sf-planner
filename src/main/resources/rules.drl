@@ -56,7 +56,7 @@ rule "geen twee inschrijvingen voor een RING op het zelfde moment"
 end
 
 /***************************** SOFT CONSTRAINTS *********************************/
-rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien verschillende ring"
+rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien verschillende discipline"
 	when
 		Inschrijving (
 			$id : id,
@@ -69,6 +69,8 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien
 			afdeling == $afdeling,
 			tijdslot != null,
 			discipline != $discipline,
+			!(($discipline.isHoofdgilde() == true && discipline.isDans() == true) ||
+			(discipline.isHoofdgilde() == true && $discipline.isDans() == true)),
 			($discipline.isJongens() == true && discipline.isJongens() == true) ||
 			($discipline.isMeisjes() == true && discipline.isMeisjes() == true),
 			tijdslot.timeBetween($tijdslot) < 6)
@@ -82,12 +84,14 @@ rule "insertAfdelingRingConsecutiveInschrijvingEnd"
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
 			tijdslot != null,
+			discipline.isHoofdgilde() == false,
 			$ring : ring,
 			$tijdslot : tijdslot,
 			$starttijd : tijdslot.startTijd)
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			discipline.isHoofdgilde() == false,
 			ring == $ring,
 			tijdslot > $tijdslot)
 	then
@@ -100,12 +104,14 @@ rule "insertAfdelingRingConsecutiveInschrijvingStart"
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
 			tijdslot != null,
+			discipline.isHoofdgilde() == false,
 			$ring : ring,
 			$tijdslot : tijdslot,
 			$eindtijd : tijdslot.eindTijd)
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			discipline.isHoofdgilde() == false,
 			ring == $ring,
 			tijdslot < $tijdslot)
 	then
@@ -131,6 +137,7 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 		Inschrijving(
 			ring == $ringStart,
 			tijdslot != null,
+			discipline.isHoofdgilde() == false,
 			afdeling != $afdelingStart,
 			tijdslot.startTijd > $tussentijdStart,
 			tijdslot.eindTijd < $tussentijdStop

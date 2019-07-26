@@ -10,6 +10,8 @@ public class Discipline {
 	private boolean meisjes;
 	private boolean jongens;
 	private boolean vendeluniform;
+	private boolean hoofdgilde;
+	private boolean dans;
 
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) {
@@ -17,16 +19,23 @@ public class Discipline {
 		meisjes = true;
 		jongens = true;
 		vendeluniform = false;
+		hoofdgilde = false;
+		dans = false;
 		if(naam.toLowerCase().contains("gilden")) { meisjes = false; vendeluniform = true; }
 		if(naam.toLowerCase().contains("vendelen")) { meisjes = false; vendeluniform = true; }
 		if(naam.toLowerCase().contains("jongens")) meisjes = false;
 		if(naam.toLowerCase().contains("wimpelen")) jongens = false;
 		if(naam.toLowerCase().contains("meisjes")) jongens = false;
+		if(naam.toLowerCase().contains("keur")) hoofdgilde = true;
+		if(naam.toLowerCase().contains("hoofdgilde")) hoofdgilde = true;
+		if(naam.toLowerCase().contains("dans")) dans = true;
+		if(naam.toLowerCase().contains("bondsreeks")) dans = true;
+		if(naam.toLowerCase().contains("vrije ritmiek")) dans = true;
 	}
 
 	public String getVerkorteNaam() {
 		if(naam.toLowerCase().contains("wimpelen"))
-			return naam.replace("reeks", "");
+			return naam.replace("reeks", "r.");
 		return naam;
 	}
 
@@ -42,6 +51,8 @@ public class Discipline {
 	public boolean isMeisjes(){ return meisjes; }
 	public boolean isJongens(){ return jongens; }
 	public boolean isVendeluniform() { return vendeluniform; }
+	public boolean isHoofdgilde() { return hoofdgilde; }
+	public boolean isDans() { return dans; }
 
 	@Override
 	public boolean equals(Object o) {
