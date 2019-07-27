@@ -74,13 +74,11 @@ public class Tijdslot implements Comparable<Tijdslot> {
 
 	public boolean isOverlap(Tijdslot a) {
 		if(a == null) return false;
-		if(a.startTijd < eindTijd && a.eindTijd > startTijd) return true;
-		else return false;
+		return a.startTijd < eindTijd && a.eindTijd > startTijd;
 	}
 
 	public boolean isIncluded(int a) {
-		if(a >= startTijd && a < eindTijd) return true;
-		else return false;
+		return a >= startTijd && a < eindTijd;
 	}
 
 	public int timeBetween(Tijdslot a) {
