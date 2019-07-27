@@ -443,8 +443,10 @@ public class Marshalling {
 				int count = 1;
 				if(ringCounter.containsKey(inschrijving.getDiscipline()))
 					count += ringCounter.get(inschrijving.getDiscipline());
-				inschrijving.setKorps(count);
-				ringCounter.put(inschrijving.getDiscipline(), count);
+				if(inschrijving.getKorps()>0) {
+					inschrijving.setKorps(count);
+					ringCounter.put(inschrijving.getDiscipline(), count);
+				}
 			}
 		}
 	}
