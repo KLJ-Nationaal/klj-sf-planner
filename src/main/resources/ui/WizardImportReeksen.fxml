@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.importer.WizardImportReeksenController">
+   <center>
+     <TableView fx:id="tblReeksen" editable="true" maxHeight="1.7976931348623157E308">
+         <columns>
+             <TableColumn fx:id="tblColDiscipline" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Discipline" />
+             <TableColumn fx:id="tblColAantal" editable="false" prefWidth="70.0" style="-fx-background-color: lightgrey;" text="Aantal inschr." />
+             <TableColumn fx:id="tblColRing" prefWidth="220.0" text="Ring" />
+             <TableColumn fx:id="tblColExtensie" prefWidth="100.0" text="Toevoeging" />
+         </columns>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+     </TableView>
+   </center>
+</BorderPane>

@@ -2,6 +2,7 @@ package persistence;
 
 import ch.qos.logback.classic.Logger;
 import domain.*;
+import domain.importing.Groepsinschrijving;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -20,10 +21,89 @@ import java.util.stream.Collectors;
 
 public class Marshalling {
 	public static final int MINMINUTEN = 3;
-	public static final int TOTALETIJD = 151;
+	public static final int TOTALETIJD = 241;       //151;
+	public static final int TABELMINUTEN = 270;     //180;
 	public static final int ROW_HEIGHT = 18;
+	public static final String STARTTIJD = "08:30"; //08:00
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
+	public static int getActiveSheet(String filename) {
+		ArrayList<String> columns = new ArrayList<>();
+		try {
+			File excelFile = new File(filename);
+			FileInputStream fis = new FileInputStream(excelFile);
+			XSSFWorkbook workbook = new XSSFWorkbook(fis);
+			return workbook.getActiveSheetIndex();
+		} catch (IOException ioe) {
+			logger.error("KON DATA XLSX NIET INLEZEN");
+			ioe.printStackTrace();
+		}
+		return 0;
+	}
+
+	public static ArrayList<String> getGroepsinschrijvingenFirstLine(String filename, int worksheetIndex) {
+		ArrayList<String> columns = new ArrayList<>();
+		try {
+			File excelFile = new File(filename);
+			FileInputStream fis = new FileInputStream(excelFile);
+			XSSFWorkbook workbook = new XSSFWorkbook(fis);
+			XSSFSheet sheet = workbook.getSheetAt(worksheetIndex);
+			Iterator<Row> rowIt = sheet.iterator();
+			Row row = rowIt.next();
+
+			if(row != null) {
+				row.forEach(cell -> {
+					if(cell.getStringCellValue() != null && cell.getStringCellValue() != "") {
+						columns.add(cell.getStringCellValue());
+					} else {
+						columns.add("");
+					}
+				});
+			}
+		} catch (IOException ioe) {
+			logger.error("KON DATA XLSX NIET INLEZEN");
+			ioe.printStackTrace();
+		}
+		return columns;
+	}
+
+	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex,
+	              boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colAantal) {
+		ArrayList<Groepsinschrijving> groepsinschrijvingen = new ArrayList<>();
+		try {
+			File excelFile = new File(filename);
+			FileInputStream fis = new FileInputStream(excelFile);
+			XSSFWorkbook workbook = new XSSFWorkbook(fis);
+			XSSFSheet sheet = workbook.getSheetAt(worksheetIndex);
+			Iterator<Row> rowIt = sheet.iterator();
+
+			if(hasTitles) rowIt.next();
+
+			while(rowIt.hasNext()) {
+				Row row = rowIt.next();
+
+				String sportfeest = row.getCell(colSportfeest).getStringCellValue();
+				String afdeling = row.getCell(colAfdeling).getStringCellValue();
+				String discipline = row.getCell(colDiscipline).getStringCellValue();
+				int aantal = 0;
+				if(row.getCell(colAantal).getCellType() == CellType.NUMERIC) {
+					aantal = (int) row.getCell(colAantal).getNumericCellValue();
+				} else if(row.getCell(colAantal).getCellType() == CellType.STRING) {
+					aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
+				}
+				if(aantal == 0) throw new IOException("Aantal groepen is 0 op regels " + row.getRowNum());
+
+				groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
+			}
+
+		} catch (IOException ioe) {
+			logger.error("KON DATA XLSX NIET INLEZEN");
+			ioe.printStackTrace();
+		}
+		return groepsinschrijvingen;
+	}
+
+	@Deprecated
 	public static Sportfeest unMarshall(String filename) {
 		Sportfeest sf = new Sportfeest();
 
@@ -149,6 +229,7 @@ public class Marshalling {
 	}
 
 	public static void marshall(Sportfeest map){
+		int rijen = (int)Math.ceil(TABELMINUTEN / MINMINUTEN / 2) + 3;
 		fixRingNumbersOrder(map);
 		try {
 			//***************************************
@@ -181,30 +262,30 @@ public class Marshalling {
 				sheet.addMergedRegion(CellRangeAddress.valueOf("$F$1:$I$1"));
 
 				//de rest opmaken
-				for (int i = 2; i < 33; i++) {
+				for (int i = 2; i < rijen; i++) {
 					Row row = sheet.createRow(i);
 					SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-					Date d = df.parse("08:00");
+					Date d = df.parse(STARTTIJD);
 					Calendar cal1 = Calendar.getInstance();
 					cal1.setTime(d);
 					cal1.add(Calendar.MINUTE, MINMINUTEN * (i-2));
 					Calendar cal2 = Calendar.getInstance();
 					cal2.setTime(d);
-					cal2.add(Calendar.MINUTE, MINMINUTEN * (i-2) + 93);
+					cal2.add(Calendar.MINUTE, MINMINUTEN * (i-2) + (TABELMINUTEN/2+3));
 					for (int col = 0; col < 9; col++) {
 						Cell cell = row.createCell(col);
 						if(col == 0 || col == 5) cell.setCellValue(df.format(cal1.getTime()));
 						if(col == 2 || col == 7) cell.setCellValue(df.format(cal2.getTime()));
 						if(col == 0 || col == 5 || col == 2 || col == 7) cell.setCellStyle(styles.get("tijd"));
 						if(col == 1 || col == 6 || col == 3 || col == 8) cell.setCellStyle(styles.get("ring"));
-						if(i == 32 && (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
+						if(i == (rijen-1) && (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
 					}
 				}
 
 				//gegevens invullen
-				for (int i = 0; i <= 180; i = i + MINMINUTEN){
-					int row = 2 + (i % 93) / 3;
-					int column = (i > 90 ? 3 : 1);
+				for (int i = 0; i <= TABELMINUTEN; i = i + MINMINUTEN){
+					int row = 2 + (i % (TABELMINUTEN/2+3)) / 3;
+					int column = (i > (TABELMINUTEN/2) ? 3 : 1);
 					final int time = i;
 					List<Inschrijving> inschrijvingList = afdeling.getInschrijvingen().stream()
 							.filter(inschr -> inschr.getTijdslot() != null)
@@ -246,12 +327,12 @@ public class Marshalling {
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, 5, 8));
 
 				//dikke lijn rondomrond
-				CellRangeAddress region = CellRangeAddress.valueOf("A1:D33");
+				CellRangeAddress region = CellRangeAddress.valueOf("A1:D"+rijen);
 				RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, sheet);
 				RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, sheet);
 				RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
 				RegionUtil.setBorderRight(BorderStyle.MEDIUM, region, sheet);
-				region = CellRangeAddress.valueOf("F1:I33");
+				region = CellRangeAddress.valueOf("F1:I"+rijen);
 				RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, sheet);
 				RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, sheet);
 				RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
@@ -307,7 +388,7 @@ public class Marshalling {
 				int aantalrijen = (int) Math.ceil(
 						(3 + (TOTALETIJD / 2f / ringGroepDuur))
 								* Math.ceil(sortedRingen.size() / 2f));
-				for(int i = 0; i < aantalrijen; i++){
+				for(int i = 0; i <= aantalrijen; i++){
 					Row row = sheet.createRow(i);
 					row.setHeightInPoints(ROW_HEIGHT);
 				}
@@ -325,7 +406,7 @@ public class Marshalling {
 
 					//Tijden invullen
 					SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-					Date d = df.parse("08:00");
+					Date d = df.parse(STARTTIJD);
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(d);
 					int slots = (TOTALETIJD / ringGroepDuur) + 1;

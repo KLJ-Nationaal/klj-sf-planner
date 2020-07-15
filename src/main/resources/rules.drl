@@ -9,50 +9,67 @@ global HardSoftScoreHolder scoreHolder;
 
 /***************************** HARD CONSTRAINTS *********************************/
 rule "elke inschrijving moet een tijdslot toegewezen hebben"
-    when
-        Inschrijving( tijdslot == null )
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, -16);
+	when
+		Inschrijving( tijdslot == null )
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -16);
 end
 
 rule "geen twee inschrijvingen voor een AFDELING op het zelfde moment"
-    when
-        $leftInschrijving : Inschrijving (
-            $id : id,
-            tijdslot != null,
-            $tijdslot : tijdslot,
-            $leftId : afdeling.naam,
-            $afdeling : afdeling,
-            $leftJongens: discipline.isJongens(),
-            $leftMeisjes: discipline.isMeisjes())
-        $rightInschrijving : Inschrijving(
-            id > $id,
-            afdeling == $afdeling,
-            tijdslot != null,
-            $rightJongens : discipline.isJongens(),
-            $rightMeisjes : discipline.isMeisjes(),
-            $rightTijdslot : tijdslot,
-            ($leftJongens == true && $rightJongens == true) ||
-            ($leftMeisjes == true && $rightMeisjes == true),
-            tijdslot.isOverlap($tijdslot))
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, -10);
+	when
+		$leftInschrijving : Inschrijving (
+			$id : id,
+			tijdslot != null,
+			$tijdslot : tijdslot,
+			$leftId : afdeling.naam,
+			$afdeling : afdeling,
+			$leftJongens: discipline.isJongens(),
+			$leftMeisjes: discipline.isMeisjes())
+		$rightInschrijving : Inschrijving(
+			id > $id,
+			afdeling == $afdeling,
+			tijdslot != null,
+			$rightJongens : discipline.isJongens(),
+			$rightMeisjes : discipline.isMeisjes(),
+			$rightTijdslot : tijdslot,
+			($leftJongens == true && $rightJongens == true) ||
+			($leftMeisjes == true && $rightMeisjes == true),
+			tijdslot.isOverlap($tijdslot))
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
 
 rule "geen twee inschrijvingen voor een RING op het zelfde moment"
-    when
-        $leftInschrijving : Inschrijving(
-            tijdslot != null,
-            $tijdslot : tijdslot,
-            $id : id,
-            $ring : ring)
-        $rightInschrijving : Inschrijving(
-            tijdslot != null,
-            ring == $ring,
+	when
+		$leftInschrijving : Inschrijving(
+			tijdslot != null,
+			$tijdslot : tijdslot,
+			$id : id,
+			$ring : ring)
+		$rightInschrijving : Inschrijving(
+			tijdslot != null,
+			ring == $ring,
 			id > $id,
-            tijdslot.isOverlap($tijdslot) )
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, -8);
+			tijdslot.isOverlap($tijdslot) )
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -8);
+end
+
+rule "meisjes die vendelen en dansen"
+	when
+		Inschrijving (
+			tijdslot != null,
+			$tijdslot : tijdslot,
+			$afdeling : afdeling,
+			afdeling.isMeisjesDansenVendelen() == true,
+			discipline.isMeisjes() == true)
+		Inschrijving(
+			afdeling == $afdeling,
+			tijdslot != null,
+			discipline.isVendeluniform() == true,
+			tijdslot.isOverlap($tijdslot))
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
 
 /***************************** SOFT CONSTRAINTS *********************************/
@@ -141,56 +158,60 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 			afdeling != $afdelingStart,
 			tijdslot.startTijd > $tussentijdStart,
 			tijdslot.eindTijd < $tussentijdStop
-        )
+		)
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -10);
+end
+
+rule "minstens enkele minuten tussen twee inschrijvingen van een verschillende afdeling in een ring"
+	when
+		Inschrijving(
+			tijdslot != null,
+			$afdelingStart : afdeling,
+			$ringStart : ring,
+			$startTijd : tijdslot,
+			$id : id
+		)
+
+		Inschrijving(
+			tijdslot != null,
+			id > $id,
+			ring == $ringStart,
+			afdeling != $afdelingStart,
+			tijdslot.timeBetween($startTijd) < 6
+		)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -5);
 end
 
 rule "zo weinig mogelijk vendeluniform wissels"
 	when
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
-		    tijdslot != null,
-		    $tijdslot1 : tijdslot,
-		    discipline.isJongens() == true,
-		    $uniform : discipline.isVendeluniform() )
+			tijdslot != null,
+			$tijdslot1 : tijdslot,
+			discipline.isJongens() == true,
+			$uniform : discipline.isVendeluniform() )
 		Inschrijving(
 			afdeling == $afdeling,
-		    tijdslot != null,
-		    $tijdslot2 : tijdslot,
-		    $tijdslot2 > $tijdslot1,
-		    discipline.isJongens() == true,
+			tijdslot != null,
+			$tijdslot2 : tijdslot,
+			$tijdslot2 > $tijdslot1,
+			discipline.isJongens() == true,
 			discipline.isVendeluniform() != $uniform )
 		not Inschrijving(
 			afdeling == $afdeling,
-		    tijdslot != null,
-		    tijdslot > $tijdslot1,
-		    tijdslot < $tijdslot2,
-		    discipline.isJongens() == true )
-		exists Inschrijving(
-		    afdeling == $afdeling,
-		    tijdslot != null,
-		    $tijdslot3 : tijdslot,
-		    $tijdslot3 > $tijdslot2,
-		    discipline.isJongens() == true,
-		    discipline.isVendeluniform() == $uniform )
-	then
-		 scoreHolder.addSoftConstraintMatch(kcontext, -3 );
-end
-
-rule "meisjes die vendelen en dansen"
-	when
-		Inschrijving (
 			tijdslot != null,
-			$tijdslot : tijdslot,
-			$afdeling : afdeling,
-			afdeling.isMeisjesDansenVendelen() == true,
-			discipline.isMeisjes() == true)
-		Inschrijving(
+			tijdslot > $tijdslot1,
+			tijdslot < $tijdslot2,
+			discipline.isJongens() == true )
+		exists Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
-			discipline.isVendeluniform() == true,
-			tijdslot.isOverlap($tijdslot))
+			$tijdslot3 : tijdslot,
+			$tijdslot3 > $tijdslot2,
+			discipline.isJongens() == true,
+			discipline.isVendeluniform() == $uniform )
 	then
-		scoreHolder.addHardConstraintMatch(kcontext, -10);
+		 scoreHolder.addSoftConstraintMatch(kcontext, -2 );
 end

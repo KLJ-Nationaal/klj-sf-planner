@@ -1,0 +1,80 @@
+package ui.importer;
+
+import com.google.inject.Inject;
+import domain.importing.Groepsinschrijving;
+import domain.importing.WizardData;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import persistence.Marshalling;
+
+import java.util.ArrayList;
+
+public class WizardImportSportfeestController extends WizardImportController {
+
+	private ObservableList<String> columns;
+
+	@FXML
+	private ChoiceBox txtSportfeest;
+	@FXML
+	private TextField txtTitel;
+	@FXML
+	private DatePicker txtDatum;
+
+	@Inject
+	WizardData model;
+
+	@FXML
+	public void initialize() {
+		txtSportfeest.valueProperty().bindBidirectional( model.sportfeestProperty() );
+		txtTitel.textProperty().bindBidirectional( model.sfTitelProperty());
+		txtDatum.valueProperty().bindBidirectional( model.sfDatumProperty() );
+
+		txtSportfeest.setOnAction(event -> {txtTitel.setText((String)txtSportfeest.getValue());});
+	}
+
+	@Override
+	public void activate(){
+		model.setTitle("Kolommen toewijzen");
+		model.setSubtitle("Selecteer de juiste kolommen uit het Excel bestand");
+
+		if(model.getFilename() != null && model.getFilename() != "") {
+			columns = FXCollections.observableArrayList();
+			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
+					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
+					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
+			groepsinschrijvingen.stream()
+					.map(groepsinschrijving -> {
+						return groepsinschrijving.getSportfeest();
+					})
+					.distinct()
+					.forEach(col -> columns.add(col));
+			txtSportfeest.setItems(columns);
+			txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")).findFirst().orElse(""));
+		}
+	}
+
+	@Validate
+	public boolean validate() throws Exception {
+
+		if( txtSportfeest.getValue() == null || txtSportfeest.getValue().equals("") ) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Kolommen");
+			alert.setHeaderText( "Niet toegewezen" );
+			alert.setContentText( "Je moet een bestaande keuze selecteren" );
+			alert.showAndWait();
+			return false;
+		}
+
+		return true;
+	}
+
+	@Submit
+	public void submit() throws Exception {
+
+	}
+}
