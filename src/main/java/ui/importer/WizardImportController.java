@@ -2,6 +2,7 @@ package ui.importer;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import domain.Sportfeest;
 import domain.importing.WizardData;
 import javafx.beans.binding.When;
 import javafx.beans.property.IntegerProperty;
@@ -46,10 +47,11 @@ public class WizardImportController {
 	private final List<Parent> steps = new ArrayList<>();
 	private final IntegerProperty currentStep = new SimpleIntegerProperty(-1);
 	private final String CONTROLLER_KEY = "controller";
-	protected Consumer<WizardData> dataCallback ;
+	protected Consumer<Sportfeest> dataCallback ;
 
-	public void setTextCallback(Consumer<WizardData> dataCallback) {
+	public void setDataCallback(Consumer<Sportfeest> dataCallback) {
 		this.dataCallback = dataCallback ;
+		steps.forEach(step -> ((WizardImportController)step.getProperties().get(CONTROLLER_KEY)).setDataCallback(dataCallback));
 	}
 
 	@FXML
@@ -95,7 +97,11 @@ public class WizardImportController {
 			contentPanel.getChildren().remove( steps.get(currentStep.get()) );
 			currentStep.set( currentStep.get() + 1 );
 			((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate();
+			steps.forEach(step -> ((WizardImportController)step.getProperties().get(CONTROLLER_KEY)).setDataCallback(dataCallback));
 			contentPanel.getChildren().add( steps.get(currentStep.get()) );
+		} else {
+			Stage stage = (Stage) btnNext.getScene().getWindow();
+			stage.close();
 		}
 	}
 

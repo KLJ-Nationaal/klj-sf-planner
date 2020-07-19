@@ -9,7 +9,7 @@
          <children>
             <Label layoutX="14.0" layoutY="14.0" text="Sportfeest" />
             <ChoiceBox fx:id="txtSportfeest" layoutX="184.0" layoutY="10.0" prefHeight="25.0" prefWidth="345.0" />
-             <Label layoutX="14.0" layoutY="44.0" text="Titel" />
+             <Label layoutX="14.0" layoutY="44.0" text="Locatie" />
              <TextField fx:id="txtTitel" layoutX="184.0" layoutY="40.0" prefHeight="25.0" prefWidth="345.0" />
              <Label layoutX="14.0" layoutY="74.0" text="Datum" />
             <DatePicker fx:id="txtDatum" layoutX="184.0" layoutY="70.0" />

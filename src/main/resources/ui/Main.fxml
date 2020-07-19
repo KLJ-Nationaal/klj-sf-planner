@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.StatusBar?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.SportfeestPlannerGUI">
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.SportfeestPlannerGUI">
    <children>
       <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -38,13 +38,13 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                              <TableView fx:id="tblInschrijvingen" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                 <columns>
                                     <TableColumn fx:id="tblColAfdeling" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Afdeling" />
                                     <TableColumn fx:id="tblColDiscipline" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Discipline" />
-                                    <TableColumn fx:id="tblColAantal" editable="false" prefWidth="70.0" style="-fx-background-color: lightgrey;" text="Aantal" />
+                                    <TableColumn fx:id="tblColKorps" editable="false" prefWidth="70.0" style="-fx-background-color: lightgrey;" text="Korps" />
                                     <TableColumn fx:id="tblColRingnaam" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Ringnaam" />
-                                    <TableColumn fx:id="tblColRingnummer" editable="false" prefWidth="70.0" text="Ringnummer" />
+                                    <TableColumn fx:id="tblColRingnummer" prefWidth="70.0" text="Ringnummer" />
                                 </columns>
                               </TableView>
                            </children>

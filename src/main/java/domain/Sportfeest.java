@@ -9,7 +9,11 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 @XmlRootElement(name = "Sportfeest")
 @PlanningSolution
@@ -19,7 +23,7 @@ public class Sportfeest {
 	private HashMap<String, Discipline> disciplines;
 	private HardSoftScore score;
 	private String locatie;
-	private Date datum;
+	private LocalDate datum;
 
 	@XmlElementWrapper(name = "Afdelingen")
 	@XmlElement(name = "Afdeling")
@@ -63,8 +67,8 @@ public class Sportfeest {
 	public String getLocatie() { return locatie; }
 	public void setLocatie(String locatie) { this.locatie = locatie; }
 
-	public Date getDatum() { return datum; }
-	public void setDatum(Date datum) { this.datum = datum; }
+	public LocalDate getDatum() { return datum; }
+	public void setDatum(LocalDate datum) { this.datum = datum; }
 
 	public Sportfeest(HashSet<Afdeling> afdelingen, HashSet<Ring> ringen, HashMap<String, Discipline> disciplines) {
 		this.afdelingen = afdelingen;

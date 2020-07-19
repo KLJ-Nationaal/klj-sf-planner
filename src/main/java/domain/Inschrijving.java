@@ -18,6 +18,7 @@ public class Inschrijving {
 	private Tijdslot tijdslot;
 	private Discipline discipline;
 	private int korps;
+	private List<Ring> mogelijkeRingen;
 
 	@PlanningId
 	public Integer getId() { return id; }
@@ -50,6 +51,9 @@ public class Inschrijving {
 		if (tijdslot == null) return 0;
 		return tijdslot.getStartTijd();
 	}
+
+	public void setMogelijkeRingen(List<Ring> ringen) {	this.mogelijkeRingen = ringen; }
+	public List<Ring> getMogelijkeRingen(){	return this.mogelijkeRingen; }
 
 	@Override
 	public boolean equals(Object o) {

@@ -4,12 +4,12 @@ public class WizardRing {
 	private String naam;
 	private int aantalRingen;
 	private int duur;
-	private int aantal;
+	private int aantalAfd;
 	private int afdPerRing;
 
-	public WizardRing(String ring, Integer aantal) {
+	public WizardRing(String ring, Integer aantalAfd) {
 		this.naam = ring;
-		this.aantal = aantal;
+		this.aantalAfd = aantalAfd;
 	}
 
 	public String getNaam() {
@@ -36,9 +36,9 @@ public class WizardRing {
 		this.duur = duur;
 	}
 
-	public int getAantal() { return aantal;	}
+	public int getAantalAfd() { return aantalAfd;	}
 
-	public void setAantal(int aantal) { this.aantal = aantal; }
+	public void setAantalAfd(int aantal) { this.aantalAfd = aantal; }
 
 	public int getAfdPerRing() { return afdPerRing;	}
 

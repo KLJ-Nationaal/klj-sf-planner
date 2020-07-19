@@ -39,8 +39,8 @@ public class WizardImportSportfeestController extends WizardImportController {
 
 	@Override
 	public void activate(){
-		model.setTitle("Kolommen toewijzen");
-		model.setSubtitle("Selecteer de juiste kolommen uit het Excel bestand");
+		model.setTitle("Instellingen");
+		model.setSubtitle("Duid het sportfeest aan, de tekst en de datum komen op verdeling");
 
 		if(model.getFilename() != null && model.getFilename() != "") {
 			columns = FXCollections.observableArrayList();

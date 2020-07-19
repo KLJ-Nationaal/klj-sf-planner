@@ -5,6 +5,7 @@ import domain.importing.Groepsinschrijving;
 import domain.importing.Reeks;
 import domain.importing.WizardData;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -66,6 +67,15 @@ public class WizardImportReeksenController extends WizardImportController{
 
 	@Validate
 	public boolean validate() throws Exception {
+		//ringnamen moeten minstens 8 characters zijn
+		if(!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam().length() > 8)) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Ringen");
+			alert.setHeaderText( "Ringnaam te kort" );
+			alert.setContentText( "Alle ringnamen moeten minsten 8 characters lang zijn" );
+			alert.showAndWait();
+			return false;
+		}
 		return true;
 	}
 

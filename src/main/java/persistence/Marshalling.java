@@ -15,6 +15,8 @@ import javax.xml.bind.Marshaller;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,7 +93,10 @@ public class Marshalling {
 				} else if(row.getCell(colAantal).getCellType() == CellType.STRING) {
 					aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
 				}
-				if(aantal == 0) throw new IOException("Aantal groepen is 0 op regels " + row.getRowNum());
+				if(aantal == 0) {
+					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdeling +
+							", discipline " + discipline);
+				}
 
 				groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
 			}
@@ -149,7 +154,9 @@ public class Marshalling {
 			rowIt = sheet.iterator();
 
 			sf.setLocatie(rowIt.next().getCell(1).getStringCellValue());
-			sf.setDatum(rowIt.next().getCell(1).getDateCellValue());
+			sf.setDatum(rowIt.next().getCell(1).getDateCellValue().toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate());
 			rowIt.next(); rowIt.next(); //rijen overslaan overslaan
 
 			int aantalInschrijvingen = 0;
@@ -309,8 +316,8 @@ public class Marshalling {
 				}
 
 				//SF informatie
-				SimpleDateFormat formatter = new SimpleDateFormat("d/MM/yyyy");
-				String sfInfo = "Sportfeest te " + map.getLocatie() + " op " + formatter.format(map.getDatum());
+				String sfInfo = "Sportfeest te " + map.getLocatie() + " op "
+						+ map.getDatum().format(DateTimeFormatter.ofPattern("d/MM/yyyy"));
 				Row infoRow = sheet.createRow(1);
 				infoRow.setHeightInPoints(20);
 				for(int i = 0; i <= 3; i++) {
