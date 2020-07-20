@@ -174,7 +174,7 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een verschillende a
 			tijdslot.timeBetween($startTijd) < 6
 		)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -5);
+		scoreHolder.addSoftConstraintMatch(kcontext, -2);
 end
 
 rule "zo weinig mogelijk vendeluniform wissels"

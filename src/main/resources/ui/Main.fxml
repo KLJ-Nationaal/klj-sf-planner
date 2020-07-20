@@ -43,8 +43,12 @@
                                     <TableColumn fx:id="tblColAfdeling" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Afdeling" />
                                     <TableColumn fx:id="tblColDiscipline" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Discipline" />
                                     <TableColumn fx:id="tblColKorps" editable="false" prefWidth="70.0" style="-fx-background-color: lightgrey;" text="Korps" />
-                                    <TableColumn fx:id="tblColRingnaam" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Ringnaam" />
-                                    <TableColumn fx:id="tblColRingnummer" prefWidth="70.0" text="Ringnummer" />
+                                    <TableColumn prefWidth="75.0" text="Ring">
+                                       <columns>
+                                          <TableColumn fx:id="tblColRingnaam" editable="false" prefWidth="220.0" style="-fx-background-color: lightgrey;" text="Naam" />
+                                          <TableColumn fx:id="tblColRingnummer" prefWidth="70.0" text="Nr" />
+                                       </columns>
+                                    </TableColumn>
                                 </columns>
                               </TableView>
                            </children>

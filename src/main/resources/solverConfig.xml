@@ -34,7 +34,7 @@
         <termination>
             <terminationCompositionStyle>OR</terminationCompositionStyle>
             <bestScoreLimit>0hard/0soft</bestScoreLimit>
-            <secondsSpentLimit>20</secondsSpentLimit>
+            <secondsSpentLimit>120</secondsSpentLimit>
         </termination>
         <localSearchType>TABU_SEARCH</localSearchType>
         <!--    <acceptor>-->

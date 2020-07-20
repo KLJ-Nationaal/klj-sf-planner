@@ -44,7 +44,7 @@ public class SportfeestPlannerGUI extends Application {
 	@FXML
 	private TableColumn tblColAfdeling, tblColDiscipline, tblColKorps, tblColRingnaam, tblColRingnummer;
 
-	private final ObservableList<Inschrijving> data = FXCollections.observableArrayList();
+	private ObservableList<Inschrijving> data = FXCollections.observableArrayList();
 	private Sportfeest sf;
 
 	public static void main(String[] args) {
@@ -87,7 +87,7 @@ public class SportfeestPlannerGUI extends Application {
 				wizardImportController.setDataCallback((Sportfeest sf) -> {
 					data.clear();
 					this.sf = sf;
-					data.addAll(sf.getInschrijvingen());
+					data = FXCollections.observableList(this.sf.getInschrijvingen());
 				});
 				wizardImportController.setFilename(selectedFile.getCanonicalPath());
 				Stage stage = new Stage();
@@ -124,7 +124,7 @@ public class SportfeestPlannerGUI extends Application {
 		tblColRingnummer.setCellFactory(param -> new EditingCell());
 		tblColRingnummer.setOnEditCommit(
 				(EventHandler<TableColumn.CellEditEvent<Inschrijving, String>>) t -> {
-					Inschrijving inschr = t.getTableView().getItems().get(t.getTablePosition().getRow() );
+					Inschrijving inschr = t.getRowValue();
 					inschr.setRing(inschr.getMogelijkeRingen().stream()
 							.filter(ring -> ring.getLetter().equals(t.getNewValue().toString()))
 							.findAny().orElse(null)
@@ -178,11 +178,11 @@ public class SportfeestPlannerGUI extends Application {
 			} else {
 				if (((Inschrijving) getTableRow().getItem()).getMogelijkeRingen().stream()
 						.anyMatch(ring -> ring.getLetter().equals(getString()))) {
-					this.setStyle("-fx-my-cell-background: green;");
+					this.setStyle("-fx-background-color: lightgreen;");
 				} else if (((Inschrijving) getTableRow().getItem()).getMogelijkeRingen().size() == 1) {
-					this.setStyle("-fx-my-cell-background: green;");
+					this.setStyle("-fx-background-color: lightgreen;");
 				} else {
-					this.setStyle("-fx-my-cell-background: yellow;");
+					this.setStyle("-fx-background-color: yellow;");
 				}
 				if (isEditing()) {
 					if (textField != null) {

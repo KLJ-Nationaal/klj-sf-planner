@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 public class Marshalling {
 	public static final int MINMINUTEN = 3;
 	public static final int TOTALETIJD = 241;       //151;
-	public static final int TABELMINUTEN = 270;     //180;
+	public static final int TABELMINUTEN = 240;     //180;
 	public static final int ROW_HEIGHT = 18;
-	public static final String STARTTIJD = "08:30"; //08:00
+	public static final String STARTTIJD = "08:00";
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
 	public static int getActiveSheet(String filename) {
@@ -548,7 +548,7 @@ public class Marshalling {
 			cell.setCellStyle(styles.get("ringonderleeg"));
 		} else {
 			cell = row.getCell(column-1);
-			cell.setCellValue("");
+			//cell.setCellValue("");
 			if (i != inschrijving.getTijdslot().getEindTijd() - MINMINUTEN){
 				cell.setCellStyle(styles.get("tijdonderleeg"));
 				cell = row.getCell(column);
