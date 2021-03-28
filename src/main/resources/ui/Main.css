@@ -1,0 +1,103 @@
+.navbar {
+    -fx-min-height: 67px;
+    -fx-max-height: 510px;
+    box-shadow: none;
+    -fx-background-color: #0088a5;
+    -fx-color: #fff;
+    border: none;
+    margin: 0 0 0 0;
+}
+
+.navbar .label {
+    -fx-font-size: 1em;
+    -fx-font-family: "VAG-Round-Regular", "calibri","Segoe UI Semibold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding-top: 8px;
+}
+
+.navbar > .divider-vertical {
+    height: 21px;
+    margin: 0 4px;
+    margin-top: 14.5px;
+    -fx-border-style: none solid none solid;
+    -fx-border-width: 0 1px 0 1px;
+    -fx-border-color: #fff #fff #666 #666;
+}
+
+.menu, .menu-item, .context-menu {
+	-fx-background-color: #0088a5;
+}
+
+.menu > .label:hover {
+    -fx-background-color: #207f76;
+    -fx-border-style: none none solid none;
+    -fx-border-width: 0 0 4px 0;
+    -fx-border-color: #fff;
+    -fx-padding-bottom: 10px;
+}
+
+.menu-item:hover {
+    -fx-background-color: #207f76;
+}
+
+.menu:focus, .menu-item:focus {
+    -fx-fill: #FFF;
+    -fx-stroke: dashed;
+    -fx-stroke-width: 1px;
+}
+
+
+footer {
+    position: relative;
+    color: #FFF;
+}
+
+    footer .footer-top {
+        width: 100%;
+        /*min-height: 130px;*/
+        background-color: #0088a5;
+        display: none;
+        align-items: center;
+    }
+
+        footer .footer-top h3, footer .footer-top h4 {
+            color: #fff;
+        }
+
+        footer .footer-top .list-social-links {
+            margin-top: 25px;
+            margin-bottom: 12.5px;
+        }
+
+footer .footer-bottom {
+    width: 100%;
+    min-height: 36px;
+    background-color: #0088a5;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+    footer .footer-bottom p {
+        margin: 0;
+    }
+
+    footer .footer-bottom h4 {
+        margin-top: 0;
+        color: #fff;
+    }
+
+    footer .footer-bottom ul {
+        list-style-type: none;
+        margin: 0;
+    }
+
+        footer .footer-bottom ul li a,
+        footer .footer-bottom ul li a:hover,
+        footer .footer-bottom ul li a:focus,
+        footer .footer-bottom ul li a:active,
+        footer .footer-bottom ul li a.active {
+            font-size: 15px;
+            color: #fff;
+        }

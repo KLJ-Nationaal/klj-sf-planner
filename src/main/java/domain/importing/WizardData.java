@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class WizardData {
 
@@ -128,13 +129,11 @@ public class WizardData {
 
     public StringProperty getSportfeest() { return sportfeest; }
 
-    public void setSfDatum(LocalDate sfDatum) { this.sfDatum.setValue(sfDatum); }
+    public void setSfDatum(Date sfDatum) { this.sfDatum.setValue(new java.sql.Date(sfDatum.getTime()).toLocalDate()); }
 
-    public Property<LocalDate> sfDatumProperty() {
-        return sfDatum;
-    }
+    public Property<LocalDate> sfDatumProperty() { return sfDatum; }
 
-    public LocalDate getSfDatum() { return sfDatum.getValue(); }
+    public Date getSfDatum() { return (sfDatum.getValue() != null ? java.sql.Date.valueOf(sfDatum.getValue()) : null); }
 
     public void setReeksen(ObservableList<Reeks> reeksen) { this.reeksen = reeksen; }
 

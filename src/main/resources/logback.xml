@@ -23,11 +23,28 @@
         </encoder>
     </appender>
 
+    <appender name="guiAppender" class="logging.TextAreaLogAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5p [%logger{0}] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="async_guiAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>10</discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
+        <appender-ref ref="guiAppender" />
+        <queueSize>500</queueSize> <!-- default 256 -->
+        <includeCallerData>false</includeCallerData><!-- default false -->
+        <neverBlock>true</neverBlock><!-- default false, set to true to cause the
+            Appender not block the application and just drop the messages -->
+    </appender>
+
     <!-- To override the debug log level from the command line, use the VM option "-Dlogback.level.org.optaplanner=trace" -->
     <logger name="org.optaplanner" level="${logback.level.org.optaplanner:-debug}"/>
 
     <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="fileAppender" />
+        <appender-ref ref="async_guiAppender" />
+        <appender-ref ref="guiAppender" />
     </root>
 </configuration>

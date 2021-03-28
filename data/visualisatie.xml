@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<afdelingsopties>
+    <Afdelingsoptie naam="Wetteren">
+        <kleur>#ff0000</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Zele Heikant">
+        <kleur>#ff4d00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Zele Centrum">
+        <kleur>#ff8400</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Kruibeke">
+        <kleur>#ffb700</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Stekene">
+        <kleur>#ffd000</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Temse-Velle">
+        <kleur>#ffea00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Hamme">
+        <kleur>#fbff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Melsele">
+        <kleur>#e1ff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Merchtem">
+        <kleur>#aaff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lochristi Hijfte Meisjes">
+        <kleur>#77ff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Opwijk">
+        <kleur>#00ff40</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Beervelde">
+        <kleur>#00ffa6</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Zomergem">
+        <kleur>#00ffd9</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Nazareth">
+        <kleur>#00eeff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Doorslaar">
+        <kleur>#00d5ff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lokeren Heirbrug">
+        <kleur>#00a2ff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lochristi Hijfte Jongens">
+        <kleur>#006fff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Sinaai">
+        <kleur>#9900ff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Sint-Gillis-Waas">
+        <kleur>#b300ff</kleur>
+    </Afdelingsoptie>
+</afdelingsopties>

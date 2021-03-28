@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,22 +82,26 @@ public class Marshalling {
 
 			while(rowIt.hasNext()) {
 				Row row = rowIt.next();
+				try {
+					String sportfeest = row.getCell(colSportfeest).getStringCellValue();
+					String afdeling = row.getCell(colAfdeling).getStringCellValue();
+					String discipline = row.getCell(colDiscipline).getStringCellValue();
+					int aantal = 0;
+					if (row.getCell(colAantal).getCellType() == CellType.NUMERIC) {
+						aantal = (int) row.getCell(colAantal).getNumericCellValue();
+					} else if (row.getCell(colAantal).getCellType() == CellType.STRING) {
+						aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
+					}
+					if (aantal == 0) {
+						logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdeling +
+								", discipline " + discipline);
+					}
 
-				String sportfeest = row.getCell(colSportfeest).getStringCellValue();
-				String afdeling = row.getCell(colAfdeling).getStringCellValue();
-				String discipline = row.getCell(colDiscipline).getStringCellValue();
-				int aantal = 0;
-				if(row.getCell(colAantal).getCellType() == CellType.NUMERIC) {
-					aantal = (int) row.getCell(colAantal).getNumericCellValue();
-				} else if(row.getCell(colAantal).getCellType() == CellType.STRING) {
-					aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
+					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
+				} catch (NullPointerException npe){
+					logger.error("Fout op rij " + row.getRowNum() + ": " + npe.getLocalizedMessage());
+					//npe.printStackTrace();
 				}
-				if(aantal == 0) {
-					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdeling +
-							", discipline " + discipline);
-				}
-
-				groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
 			}
 
 		} catch (IOException ioe) {
@@ -154,9 +157,7 @@ public class Marshalling {
 			rowIt = sheet.iterator();
 
 			sf.setLocatie(rowIt.next().getCell(1).getStringCellValue());
-			sf.setDatum(rowIt.next().getCell(1).getDateCellValue().toInstant()
-					.atZone(ZoneId.systemDefault())
-					.toLocalDate());
+			sf.setDatum(Date.from(rowIt.next().getCell(1).getDateCellValue().toInstant()));
 			rowIt.next(); rowIt.next(); //rijen overslaan overslaan
 
 			int aantalInschrijvingen = 0;
@@ -218,13 +219,28 @@ public class Marshalling {
 		return new Sportfeest();
 	}
 
+	public static Sportfeest unmarshallXml(String filename){
+		//TODO diagnostische XML uitvoer van score
+		Sportfeest sf = new Sportfeest();
+		try {
+			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
+			Unmarshaller m = context.createUnmarshaller();
+
+			try (Reader r = new FileReader(filename)) {
+				sf = (Sportfeest) m.unmarshal(r);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sf;
+	}
+
 	public static void marshallXml(Sportfeest map, String filename){
-		//TODO diagnostische XML uitvoer
 		try {
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			//m.marshal(map, System.out);
 
 			try (Writer w = new FileWriter(filename)) {
 				m.marshal(map, w);
@@ -236,7 +252,7 @@ public class Marshalling {
 	}
 
 	public static void marshall(Sportfeest map){
-		int rijen = (int)Math.ceil(TABELMINUTEN / MINMINUTEN / 2) + 3;
+		int rijen = (int)Math.ceil(1.0 * TABELMINUTEN / MINMINUTEN / 2) + 3;
 		fixRingNumbersOrder(map);
 		try {
 			//***************************************
@@ -316,8 +332,11 @@ public class Marshalling {
 				}
 
 				//SF informatie
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				String dateString = format.format( new Date()   );
+
 				String sfInfo = "Sportfeest te " + map.getLocatie() + " op "
-						+ map.getDatum().format(DateTimeFormatter.ofPattern("d/MM/yyyy"));
+						+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 				Row infoRow = sheet.createRow(1);
 				infoRow.setHeightInPoints(20);
 				for(int i = 0; i <= 3; i++) {

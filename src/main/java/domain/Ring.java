@@ -2,21 +2,23 @@ package domain;
 
 import persistence.Marshalling;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-@XmlRootElement(name = "Ring")
 public class Ring {
-	@XmlElement(name = "Naam")
 	private String naam;
 	private String letter;
 	private int index;
-	private List<Tijdslot> tijdslots;
-	private HashSet<Discipline> disciplines;
+	@XmlElementWrapper(name = "Tijdslots")
+	@XmlElement(name = "Tijdslot")
+	private final List<Tijdslot> tijdslots;
+	@XmlIDREF
+	@XmlElementWrapper(name = "Disciplines")
+	@XmlElement(name = "Discipline")
+	private final HashSet<Discipline> disciplines;
 
 	public Ring(String ringNaam, String ringLetter, int ringIndex) {
 		naam = ringNaam;
@@ -26,20 +28,30 @@ public class Ring {
 		disciplines = new HashSet<>();
 	}
 
+	public Ring(){
+		this("Ring zonder naam " + Math.random(), "", 0);
+	}
+
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) { this.naam = naam; }
 
 	public String getLetter() { return letter; }
 	public void setLetter(String letter) { this.letter = letter; }
 
-	@XmlElement(name = "RingIndex")
+	@XmlID
+	@XmlAttribute(name = "id")
+	public String getRef() { return "R"+ index; }
+	public void setRef(String s) { this.index = Integer.parseInt(s.substring(1)); }
+
 	public int getRingIndex() { return index; }
 	public void setRingIndex(int ringIndex) { index = ringIndex; }
 
+	@XmlTransient
 	public List<Tijdslot> getTijdslots() {
 		return tijdslots;
 	}
 
+	@XmlTransient
 	public HashSet<Discipline> getDisciplines() { return disciplines;}
 	public void addDiscipline(Discipline discipline) {
 		disciplines.add(discipline);
@@ -60,7 +72,7 @@ public class Ring {
 	}
 
 	@Override
-	public String toString() { return naam; }
+	public String toString() { return naam + (letter != "" ? " " + letter : ""); }
 
 	@Override
 	public int hashCode() { return Objects.hash(getRingIndex()); }

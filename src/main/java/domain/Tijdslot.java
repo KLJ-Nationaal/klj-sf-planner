@@ -1,21 +1,28 @@
 package domain;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import persistence.IntegerAdapter;
 import persistence.Marshalling;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-@XmlRootElement(name = "Tijdslot")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Tijdslot implements Comparable<Tijdslot> {
-	private int startTijd;
-	private int eindTijd;
-	private int duur;
+	private final int startTijd;
+	private final int eindTijd;
+	private final int duur;
+	@XmlTransient
 	private Ring ring;
-	private int id;
+	@XmlAttribute
+	@XmlID
+	@XmlJavaTypeAdapter(type=int.class,value=IntegerAdapter.class)
+	private final int id;
 
 	public Tijdslot(int startTijd, int duur, Ring ring) {
 		this.startTijd = startTijd;
@@ -23,6 +30,10 @@ public class Tijdslot implements Comparable<Tijdslot> {
 		this.ring = ring;
 		this.eindTijd = startTijd + duur;
 		this.id = ring.getRingIndex() * 10000 + startTijd;
+	}
+
+	public Tijdslot(){
+		this(0,1, new Ring());
 	}
 
 	public Ring getRing() {
@@ -55,7 +66,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	public int getId() { return id; }
 
 	@Override
-	public String toString() { return ring.toString() + " " + getStartTijdFormatted() + " " + hashCode(); }
+	public String toString() { return ring.toString() + " om " + getStartTijdFormatted() + " [" + hashCode() + "]"; }
 
 	@Override
 	public int hashCode() { return Objects.hash(ring, startTijd); }
@@ -91,5 +102,9 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	@Override
 	public int compareTo(Tijdslot o) {
 		return Objects.compare(startTijd, o.startTijd, Integer::compareTo);
+	}
+
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		ring = (Ring) parent;
 	}
 }

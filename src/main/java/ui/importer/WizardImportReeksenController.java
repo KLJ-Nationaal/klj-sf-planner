@@ -38,6 +38,7 @@ public class WizardImportReeksenController extends WizardImportController{
 		tblColExtensie.setCellValueFactory(new PropertyValueFactory<Reeks,String>("extensie"));
 
 		tblReeksen.setItems(model.getReeksen());
+		tblReeksen.getSelectionModel().setCellSelectionEnabled(true);
 	}
 
 	@Override
@@ -46,6 +47,7 @@ public class WizardImportReeksenController extends WizardImportController{
 		model.setSubtitle("Disciplines die in dezelfde ring moeten zitten, worden hier aangeduid, eventueel aangevuld met een extensie");
 
 		model.getReeksen().clear();
+		//TODO: errors in Marshalling controlleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
 				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
@@ -68,7 +70,7 @@ public class WizardImportReeksenController extends WizardImportController{
 	@Validate
 	public boolean validate() throws Exception {
 		//ringnamen moeten minstens 8 characters zijn
-		if(!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam().length() > 8)) {
+		if(!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam() != null && reeks.getRingNaam().length() > 8)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Ringen");
 			alert.setHeaderText( "Ringnaam te kort" );

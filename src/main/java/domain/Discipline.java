@@ -1,5 +1,6 @@
 package domain;
 
+import javax.xml.bind.annotation.XmlID;
 import java.util.Objects;
 
 public class Discipline {
@@ -13,6 +14,7 @@ public class Discipline {
 	private boolean hoofdgilde;
 	private boolean dans;
 
+	@XmlID
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) {
 		this.naam = naam;

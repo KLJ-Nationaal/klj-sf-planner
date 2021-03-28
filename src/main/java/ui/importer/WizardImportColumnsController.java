@@ -51,7 +51,8 @@ public class WizardImportColumnsController extends WizardImportController {
 		txtAfdeling.setItems(columns);
 		txtDiscipline.setItems(columns);
 		txtAantal.setItems(columns);
-		txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")).findFirst().orElse(""));
+		txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")
+				|| s.toLowerCase().startsWith("cursus")).findFirst().orElse(""));
 		txtAfdeling.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("afdeling")).findFirst().orElse(""));
 		txtDiscipline.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("discipline")
 				|| s.equalsIgnoreCase("sport")).findFirst().orElse(""));

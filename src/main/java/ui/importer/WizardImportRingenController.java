@@ -49,6 +49,7 @@ public class WizardImportRingenController extends WizardImportController{
 		tblColAantalRingen.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("aantalRingen"));
 
 		tblRingen.setItems(data);
+		tblRingen.getSelectionModel().setCellSelectionEnabled(true);
 	}
 
 	@Override
@@ -122,7 +123,7 @@ public class WizardImportRingenController extends WizardImportController{
 			for (int i = 0; i < wizardRing.getAantalRingen(); i++) {
 				String ringLetter = new String(Character.toChars('A' + i));
 				if (wizardRing.getAantalRingen() < 2) ringLetter = "";
-				Ring ring = new Ring(wizardRing.getNaam(), ringLetter, ringId.getAndAdd(1));
+				Ring ring = new Ring(wizardRing.getNaam(), ringLetter, ringId.addAndGet(1));
 				sf.getDisciplines().values().stream()
 						.filter(disc -> disc.getRingNaam().equals(wizardRing.getNaam()))
 						.forEach(disc -> ring.addDiscipline(disc));
@@ -132,6 +133,7 @@ public class WizardImportRingenController extends WizardImportController{
 
 		//inschrijvingen verwerken
 		final AtomicInteger aantal = new AtomicInteger(0);
+		//TODO: errors in Marshalling controlleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
 				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
@@ -153,6 +155,8 @@ public class WizardImportRingenController extends WizardImportController{
 										.anyMatch(discipline -> discipline.getNaam().equals(inschr.getSport())))
 								.collect(Collectors.toList())
 						);
+						if(inschrijving.getMogelijkeRingen().size() == 1)
+							inschrijving.setRing(inschrijving.getMogelijkeRingen().get(0));
 						if(inschr.getAantal() > 1) inschrijving.setKorps(i+1);
 						afdeling.getInschrijvingen().add(inschrijving);
 					}

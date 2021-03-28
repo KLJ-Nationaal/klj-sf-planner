@@ -6,12 +6,18 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
+import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 import java.util.Objects;
 
 @PlanningEntity(difficultyComparatorClass = InschrijvingDifficultyComparator.class)
-public class Inschrijving {
+public class Inschrijving implements InschrijvingInterface {
 	private Integer id;
 	private Afdeling afdeling;
 	private Ring ring;
@@ -20,10 +26,17 @@ public class Inschrijving {
 	private int korps;
 	private List<Ring> mogelijkeRingen;
 
+	@XmlTransient
 	@PlanningId
 	public Integer getId() { return id; }
 	public void setId(Integer id) { this.id = id; }
 
+	@XmlAttribute(name = "id")
+	@XmlID
+	public String getRef() { return "I"+ id; }
+	public void setRef(String s) { this.id = Integer.parseInt(s.substring(1)); }
+
+	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
 			strengthComparatorClass = TijdslotStrengthComparator.class,
 			nullable=true)
@@ -32,12 +45,15 @@ public class Inschrijving {
 	}
 	public void setTijdslot(Tijdslot tijdslot) { this.tijdslot = tijdslot; }
 
+	@XmlTransient
 	public Afdeling getAfdeling() { return afdeling; }
 	public void setAfdeling(Afdeling afdeling) { this.afdeling = afdeling; }
 
+	@XmlIDREF
 	public Ring getRing() { return ring; }
 	public void setRing(Ring ring) { this.ring = ring; }
 
+	@XmlIDREF
 	public Discipline getDiscipline() { return discipline; }
 	public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
 
@@ -52,6 +68,12 @@ public class Inschrijving {
 		return tijdslot.getStartTijd();
 	}
 
+	public int getEindTijd(){
+		if (tijdslot == null) return 0;
+		return tijdslot.getEindTijd();
+	}
+
+	@XmlIDREF
 	public void setMogelijkeRingen(List<Ring> ringen) {	this.mogelijkeRingen = ringen; }
 	public List<Ring> getMogelijkeRingen(){	return this.mogelijkeRingen; }
 
@@ -70,7 +92,12 @@ public class Inschrijving {
 
 	@Override
 	public String toString() {
-		return "[" + id + "] " + afdeling.getNaam() + " in " + ring.getVerkorteNotatie();
+		return "[" + id + "] " + afdeling.getNaam() + (korps > 0 ? " " + korps : "")
+				+ " in " + (ring == null ? "" : ring.getVerkorteNotatie());
+	}
+
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		setAfdeling((Afdeling) parent);
 	}
 
 }
