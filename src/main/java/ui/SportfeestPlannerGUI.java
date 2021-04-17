@@ -8,12 +8,13 @@ import domain.Afdeling;
 import domain.Inschrijving;
 import domain.Ring;
 import domain.Sportfeest;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,9 +25,9 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.*;
+import javafx.util.Duration;
+import javafx.util.Pair;
 import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
@@ -36,16 +37,17 @@ import ui.importer.WizardModule;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 public class SportfeestPlannerGUI extends Application {
 
-	private Window primaryStage;
+	private static Window primaryStage;
 	@FXML
 	private TableView<Inschrijving> tblInschrijvingen;
 	@FXML
@@ -55,16 +57,19 @@ public class SportfeestPlannerGUI extends Application {
 	@FXML
 	private ProgressBar prgStatusProgress;
 	@FXML
-	private MenuItem mnuStart, mnuStop;
+	private MenuItem mnuStart, mnuStop, mnuExport, mnuSFSave, mnuScore;
 	@FXML
 	private AfdelingenController afdelingenController;
 	@FXML
+	private RingenController ringenController;
+	@FXML
 	private Tab tbInschrijvingen, tbLog, tbAfdelingen;
 
-	private final ObservableList<Inschrijving> data = FXCollections.observableArrayList();
+	private final ObservableList<Inschrijving> ringverdeling = FXCollections.observableArrayList();
 	private SportfeestPlannerService sportfeestPlannerService;
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerGUI.class);
 	private final AtomicLong limiter = new AtomicLong(-1);
+	private final Timeline progressUpdater = new Timeline(new KeyFrame(Duration.millis(500), e -> progressUpdate()));
 
 	public static void main(String[] args) {
 		launch(args);
@@ -72,15 +77,10 @@ public class SportfeestPlannerGUI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-		this.primaryStage = primaryStage;
-		FXMLLoader loader = new FXMLLoader();
+		SportfeestPlannerGUI.primaryStage = primaryStage;
 		Parent root = FXMLLoader.load( getClass().getResource("/ui/Main.fxml"));
 		Scene scene = new Scene(root);
-		//TODO
-		/*JMetro jMetro = new JMetro(Style.LIGHT);
-		jMetro.setParent(root);
-		jMetro.setScene(scene);*/
-		primaryStage.setScene( scene );
+		primaryStage.setScene(scene);
 		this.setTitle("");
 		primaryStage.show();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -93,7 +93,7 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	private void setTitle(String subtitle) {
-		if(subtitle == "") ((Stage)primaryStage).setTitle("KLJ Sportfeest Planner");
+		if(subtitle.equals("")) ((Stage)primaryStage).setTitle("KLJ Sportfeest Planner");
 		else ((Stage)primaryStage).setTitle("KLJ Sportfeest Planner - " + subtitle);
 	}
 
@@ -110,35 +110,40 @@ public class SportfeestPlannerGUI extends Application {
 		if(selectedFile != null) {
 			try {
 				Sportfeest sf = Marshalling.unmarshallXml(selectedFile.getCanonicalPath());
-				afdelingenController.setSportfeest(sf);
-				sportfeestPlannerService.setSportfeest(sf);
-				setTitle(sf.getLocatie() + " " + (new SimpleDateFormat("d/MM/yyyy")).format(sf.getDatum()));
+				setNewSportfeest(sf);
 			} catch (IOException e) {
 				logger.error(e.getLocalizedMessage());
 			}
 		}
 	}
 
+	private void setNewSportfeest(Sportfeest sf) {
+		ringverdeling.clear();
+		for(Afdeling afdeling : sf.getAfdelingen()){
+			ringverdeling.addAll(afdeling.getInschrijvingen());
+		}
+		afdelingenController.setSportfeest(sf);
+		ringenController.setSportfeest(sf);
+		sportfeestPlannerService.setSportfeest(sf);
+		setTitle(sf.getLocatie() + " " + (new SimpleDateFormat("d/MM/yyyy")).format(sf.getDatum()));
+	}
+
 	@FXML
 	public void SFSave(ActionEvent actionEvent){
-		if(sportfeestPlannerService.getSportfeest() != null) {
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.getExtensionFilters().addAll(
-					new FileChooser.ExtensionFilter("XML-bestanden", "*.xml")
-					,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
-			);
-			fileChooser.setInitialDirectory(new File("data/"));
-			Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
-			File selectedFile = fileChooser.showSaveDialog(parentWindow);
-			if(selectedFile != null) {
-				try {
-					Marshalling.marshallXml(sportfeestPlannerService.getSportfeest(), selectedFile.getCanonicalPath());
-				} catch (IOException e) {
-					logger.error(e.getLocalizedMessage());
-				}
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("XML-bestanden", "*.xml")
+				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+		);
+		fileChooser.setInitialDirectory(new File("data/"));
+		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		File selectedFile = fileChooser.showSaveDialog(parentWindow);
+		if(selectedFile != null) {
+			try {
+				Marshalling.marshallXml(sportfeestPlannerService.getSportfeest(), selectedFile.getCanonicalPath());
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage());
 			}
-		} else {
-			logger.error("Sportfeest is nog niet geinitialiseerd of opgelost");
 		}
 	}
 
@@ -161,14 +166,7 @@ public class SportfeestPlannerGUI extends Application {
 						injector::getInstance);
 				Parent root = loader.load();
 				WizardImportController wizardImportController = loader.getController();
-				wizardImportController.setDataCallback((Sportfeest sf) -> {
-					data.clear();
-					sportfeestPlannerService.setSportfeest(sf);
-					for(Afdeling afdeling : sf.getAfdelingen()){
-						data.addAll(afdeling.getInschrijvingen());
-					}
-					setTitle(sf.getLocatie() + " " + (new SimpleDateFormat("d/MM/yyyy")).format(sf.getDatum()));
-				});
+				wizardImportController.setDataCallback(this::setNewSportfeest);
 				wizardImportController.setFilename(selectedFile.getCanonicalPath());
 				Stage stage = new Stage();
 				stage.setTitle("Importeer uit Excel");
@@ -196,28 +194,76 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	@FXML
+	public void ExportExcel(ActionEvent actionEvent) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Excel-bestanden", "*.xlsx")
+				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+		);
+		fileChooser.setInitialDirectory(new File("data/"));
+		fileChooser.setInitialFileName("uurschema");
+		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		File selectedFile = fileChooser.showSaveDialog(parentWindow);
+		if(selectedFile != null) {
+			try {
+				Marshalling.marshall(sportfeestPlannerService.getSportfeest(), selectedFile.getPath());
+			} catch (Exception e) {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Exporteren naar Excel");
+				alert.setHeaderText("Fout bij Exporteren");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
+				logger.error("Exporteren naar Excel", e);
+			}
+		}
+	}
+
+	@FXML
 	public void RingenInvullen(ActionEvent actionEvent) {
-		//TODO: zelfde afdelingen, zelfde ring. nok!
 		logger.info("Ringen aanvullen...");
-		data.stream()
-				.sorted(Comparator.comparingInt(Inschrijving::getKorps).reversed())
+		ringverdeling.stream()
 				.filter(inschrijving -> inschrijving.getMogelijkeRingen().size() > 1)
 				.filter(inschrijving -> inschrijving.getRing() == null)
-				.forEach(inschrijving -> {
-					Ring leastUsedRing = inschrijving.getMogelijkeRingen().stream()
-							.map(ring -> new AbstractMap.SimpleEntry<Ring, Long>(ring, data.stream()
-									.filter(inschr -> inschr.getDiscipline().getRingNaam().equals(inschrijving.getDiscipline().getRingNaam()))
+				.collect(groupingBy(inschrijving -> new Pair<>(inschrijving.getDiscipline(), inschrijving.getAfdeling()), LinkedHashMap::new, toList()))
+				.values().stream()
+				.sorted(Comparator.comparing((Function<List<Inschrijving>, Integer>) List::size).reversed())
+				.forEach(inschrijvingen -> {
+					Ring leastUsedRing = inschrijvingen.get(0).getMogelijkeRingen().stream()
+							.map(ring -> new AbstractMap.SimpleEntry<Ring, Long>(ring, ringverdeling.stream()
+									.filter(inschr -> inschr.getDiscipline().getRingNaam().equals(inschrijvingen.get(0).getDiscipline().getRingNaam()))
 									.filter(inschr -> inschr.getRing() != null)
-									.collect(Collectors.groupingBy(Inschrijving::getRing, Collectors.counting()))
+									.collect(groupingBy(Inschrijving::getRing, Collectors.counting()))
 									.getOrDefault(ring, 0L)))
 							.min(Map.Entry.comparingByValue())
 							.orElse(new AbstractMap.SimpleEntry<Ring, Long>(null, 0L))
 							.getKey();
-					logger.debug("Ring " + leastUsedRing + " toewijzen aan inschrijving " + inschrijving);
-					inschrijving.setRing(leastUsedRing);
+					inschrijvingen.forEach(inschrijving -> {
+						logger.debug("Ring " + leastUsedRing + " toewijzen aan inschrijving " + inschrijving);
+						inschrijving.setRing(leastUsedRing);
+					});
 				});
 		logger.info("Einde ringen aanvullen...");
 		tblInschrijvingen.refresh();
+	}
+
+	@FXML
+	public void AnalyseResultaat(ActionEvent actionEvent) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/AnalyseResultaat.fxml"));
+			Parent root = loader.load();
+
+			AnalyseResultaatController analyseResultaatController = loader.getController();
+			analyseResultaatController.setSportfeest(sportfeestPlannerService.getSportfeest(), sportfeestPlannerService.getScoreDirector());
+			Stage stage = new Stage();
+			stage.setTitle("Score en analyse resultaat");
+			stage.setScene(new Scene(root));
+			stage.initModality(Modality.NONE);
+			stage.initOwner(primaryStage);
+			stage.show();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -232,12 +278,32 @@ public class SportfeestPlannerGUI extends Application {
 				if (empty) {
 					setText(null);
 				} else {
-					setText(korps.intValue() > 0 ? korps.toString() : "");
+					setText(korps > 0 ? korps.toString() : "");
 				}
 			}
 		});
 		tblColRingnaam.setCellValueFactory(inschr -> new SimpleStringProperty(((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getDiscipline().getRingNaam()));
-		tblColRingnummer.setCellFactory(param -> new EditingCell());
+		tblColRingnummer.setCellFactory(col -> new EditingCell<Inschrijving, String>(){
+			@Override
+			public void updateItemHandler(String str) {
+				Inschrijving inschrijving = (Inschrijving) getTableRow().getItem();
+				if (inschrijving != null) {
+					if (inschrijving.getRing() == null) {
+						this.setStyle("-fx-background-color: yellow;");
+					} else {
+						this.setStyle("-fx-background-color: lightgreen;");
+					}
+				}
+			}
+			@Override
+			public void commitEditHandler(String newValue){
+				Inschrijving inschr = (Inschrijving) getTableRow().getItem();
+				inschr.setRing(inschr.getMogelijkeRingen().stream()
+						.filter(ring -> ring.getLetter().equals(newValue.trim()))
+						.findAny().orElse(null)
+				);
+			}
+		});
 		tblColRingnummer.setCellValueFactory(inschr -> new SimpleStringProperty(
 				Optional.ofNullable(
 						((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getRing())
@@ -251,7 +317,7 @@ public class SportfeestPlannerGUI extends Application {
 			}
 		});
 
-		tblInschrijvingen.setItems(data);
+		tblInschrijvingen.setItems(ringverdeling);
 
 		sportfeestPlannerService = new SportfeestPlannerService();
 		sportfeestPlannerService.addSolverEventListener(bestSolutionChangedEvent -> {
@@ -261,232 +327,59 @@ public class SportfeestPlannerGUI extends Application {
 			}
 		});
 		sportfeestPlannerService.setOnSucceeded(event -> {
+			progressUpdater.stop();
 			prgStatusProgress.setProgress(0);
+			setNewSportfeest(sportfeestPlannerService.getSportfeest());
+			AnalyseResultaat(new ActionEvent());
 			txtStatusLabel.setText("Einde van de berekening");
 			sportfeestPlannerService.reset();
 		});
 		sportfeestPlannerService.setOnCancelled(event -> {
+			progressUpdater.stop();
 			prgStatusProgress.setProgress(0);
 			txtStatusLabel.setText("Berekening gestopt");
 			sportfeestPlannerService.reset();
 		});
 		sportfeestPlannerService.setOnFailed(event -> {
+			progressUpdater.stop();
 			prgStatusProgress.setProgress(0);
 			txtStatusLabel.setText("Berekening gestopt (fout)");
 			sportfeestPlannerService.reset();
 		});
 		sportfeestPlannerService.setOnRunning(event -> {
+			progressUpdater.play();
 			prgStatusProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 			txtStatusLabel.setText("Berekening starten...");
 		});
 		mnuStart.disableProperty().bind(sportfeestPlannerService.runningProperty());
 		mnuStop.disableProperty().bind(sportfeestPlannerService.runningProperty().not());
+		mnuExport.disableProperty().bind(sportfeestPlannerService.getSportfeestProperty().isNull());
+		mnuSFSave.disableProperty().bind(sportfeestPlannerService.getSportfeestProperty().isNull());
+		mnuScore.disableProperty().bind(sportfeestPlannerService.getSportfeestProperty().isNull());
+		progressUpdater.setCycleCount(Animation.INDEFINITE);
 	}
 
-	private void bestSolutionChanged(BestSolutionChangedEvent bestSolutionChangedEvent) {
+	private void bestSolutionChanged(BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) {
 		if(bestSolutionChangedEvent.isEveryProblemFactChangeProcessed()) {
-			final Sportfeest nSportfeest = (Sportfeest) bestSolutionChangedEvent.getNewBestSolution();
+			//TODO: optie om te updaten
+			//final Sportfeest nSportfeest = (Sportfeest) bestSolutionChangedEvent.getNewBestSolution();
 			Platform.runLater(() -> {
 				txtStatusLabel.setText("Score " + bestSolutionChangedEvent.getNewBestScore().toString());
-				if(bestSolutionChangedEvent.getTimeMillisSpent() > 0) {
-					if(sportfeestPlannerService.getTimeScheduled() == Long.MAX_VALUE) {
-						prgStatusProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-					} else {
-						prgStatusProgress.setProgress(bestSolutionChangedEvent.getTimeMillisSpent() / sportfeestPlannerService.getTimeScheduled());
-					}
-				}
+				progressUpdate();
 				limiter.set(-1);
 			});
 		}
 	}
 
-
-	class EditingCell extends TableCell<Inschrijving, String> {
-
-		private TextField textField;
-
-		public EditingCell() {}
-
-		@Override
-		public void startEdit() {
-			if (!isEmpty()) {
-				super.startEdit();
-				createTextField();
-				setText(null);
-				setGraphic(textField);
-				textField.requestFocus();
-				textField.selectAll();
-			}
-		}
-
-		@Override
-		public void commitEdit(String newValue) {
-			super.commitEdit(newValue);
-
-			Inschrijving inschr = (Inschrijving) getTableRow().getItem();
-			inschr.setRing(inschr.getMogelijkeRingen().stream()
-					.filter(ring -> ring.getLetter().equals(newValue))
-					.findAny().orElse(null)
-			);
-
-			setText(getItem());
-			setGraphic(null);
-		}
-
-		@Override
-		public void cancelEdit() {
-			super.cancelEdit();
-
-			setText(getItem());
-			setGraphic(null);
-		}
-
-		@Override
-		public void updateItem(String item, boolean empty) {
-			super.updateItem(item, empty);
-
-			if (empty) {
-				setText(null);
-				setGraphic(null);
+	private void progressUpdate() {
+		if(sportfeestPlannerService.isRunning()) {
+			if(sportfeestPlannerService.getTimeScheduled() == Long.MAX_VALUE) {
+				prgStatusProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 			} else {
-				Inschrijving inschrijving = (Inschrijving) getTableRow().getItem();
-				if (inschrijving.getRing() == null) {
-					this.setStyle("-fx-background-color: yellow;");
-				} else {
-					this.setStyle("-fx-background-color: lightgreen;");
-				}
-				if (isEditing()) {
-					if (textField != null) {
-						textField.setText(getString());
-					}
-					setText(null);
-					setGraphic(textField);
-				} else {
-					setText(getString());
-					setGraphic(null);
-				}
+				prgStatusProgress.setProgress(sportfeestPlannerService.getTimeScheduled());
 			}
-		}
-
-		private void createTextField() {
-			textField = new TextField(getString());
-			textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
-			textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
-				@Override
-				public void changed(ObservableValue<? extends Boolean> arg0,
-				                    Boolean arg1, Boolean arg2) {
-					if (!arg2) {
-						commitEdit(textField.getText());
-					}
-					//getTableView().refresh();
-				}
-			});
-			textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent t) {
-					if (t.getCode() == KeyCode.ENTER) {
-						commitEdit(textField.getText());
-					} else if (t.getCode() == KeyCode.TAB) {
-						EditingCell.this.getTableView().requestFocus();//why does it lose focus??
-						EditingCell.this.getTableView().getSelectionModel().selectBelowCell();
-					} else if (t.getCode() == KeyCode.ESCAPE) {
-						cancelEdit();
-					}
-				}
-			});
-			/*textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent t) {
-					if (t.getCode().isDigitKey()) {
-						if (CellField.isLessOrEqualOneSym()) {
-							CellField.addSymbol(t.getText());
-						} else {
-							CellField.setText(textField.getText());
-						}
-						textField.setText(CellField.getText());
-						textField.deselect();
-						textField.end();
-						textField.positionCaret(textField.getLength() + 2);//works sometimes
-
-					}
-				}
-			});*/
-		}
-
-		private String getString() {
-			return getItem() == null ? "" : getItem();
 		}
 	}
 
-	//TODO
-	public class ComboBoxCell<I, S> extends TableCell<Inschrijving, String> {
 
-		private ComboBox<String> comboBox;
-
-		public ComboBoxCell() {}
-
-		@Override
-		public void startEdit() {
-			super.startEdit();
-
-			if (comboBox == null) {
-				createComboBox();
-			}
-
-			setGraphic(comboBox);
-			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-		}
-
-		@Override
-		public void cancelEdit() {
-			super.cancelEdit();
-
-			setText(String.valueOf(getItem()));
-			setContentDisplay(ContentDisplay.TEXT_ONLY);
-		}
-
-		public void updateItem(String item, boolean empty) {
-			super.updateItem(item, empty);
-
-			if (empty) {
-				setText(null);
-				setGraphic(null);
-			} else {
-				if (isEditing()) {
-					if (comboBox != null) {
-						comboBox.setValue(getString());
-					}
-					setGraphic(comboBox);
-					setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-				} else {
-					setText(getString());
-					setContentDisplay(ContentDisplay.TEXT_ONLY);
-				}
-			}
-		}
-
-		private void createComboBox() {
-			// ClassesController.getLevelChoice() is the observable list of String
-			comboBox = new ComboBox<>(FXCollections.observableArrayList(sportfeestPlannerService.getSportfeest().getRingen().stream()
-					.filter(ring -> ring.getNaam().equals(((Inschrijving)getTableRow().getItem()).getDiscipline().getRingNaam()))
-					.map(Ring::getLetter)
-					.collect(Collectors.toList()) ));
-			comboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);
-			comboBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent t) {
-					if (t.getCode() == KeyCode.ENTER) {
-						commitEdit(comboBox.getSelectionModel().getSelectedItem());
-					} else if (t.getCode() == KeyCode.ESCAPE) {
-						cancelEdit();
-					}
-				}
-			});
-		}
-
-		private String getString() {
-			return getItem() == null ? "" : getItem();
-		}
-
-	}
 }

@@ -12,9 +12,10 @@
                 <Menu mnemonicParsing="false" text="Bestand">
                   <items>
                       <MenuItem mnemonicParsing="false" onAction="#OpenImportExcelWizard" text="Importeer inschrijvingen" />
+                      <MenuItem fx:id="mnuExport" mnemonicParsing="false" onAction="#ExportExcel" text="Exporteer naar Excel" />
                       <SeparatorMenuItem mnemonicParsing="false" />
                       <MenuItem mnemonicParsing="false" onAction="#SFOpen" text="Sportfeestmap openen" />
-                      <MenuItem mnemonicParsing="false" onAction="#SFSave" text="Sportfeestmap opslaan" />
+                      <MenuItem fx:id="mnuSFSave" mnemonicParsing="false" onAction="#SFSave" text="Sportfeestmap opslaan" />
                       <SeparatorMenuItem mnemonicParsing="false" />
                       <MenuItem mnemonicParsing="false" onAction="#stop" text="Afsluiten" />
                   </items>
@@ -22,9 +23,11 @@
                 <Menu mnemonicParsing="false" text="Functies">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#RingenInvullen" text="Resterende ringen aanvullen" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="mnuStart" mnemonicParsing="false" onAction="#StartOplossen" text="Start oplossen" />
-                        <MenuItem fx:id="mnuStop" mnemonicParsing="false" onAction="#StopOplossen" text="Stop oplossen" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem fx:id="mnuStart" mnemonicParsing="false" onAction="#StartOplossen" text="Start oplossen" />
+                    <MenuItem fx:id="mnuStop" mnemonicParsing="false" onAction="#StopOplossen" text="Stop oplossen" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem fx:id="mnuScore" mnemonicParsing="false" onAction="#AnalyseResultaat" text="Score" />
                   </items>
                 </Menu>
               </menus>

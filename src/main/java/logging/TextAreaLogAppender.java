@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 
 	private final TextAreaOutputStream textAreaOutputStream = new TextAreaOutputStream();
-	private static AtomicBoolean inTimeout = new AtomicBoolean(false);
+	private static final AtomicBoolean inTimeout = new AtomicBoolean(false);
 
 	public TextAreaLogAppender() {}
 
@@ -28,7 +28,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 	private static class TextAreaOutputStream extends OutputStream {
 
 		private StyleClassedTextArea textArea;
-		protected byte buf[];
+		protected byte[] buf;
 		protected int count;
 
 		public TextAreaOutputStream() { this(8192); }
@@ -59,17 +59,16 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 			if(inTimeout.compareAndSet(false, true)) {
 				//writeout the buffer
 				flush();
+				//setup some wait time before the next write
+				Runnable runnable = () -> {
+					try {
+						Thread.sleep(250);
+						inTimeout.set(false);
+					} catch (InterruptedException e) { e.printStackTrace();	}
+				};
+				Thread thread = new Thread(runnable);
+				thread.start();
 			}
-
-			//setup some wait time before the next write
-			Runnable runnable = () -> {
-				try {
-					Thread.sleep(250);
-					inTimeout.set(false);
-				} catch (InterruptedException e) { e.printStackTrace();	}
-			};
-			Thread thread = new Thread(runnable);
-			thread.start();
 		}
 
 		public synchronized void flush() {
@@ -79,6 +78,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 
 				Platform.runLater(() -> {
 					textArea.appendText(text);
+
 				});
 				count = 0;
 			}

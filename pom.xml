@@ -6,7 +6,7 @@
 
     <groupId>klj</groupId>
     <artifactId>KljSfPlanner</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <dependencies>
         <dependency>
             <groupId>org.optaplanner</groupId>
@@ -40,11 +40,6 @@
         </dependency>
         <dependency>
             <groupId>org.jfxtras</groupId>
-            <artifactId>jmetro</artifactId>
-            <version>8.6.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-controls</artifactId>
             <version>8.0-r6</version>
         </dependency>
@@ -57,8 +52,8 @@
 
     <properties>
         <package.filename>sf-planner</package.filename>
-        <package.mainclass>app.SportfeestPlannerApp</package.mainclass>
-        <package.year>2020</package.year>
+        <package.mainclass>ui.SportfeestPlannerGUI</package.mainclass>
+        <package.year>2021</package.year>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
     </properties>

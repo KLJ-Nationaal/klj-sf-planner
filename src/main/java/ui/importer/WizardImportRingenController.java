@@ -14,10 +14,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.converter.IntegerStringConverter;
 import persistence.Marshalling;
 import persistence.ReeksDefinitie;
+import ui.EditingCell;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,9 +42,35 @@ public class WizardImportRingenController extends WizardImportController{
 	public void initialize() {
 		tblColRing.setCellValueFactory(new PropertyValueFactory<WizardRing,String>("naam"));
 		tblColAantal.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("aantalAfd"));
-		tblColDuur.setCellFactory(TextFieldTableCell.<WizardRing,Integer>forTableColumn(new IntegerStringConverter()));
+		tblColDuur.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
+			@Override
+			public void updateIndex(int i) {
+				super.updateIndex(i);
+				if (i >= 0) {
+					this.getStyleClass().add("editable-cell");
+				}
+			}
+			@Override
+			public void commitEditHandler(Integer newValue){
+				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
+				wizardRing.setDuur(newValue);
+			}
+		});
 		tblColDuur.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("duur"));
-		tblColAantalRingen.setCellFactory(TextFieldTableCell.<WizardRing,Integer>forTableColumn(new IntegerStringConverter()));
+		tblColAantalRingen.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
+			@Override
+			public void updateIndex(int i) {
+				super.updateIndex(i);
+				if (i >= 0) {
+					this.getStyleClass().add("editable-cell");
+				}
+			}
+			@Override
+			public void commitEditHandler(Integer newValue){
+				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
+				wizardRing.setAantalRingen(newValue);
+			}
+		});
 		tblColAantalRingen.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("aantalRingen"));
 
 		tblRingen.setItems(data);
@@ -126,7 +151,7 @@ public class WizardImportRingenController extends WizardImportController{
 				Ring ring = new Ring(wizardRing.getNaam(), ringLetter, ringId.addAndGet(1));
 				sf.getDisciplines().values().stream()
 						.filter(disc -> disc.getRingNaam().equals(wizardRing.getNaam()))
-						.forEach(disc -> ring.addDiscipline(disc));
+						.forEach(ring::addDiscipline);
 				sf.getRingen().add(ring);
 			}
 		});

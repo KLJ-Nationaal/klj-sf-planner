@@ -45,7 +45,11 @@ public class SportfeestPlannerApp {
 			}
 		}
 
-		Marshalling.marshall(solvedSportfeest);
+		try {
+			Marshalling.marshall(solvedSportfeest, "data/uurschema");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 }

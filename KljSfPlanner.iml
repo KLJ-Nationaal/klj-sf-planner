@@ -59,7 +59,6 @@
     <orderEntry type="library" name="Maven: com.google.inject:guice:4.0" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jfxtras:jmetro:8.6.9" level="project" />
     <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-controls:8.0-r6" level="project" />
     <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-common:8.0-r6" level="project" />
     <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-fxml:8.0-r6" level="project" />

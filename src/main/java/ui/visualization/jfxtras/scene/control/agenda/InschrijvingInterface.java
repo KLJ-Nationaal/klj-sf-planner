@@ -20,55 +20,55 @@ import java.util.function.Supplier;
 public interface InschrijvingInterface {
 	@XmlTransient
 	@PlanningId
-	public Integer getId();
-	public void setId(Integer id);
+	Integer getId();
+	void setId(Integer id);
 
 	@XmlAttribute(name = "id")
 	@XmlID
-	public String getRef();
-	public void setRef(String s);
+	String getRef();
+	void setRef(String s);
 
 	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
 			strengthComparatorClass = TijdslotStrengthComparator.class,
 			nullable=true)
-	public Tijdslot getTijdslot();
-	public void setTijdslot(Tijdslot tijdslot);
+	Tijdslot getTijdslot();
+	void setTijdslot(Tijdslot tijdslot);
 
 	@XmlTransient
-	public Afdeling getAfdeling();
-	public void setAfdeling(Afdeling afdeling);
+	Afdeling getAfdeling();
+	void setAfdeling(Afdeling afdeling);
 
 	@XmlIDREF
-	public Ring getRing();
-	public void setRing(Ring ring);
+	Ring getRing();
+	void setRing(Ring ring);
 
 	@XmlIDREF
-	public Discipline getDiscipline();
-	public void setDiscipline(Discipline discipline);
+	Discipline getDiscipline();
+	void setDiscipline(Discipline discipline);
 
-	public int getKorps();
-	public void setKorps(int korps);
+	int getKorps();
+	void setKorps(int korps);
 
 	@ValueRangeProvider(id = "Tijdslot")
-	public List<Tijdslot> getTijdslots();
+	List<Tijdslot> getTijdslots();
 
-	public int getStartTijd();
+	int getStartTijd();
 
-	public int getEindTijd();
+	int getEindTijd();
 
 	@XmlIDREF
-	public void setMogelijkeRingen(List<Ring> ringen);
-	public List<Ring> getMogelijkeRingen();
+	void setMogelijkeRingen(List<Ring> ringen);
+	List<Ring> getMogelijkeRingen();
 
 	@Override
-	public boolean equals(Object o);
+	boolean equals(Object o);
 
 	@Override
-	public int hashCode();
+	int hashCode();
 
 	@Override
-	public String toString();
+	String toString();
 
 
 	default Boolean isWholeDay() { return getTijdslot() == null; }

@@ -9,9 +9,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import persistence.Marshalling;
 import persistence.ReeksDefinitie;
+import ui.EditingCell;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,9 +32,35 @@ public class WizardImportReeksenController extends WizardImportController{
 	public void initialize() {
 		tblColDiscipline.setCellValueFactory(new PropertyValueFactory<Reeks,String>("naam"));
 		tblColAantal.setCellValueFactory(new PropertyValueFactory<Reeks,Integer>("aantal"));
-		tblColRing.setCellFactory(TextFieldTableCell.forTableColumn());
+		tblColRing.setCellFactory(col -> new EditingCell<Reeks, String>() {
+			@Override
+			public void updateIndex(int i) {
+				super.updateIndex(i);
+				if (i >= 0) {
+					this.getStyleClass().add("editable-cell");
+				}
+			}
+			@Override
+			public void commitEditHandler(String newValue){
+				Reeks reeks = (Reeks) getTableRow().getItem();
+				reeks.setRingNaam(newValue.trim());
+			}
+		});
 		tblColRing.setCellValueFactory(new PropertyValueFactory<Reeks,String>("ringNaam"));
-		tblColExtensie.setCellFactory(TextFieldTableCell.forTableColumn());
+		tblColExtensie.setCellFactory(col -> new EditingCell<Reeks, String>() {
+			@Override
+			public void updateIndex(int i) {
+				super.updateIndex(i);
+				if (i >= 0) {
+					this.getStyleClass().add("editable-cell");
+				}
+			}
+			@Override
+			public void commitEditHandler(String newValue){
+				Reeks reeks = (Reeks) getTableRow().getItem();
+				reeks.setExtensie(newValue.trim());
+			}
+		});
 		tblColExtensie.setCellValueFactory(new PropertyValueFactory<Reeks,String>("extensie"));
 
 		tblReeksen.setItems(model.getReeksen());
