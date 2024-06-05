@@ -15,8 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
         <javafx.version>11</javafx.version>
-        <jfxtra.version>8.0-r6</jfxtra.version>
-        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -62,13 +60,8 @@
         </dependency>
         <dependency>
             <groupId>org.jfxtras</groupId>
-            <artifactId>jfxtras-fxml</artifactId>
-            <version>${jfxtra.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-agenda</artifactId>
-            <version>${jfxtra.version}</version>
+            <version>8.0-r6</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
