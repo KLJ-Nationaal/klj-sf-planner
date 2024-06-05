@@ -1,0 +1,126 @@
+@font-face {
+	src: url("/roboto/RobotoCondensed-Light.ttf");
+}
+
+.Agenda { 
+	-fx-font-family: "Roboto Condensed Light"; 	
+}
+
+.Agenda .Week {
+	-fx-background-color: WHITE;
+}
+
+.Agenda .HourLabel {
+	-fx-fill: BLACK;
+	-fx-stroke: transparent;
+}
+
+.Agenda .HourLine {
+	-fx-fill: transparent;
+	-fx-stroke: LIGHTGRAY;
+}
+
+.Agenda .HalfHourLine {
+	-fx-fill: transparent;
+	-fx-stroke: LIGHTGRAY;
+	-fx-stroke-dash-array: 4 4 4 4;
+}
+
+.Agenda .DayHeader {
+	-fx-border-color:LIGHTGRAY;
+	-fx-border-width: 0px 0px 0px 1px;
+}
+
+/*
+.Agenda .DayHeader .weekend { 
+	-fx-text-fill: BLACK;
+	-fx-font-weight: bold;
+}
+*/
+
+.Agenda .Day {
+	-fx-fill: transparent;
+	-fx-stroke: transparent;
+	-fx-border-color:LIGHTGRAY;
+	-fx-border-width: 0px 0px 0px 1px;
+}
+
+.Agenda .weekend {
+	-fx-background-color: #eeeeee90;
+}
+
+.Agenda .Appointment {
+	-fx-border-color: WHITE;
+	-fx-border-width: 1px;
+}
+
+.Agenda .AppointmentTimeLabel {
+	-fx-fill: BLACK;
+	-fx-stroke: transparent;
+	-fx-font-size: 0.7em;
+}
+
+.Agenda .AppointmentLabel {
+	-fx-fill: BLACK;
+	-fx-stroke: transparent;
+}
+
+.Agenda .DurationDragger {
+	-fx-fill: #00000040;	
+}
+
+.Agenda .MenuIcon {
+	-fx-fill: #00000040;	
+}
+
+.Agenda .GhostRectangle {
+	-fx-fill: transparent;
+	-fx-stroke: #00000080;
+    -fx-stroke-width: 1;
+    -fx-stroke-dash-array: 4 4 4 4;
+}
+
+.Agenda .Selected { 
+	-xfx-color: -fx-focused-base;
+	-fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-background-insets: -1.4, 0, 1, 2;
+	-fx-background-radius: 6.4, 5, 4, 3;
+}
+
+.Agenda .History {
+	-fx-stroke: transparent;
+	-fx-fill: #FFFFFF70;
+}
+
+.AgendaPopup {
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-background-insets: 0 0 -1 0,0,1,2;
+	-fx-background-radius: 5,5,4,3;
+	-fx-padding: 0.766667em 0.733333em 0.75em 0.733333em;
+	-fx-text-fill: -fx-text-base-color;
+}
+
+.AgendaPopup .AppointmentGroups {
+}
+
+.AgendaPopup .AppointmentGroup {
+	-fx-border-color: WHITE;
+	-fx-border-width: 1px;
+}
+
+.AgendaPopup .close-icon  {
+    -fx-image: url("AgendaWeekSkinPopupCloseWindowIcon.png");
+}
+
+.AgendaPopup .delete-icon  {
+    -fx-image: url("AgendaWeekSkinDeleteIcon.png");
+}
+
+.AgendaPopup .action-icon  {
+    -fx-image: url("AgendaWeekSkinActionIcon.png");
+}
+
+.AgendaPopup .data  {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em;
+}
