@@ -10,7 +10,6 @@ import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
-
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
