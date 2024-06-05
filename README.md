@@ -8,5 +8,5 @@ Hierbij zal men moeten starten met het installeren van de JavaFx plugin.
 2. Installeer "JavaFx Runtime for Plugins"  
 ![JavaFx Runtime for Plugins](assets/javafx_plugin.png)
 
-## Auteur
-Het orginele project is gestart door Sam Verstraete.
+## Referentie
+Het orginele project is gestart door [Sam Verstraete](https://github.com/samverstraete).

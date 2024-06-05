@@ -5,7 +5,6 @@ import domain.Inschrijving;
 import domain.Sportfeest;
 import javafx.fxml.FXML;
 import persistence.Visualisatie;
-import ui.visualization.jfxtras.scene.control.agenda.*;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 
 import java.util.ArrayList;
