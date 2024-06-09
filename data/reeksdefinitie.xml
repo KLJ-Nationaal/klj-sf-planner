@@ -5,21 +5,21 @@
     <Ringnaam>Basiswimpelen basis</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>18</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Basiswimpelen muziekreeks</Naam>
     <Ringnaam>Basiswimpelen muziek</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>18</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Basiswimpelen vrije reeks</Naam>
     <Ringnaam>Basiswimpelen vrije</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Bondsreeks gemengd</Naam>
@@ -40,28 +40,28 @@
     <Ringnaam>Bondsreeks meisjes &amp; gemengd</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Brechts korpsvendelen</Naam>
     <Ringnaam>Brechts korpsvendelen</Ringnaam>
-    <Schema>15</Schema>
+    <Schema>12</Schema>
     <AfdelingenPerRing>11</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Gilden muziekreeks</Naam>
     <Ringnaam>Gilden muziekreeks</Ringnaam>
     <Schema>9</Schema>
     <AfdelingenPerRing>13</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Gilden vrije reeks</Naam>
     <Ringnaam>Gilden vrije reeks</Ringnaam>
     <Schema>9</Schema>
     <AfdelingenPerRing>13</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Hoofdgilden muziekreeks</Naam>
@@ -103,21 +103,21 @@
     <Ringnaam>Kringdans jongens</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Kringdans meisjes</Naam>
     <Ringnaam>Kringdans meisjes &amp; gemengd</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Parendans gemengd</Naam>
     <Ringnaam>Parendans</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Parendans meisjes</Naam>
@@ -127,11 +127,26 @@
     <Toevoeging>meisjes</Toevoeging>
   </Discipline>
   <Discipline>
+    <Naam>Piramide hoog</Naam>
+    <Ringnaam>Piramide hoog</Ringnaam>
+    <Schema>12</Schema>
+    <AfdelingenPerRing>11</AfdelingenPerRing>
+    <Toevoeging/>
+  </Discipline>
+  <Discipline>
+    <Naam>Piramide laag</Naam>
+    <Ringnaam>Piramide laag</Ringnaam>
+    <Schema>12</Schema>
+    <AfdelingenPerRing>11</AfdelingenPerRing>
+    <Toevoeging/>
+  </Discipline>
+  <!-- voor compatibiliteit met oude lijsten -->
+  <Discipline>
     <Naam>Piramide gemengd</Naam>
     <Ringnaam>Piramide gemengd</Ringnaam>
     <Schema>12</Schema>
     <AfdelingenPerRing>11</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
   <Discipline>
     <Naam>Piramide jongens</Naam>
@@ -147,6 +162,7 @@
     <AfdelingenPerRing>11</AfdelingenPerRing>
     <Toevoeging>meisjes</Toevoeging>
   </Discipline>
+  <!--   -->
   <Discipline>
     <Naam>Vrije ritmiek gemengd</Naam>
     <Ringnaam>Vrije ritmiek meisjes &amp; gemengd</Ringnaam>
@@ -166,6 +182,6 @@
     <Ringnaam>Vrije ritmiek meisjes &amp; gemengd</Ringnaam>
     <Schema>6</Schema>
     <AfdelingenPerRing>20</AfdelingenPerRing>
-    <Toevoeging></Toevoeging>
+    <Toevoeging/>
   </Discipline>
 </list>

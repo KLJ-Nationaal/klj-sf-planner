@@ -56,7 +56,7 @@ public class Ring {
 	public void addDiscipline(Discipline discipline) {
 		disciplines.add(discipline);
 		//tijdslots voor ring maken als ze nog niet bestaan
-		if(tijdslots.size() == 0) {
+		if(tijdslots.isEmpty()) {
 			for (int i = 0; i < Marshalling.TOTALETIJD; i = i + discipline.getDuur()) {  //TODO: property van maken
 				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 				tijdslots.add(tijdslot);
@@ -72,7 +72,7 @@ public class Ring {
 	}
 
 	@Override
-	public String toString() { return naam + (letter != "" ? " " + letter : ""); }
+	public String toString() { return naam + (!Objects.equals(letter, "") ? " " + letter : ""); }
 
 	@Override
 	public int hashCode() { return Objects.hash(getRingIndex()); }

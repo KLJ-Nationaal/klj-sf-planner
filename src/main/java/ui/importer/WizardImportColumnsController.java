@@ -17,13 +17,13 @@ public class WizardImportColumnsController extends WizardImportController {
 	private ObservableList<String> columns;
 
 	@FXML
-	private ChoiceBox txtSportfeest;
+	private ChoiceBox<String> txtSportfeest;
 	@FXML
-	private ChoiceBox txtAfdeling;
+	private ChoiceBox<String> txtAfdeling;
 	@FXML
-	private ChoiceBox txtDiscipline;
+	private ChoiceBox<String> txtDiscipline;
 	@FXML
-	private ChoiceBox txtAantal;
+	private ChoiceBox<String> txtAantal;
 	@FXML
 	private CheckBox chkKopteksten;
 
@@ -36,7 +36,7 @@ public class WizardImportColumnsController extends WizardImportController {
 	}
 
 	@Override
-	public void activate(){
+	public void activate(boolean fromPrevious){
 		model.setTitle("Kolommen toewijzen");
 		model.setSubtitle("Selecteer de juiste kolommen uit het Excel bestand");
 	}
@@ -46,7 +46,7 @@ public class WizardImportColumnsController extends WizardImportController {
 		columns = FXCollections.observableArrayList();
 		ArrayList<String> groepsinschrijvingenFirstLine = Marshalling.getGroepsinschrijvingenFirstLine(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()));
-		groepsinschrijvingenFirstLine.forEach(col -> columns.add(col));
+		columns.addAll(groepsinschrijvingenFirstLine);
 		txtSportfeest.setItems(columns);
 		txtAfdeling.setItems(columns);
 		txtDiscipline.setItems(columns);
