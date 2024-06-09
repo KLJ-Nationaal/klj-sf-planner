@@ -1,5 +1,6 @@
 package ui.importer;
 
+import ch.qos.logback.classic.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import domain.Sportfeest;
@@ -17,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -44,6 +46,7 @@ public class WizardImportController {
 	@Inject
 	WizardData model;
 
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(WizardImportController.class);
 	private final List<Parent> steps = new ArrayList<>();
 	private final IntegerProperty currentStep = new SimpleIntegerProperty(-1);
 	private final String CONTROLLER_KEY = "controller";
@@ -59,7 +62,7 @@ public class WizardImportController {
 		if( currentStep.get() > 0 ) {
 			contentPanel.getChildren().remove( steps.get(currentStep.get()) );
 			currentStep.set( currentStep.get() - 1 );
-			((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate();
+			((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate(false);
 			contentPanel.getChildren().add( steps.get(currentStep.get()) );
 		}
 	}
@@ -79,7 +82,7 @@ public class WizardImportController {
 				}
 
 			} catch (IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -89,14 +92,14 @@ public class WizardImportController {
 			try {
 				sub.invoke(controller);
 			} catch (IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
 		if( currentStep.get() < (steps.size()-1) ) {
 			contentPanel.getChildren().remove( steps.get(currentStep.get()) );
 			currentStep.set( currentStep.get() + 1 );
-			((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate();
+			((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate(true);
 			steps.forEach(step -> ((WizardImportController)step.getProperties().get(CONTROLLER_KEY)).setDataCallback(dataCallback));
 			contentPanel.getChildren().add( steps.get(currentStep.get()) );
 		} else {
@@ -134,7 +137,7 @@ public class WizardImportController {
 
 		currentStep.set( 0 );  // first element
 		contentPanel.getChildren().add( steps.get( currentStep.get() ));
-		((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate();
+		((WizardImportController)steps.get(currentStep.get()).getProperties().get(CONTROLLER_KEY)).activate(true);
 
 		title.textProperty().bindBidirectional( model.titleProperty() );
 		subtitle.textProperty().bindBidirectional( model.subtitleProperty() );
@@ -151,11 +154,9 @@ public class WizardImportController {
 		}
 
 		Method[] methods = obj.getClass().getMethods();
-		if(methods.length > 0) {
-			for( Method m : methods ) {
-				if( m.isAnnotationPresent(an)) {
-					return m;
-				}
+		for (Method m : methods) {
+			if (m.isAnnotationPresent(an)) {
+				return m;
 			}
 		}
 		return null;
@@ -166,5 +167,5 @@ public class WizardImportController {
 		((WizardImportColumnsController)steps.get(0).getProperties().get(CONTROLLER_KEY)).loadFile(filename);
 	}
 
-	public void activate(){	}
+	public void activate(boolean fromPrevious){	}
 }

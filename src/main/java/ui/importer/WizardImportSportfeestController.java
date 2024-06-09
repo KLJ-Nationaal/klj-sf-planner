@@ -19,7 +19,7 @@ public class WizardImportSportfeestController extends WizardImportController {
 	private ObservableList<String> columns;
 
 	@FXML
-	private ChoiceBox txtSportfeest;
+	private ChoiceBox<String> txtSportfeest;
 	@FXML
 	private TextField txtTitel;
 	@FXML
@@ -33,29 +33,29 @@ public class WizardImportSportfeestController extends WizardImportController {
 		txtSportfeest.valueProperty().bindBidirectional( model.sportfeestProperty() );
 		txtTitel.textProperty().bindBidirectional( model.sfTitelProperty());
 		txtDatum.valueProperty().bindBidirectional( model.sfDatumProperty() );
-
-		txtSportfeest.setOnAction(event -> {txtTitel.setText((String)txtSportfeest.getValue());});
 	}
 
 	@Override
-	public void activate(){
+	public void activate(boolean fromPrevious){
 		model.setTitle("Instellingen");
 		model.setSubtitle("Duid het sportfeest aan, de tekst en de datum komen op verdeling");
 
-		if(model.getFilename() != null && model.getFilename() != "") {
+		if(fromPrevious && model.getFilename() != null && model.getFilename() != "") {
 			columns = FXCollections.observableArrayList();
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
 					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
 			groepsinschrijvingen.stream()
-					.map(groepsinschrijving -> {
-						return groepsinschrijving.getSportfeest();
-					})
+					.map(Groepsinschrijving::getSportfeest)
 					.distinct()
 					.forEach(col -> columns.add(col));
 			txtSportfeest.setItems(columns);
 			txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")).findFirst().orElse(""));
 		}
+
+		txtSportfeest.setOnAction(event -> {
+			txtTitel.setText(txtSportfeest.getValue());
+		});
 	}
 
 	@Validate

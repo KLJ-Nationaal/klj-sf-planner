@@ -78,7 +78,7 @@ public class WizardImportRingenController extends WizardImportController{
 	}
 
 	@Override
-	public void activate(){
+	public void activate(boolean fromPrevious){
 		model.setTitle("Ringen instellen");
 		model.setSubtitle("Vul hier het aantal ringen en minuten per ring in");
 

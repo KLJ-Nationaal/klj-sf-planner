@@ -155,7 +155,7 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -10);
 end
-
+/*
 rule "minstens enkele minuten tussen twee inschrijvingen van een verschillende afdeling in een ring"
 	when
 		Inschrijving(
@@ -171,12 +171,12 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een verschillende a
 			id > $id,
 			ring == $ringStart,
 			afdeling != $afdelingStart,
-			tijdslot.timeBetween($startTijd) < 6
+			tijdslot.timeBetween($startTijd) < 2
 		)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -2);
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
-
+*/
 rule "zo weinig mogelijk vendeluniform wissels"
 	when
 		$inschrijving : Inschrijving(
