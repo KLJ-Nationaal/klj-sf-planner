@@ -373,7 +373,7 @@ public class Marshalling {
 			}
 		}
 
-		logger.info("Schrijven van bestand " + fileAfdelingen);
+		logger.info("Schrijven van bestand {}", fileAfdelingen);
 		FileOutputStream out = new FileOutputStream(fileAfdelingen);
 		wb.write(out);
 		out.close();

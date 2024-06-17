@@ -129,4 +129,25 @@
     <Afdelingsoptie naam="Hamme St-Anna">
         <kleur>#ff8400</kleur>
     </Afdelingsoptie>
+    <Afdelingsoptie naam="Bassevelde">
+        <kleur>#ffb700</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Nazareth">
+        <kleur>#ffd000</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lokeren Heirbrug">
+        <kleur>#ffea00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lochristi Hijfte Jongens">
+        <kleur>#fbff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Kruibeke">
+        <kleur>#e1ff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Meetjesland">
+        <kleur>#aaff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Bazelle-Waas">
+        <kleur>#77ff00</kleur>
+    </Afdelingsoptie>
 </afdelingsopties>

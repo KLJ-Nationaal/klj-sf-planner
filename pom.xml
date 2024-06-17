@@ -90,12 +90,28 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.6</version>
+                <configuration>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <stripDebug>true</stripDebug>
+                    <noManPages>true</noManPages>
+                    <launcher>klj-sf-planner</launcher>
+                    <mainClass>ui.SportfeestPlannerGUI</mainClass>
+                    <jlinkImageName>klj-sf-planner</jlinkImageName>
+                    <jlinkZipName>klj-sf-planner</jlinkZipName>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>8</source>
+                    <target>8</target>
                     <excludes>
                         <exclude>**/data/*</exclude>
                     </excludes>
@@ -216,9 +232,10 @@
                             </classPath>
                             <icon>src/main/resources/icon.ico</icon>
                             <jre>
-                                <bundledJreAsFallback>true</bundledJreAsFallback>
+                                <!--<bundledJreAsFallback>true</bundledJreAsFallback>-->
                                 <minVersion>1.8.0</minVersion>
-                                <jdkPreference>preferJre</jdkPreference>
+                                <jdkPreference>jdkOnly</jdkPreference>
+                                <!--<jdkPreference>preferJre</jdkPreference>-->
                                 <path>./java</path>
                                 <initialHeapSize>256</initialHeapSize>
                                 <maxHeapSize>1024</maxHeapSize>
@@ -228,7 +245,7 @@
                                 <fileVersion>${project.version}.0.${maven.build.timestamp}</fileVersion>
                                 <txtFileVersion>${project.version}.0.${maven.build.timestamp}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>${package.year} Sam Verstraete</copyright>
+                                <copyright>${package.year} KLJ</copyright>
                                 <productVersion>${project.version}.0.0</productVersion>
                                 <txtProductVersion>${project.version}.0.0</txtProductVersion>
                                 <productName>${project.name}</productName>
@@ -253,7 +270,7 @@
                         <phase>package</phase>
                         <configuration>
                             <name>${project.name}</name>
-                            <url>https://github.com/samverstraete/klj-sf-planner</url>
+                            <url>https://github.com/KLJ-Nationaal/klj-sf-planner</url>
                             <alias>code</alias>
                             <file>${project.build.directory}/${package.filename}.exe</file>
                             <keystore>C:/Users/Sam Verstraete/Documents/java_keystore.jks</keystore>
