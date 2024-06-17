@@ -23,17 +23,19 @@ rule "geen twee inschrijvingen voor een AFDELING op het zelfde moment"
 			$tijdslot : tijdslot,
 			$leftId : afdeling.naam,
 			$afdeling : afdeling,
-			$leftJongens: discipline.isJongens(),
-			$leftMeisjes: discipline.isMeisjes())
+			$leftJongens : discipline.isJongens(),
+			$leftMeisjes : discipline.isMeisjes())
 		$rightInschrijving : Inschrijving(
 			id > $id,
 			afdeling == $afdeling,
 			tijdslot != null,
+			!isVerbonden($leftInschrijving),
 			$rightJongens : discipline.isJongens(),
 			$rightMeisjes : discipline.isMeisjes(),
 			$rightTijdslot : tijdslot,
 			($leftJongens == true && $rightJongens == true) ||
 			($leftMeisjes == true && $rightMeisjes == true),
+
 			tijdslot.isOverlap($tijdslot))
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -10);
@@ -54,7 +56,7 @@ rule "geen twee inschrijvingen voor een RING op het zelfde moment"
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -8);
 end
-
+/*
 rule "meisjes die vendelen en dansen"
 	when
 		Inschrijving (
@@ -71,7 +73,7 @@ rule "meisjes die vendelen en dansen"
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -10);
 end
-
+*/
 /***************************** SOFT CONSTRAINTS *********************************/
 rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien verschillende ring"
 	when
@@ -100,15 +102,17 @@ rule "insertAfdelingRingConsecutiveInschrijvingEnd"
 			$afdeling : afdeling,
 			tijdslot != null,
 			$ring : ring,
+			$discipline : discipline,
 			$tijdslot : tijdslot,
 			$starttijd : tijdslot.startTijd)
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
 			ring == $ring,
+			discipline == $discipline,
 			tijdslot > $tijdslot)
 	then
-		insertLogical(new AfdelingRingConsecutiveInschrijvingEnd($ring, $afdeling, $starttijd));
+		insertLogical(new AfdelingRingConsecutiveInschrijvingEnd($ring, $afdeling, $discipline, $starttijd));
 end
 
 rule "insertAfdelingRingConsecutiveInschrijvingStart"
@@ -118,15 +122,17 @@ rule "insertAfdelingRingConsecutiveInschrijvingStart"
 			$afdeling : afdeling,
 			tijdslot != null,
 			$ring : ring,
+			$discipline : discipline,
 			$tijdslot : tijdslot,
 			$eindtijd : tijdslot.eindTijd)
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
 			ring == $ring,
+			discipline == $discipline,
 			tijdslot < $tijdslot)
 	then
-		insertLogical(new AfdelingRingConsecutiveInschrijvingStart($ring, $afdeling, $eindtijd));
+		insertLogical(new AfdelingRingConsecutiveInschrijvingStart($ring, $afdeling, $discipline, $eindtijd));
 end
 
 rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
@@ -135,12 +141,14 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 		AfdelingRingConsecutiveInschrijvingStart(
 			$afdelingStart : afdeling,
 			$ringStart : ring,
+			$disciplineStart : discipline,
 			$tussentijdStart : startTijd
 		)
 
 		AfdelingRingConsecutiveInschrijvingEnd(
 			ring == $ringStart,
 			afdeling == $afdelingStart,
+			discipline == $disciplineStart,
 			$tussentijdStop : eindTijd
 		)
 
@@ -149,8 +157,8 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 			ring == $ringStart,
 			tijdslot != null,
 			afdeling != $afdelingStart,
-			tijdslot.startTijd > $tussentijdStart,
-			tijdslot.eindTijd < $tussentijdStop
+			tijdslot.startTijd >= $tussentijdStart,
+			tijdslot.eindTijd <= $tussentijdStop
 		)
 	then
 		scoreHolder.addSoftConstraintMatch(kcontext, -10);
@@ -207,4 +215,25 @@ rule "zo weinig mogelijk vendeluniform wissels"
 			discipline.isVendeluniform() == $uniform )
 	then
 		 scoreHolder.addSoftConstraintMatch(kcontext, -2 );
+end
+rule "inschrijvingen die op hetzelfde moment moeten beginnen"
+	when
+		$leftInschrijving : Inschrijving(
+			tijdslot != null,
+			$afdeling : afdeling,
+			$ring : ring,
+			$tijdslot : tijdslot,
+			$id : id
+		)
+
+		Inschrijving(
+			tijdslot != null,
+			afdeling == $afdeling,
+			ring != $ring,
+			id > $id,
+			isVerbonden($leftInschrijving),
+			!tijdslot.isOverlap($tijdslot)
+		)
+	then
+		scoreHolder.addSoftConstraintMatch(kcontext, -30);
 end

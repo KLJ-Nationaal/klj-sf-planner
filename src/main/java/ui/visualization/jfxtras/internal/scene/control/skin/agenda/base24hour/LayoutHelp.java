@@ -65,7 +65,7 @@ class LayoutHelp<H, I> {
 		dayContentWidthProperty.bind( dayWidthProperty.subtract(0) ); // the 10 is a margin at the right so that there is always room to start a new appointment
 		
 		// hour height
-		dayHeightProperty.bind(hourHeightProperty.multiply(Marshalling.TOTALETIJD / 60.0).add(15));
+		dayHeightProperty.bind(hourHeightProperty.multiply((Marshalling.TOTALETIJD) / 60.0).add(15));
 		durationInMSPerPixelProperty.bind( msPerDayProperty.divide(dayHeightProperty) );
 		
 		// generic

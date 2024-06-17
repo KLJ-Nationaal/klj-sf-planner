@@ -1,5 +1,6 @@
 package ui.importer;
 
+import ch.qos.logback.classic.Logger;
 import com.google.inject.Inject;
 import domain.*;
 import domain.importing.Groepsinschrijving;
@@ -14,12 +15,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
 import persistence.ReeksDefinitie;
 import ui.EditingCell;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,7 @@ public class WizardImportRingenController extends WizardImportController{
 	WizardData model;
 
 	private final ObservableList<WizardRing> data = FXCollections.observableArrayList();
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
 	@FXML
 	public void initialize() {
@@ -133,7 +137,7 @@ public class WizardImportRingenController extends WizardImportController{
 		sf.setDatum(model.getSfDatum());
 
 		//Disciplines toevoegen
-		model.getReeksen().stream().forEach(reeks -> {
+		model.getReeksen().forEach(reeks -> {
 			Discipline discipline = new Discipline();
 			discipline.setNaam(reeks.getNaam());
 			discipline.setRingNaam(reeks.getRingNaam());
@@ -144,7 +148,7 @@ public class WizardImportRingenController extends WizardImportController{
 
 		//Ringen maken
 		final AtomicInteger ringId = new AtomicInteger(0);
-		data.stream().forEach(wizardRing -> {
+		data.forEach(wizardRing -> {
 			for (int i = 0; i < wizardRing.getAantalRingen(); i++) {
 				String ringLetter = new String(Character.toChars('A' + i));
 				if (wizardRing.getAantalRingen() < 2) ringLetter = "";
@@ -187,6 +191,20 @@ public class WizardImportRingenController extends WizardImportController{
 					}
 					sf.getAfdelingen().add(afdeling);
 				});
+		// verbonden inschrijvingen instellen (voor piramides in verschillende disciplines
+		sf.getAfdelingen().forEach(afdeling -> {
+			List<Inschrijving> inschr = afdeling.getInschrijvingen().stream()
+					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("piramide"))
+					.collect(Collectors.toList());
+			if (inschr.size() > 2) {
+				logger.error("{} heeft meer dan twee inschrijvingen voor de piramides!", afdeling.getNaam());
+			}
+			if (inschr.size() > 1 & inschr.stream().map(Inschrijving::getRing).count() > 1) {
+				inschr.get(0).setVerbondenInschrijving(inschr.get(1));
+				inschr.get(1).setVerbondenInschrijving(inschr.get(0));
+			}
+
+		});
 
 		if(dataCallback != null) dataCallback.accept(sf);
 	}

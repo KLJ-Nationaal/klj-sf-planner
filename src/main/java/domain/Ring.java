@@ -57,7 +57,9 @@ public class Ring {
 		disciplines.add(discipline);
 		//tijdslots voor ring maken als ze nog niet bestaan
 		if(tijdslots.isEmpty()) {
-			for (int i = 0; i < Marshalling.TOTALETIJD; i = i + discipline.getDuur()) {  //TODO: property van maken
+			int totaletijd = Marshalling.TOTALETIJDRINGMETFINALE;
+			if (Objects.equals(letter, "")) totaletijd = Marshalling.TOTALETIJD;
+			for (int i = 0; i < totaletijd; i = i + discipline.getDuur()) {  //TODO: property van maken
 				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 				tijdslots.add(tijdslot);
 			}
