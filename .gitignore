@@ -141,5 +141,5 @@ hs_err_pid*
 replay_pid*
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij
-optaplanner-distribution-7.19.0.Final/*
 javafx-sdk-11.0.2/*
+target/*
