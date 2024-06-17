@@ -117,6 +117,30 @@ public class SportfeestPlannerGUI extends Application {
 		}
 	}
 
+	private boolean isRingenVerdeeld(Sportfeest sf) {
+		return ringverdeling.stream()
+				.noneMatch(inschrijving -> inschrijving.getRing() == null);
+	}
+
+	private void setNewSportfeestChecked(Sportfeest sf) {
+		setNewSportfeest(sf);
+		if (!isRingenVerdeeld(sf)) {
+			// als nodige ringen nog niet verdeeld zijn, vraag of dat moet gebeuren
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setTitle("Ringen verdelen");
+			alert.setHeaderText("Nog niet alle ringen zijn verdeeld");
+			alert.setContentText("Er zijn inschrijvingen die nog niet verdeeld zijn over de ringen. Dit nu automatisch doen?");
+			ButtonType buttonTypeYes = new ButtonType("Ja");
+			ButtonType buttonTypeNo = new ButtonType("Nee", ButtonBar.ButtonData.CANCEL_CLOSE);
+			alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.isPresent() && result.get() == buttonTypeYes) {
+				RingenInvullen(new ActionEvent());
+			}
+		}
+	}
+
 	private void setNewSportfeest(Sportfeest sf) {
 		ringverdeling.clear();
 		for(Afdeling afdeling : sf.getAfdelingen()){
@@ -166,7 +190,7 @@ public class SportfeestPlannerGUI extends Application {
 						injector::getInstance);
 				Parent root = loader.load();
 				WizardImportController wizardImportController = loader.getController();
-				wizardImportController.setDataCallback(this::setNewSportfeest);
+				wizardImportController.setDataCallback(this::setNewSportfeestChecked);
 				wizardImportController.setFilename(selectedFile.getCanonicalPath());
 				Stage stage = new Stage();
 				stage.setTitle("Importeer uit Excel");
@@ -183,9 +207,17 @@ public class SportfeestPlannerGUI extends Application {
 
 	@FXML
 	public void StartOplossen(ActionEvent actionEvent) {
-		//TODO: controleer of alle nodige ringen ingevuld zijn
-		sportfeestPlannerService.start();
-		tbLog.getTabPane().getSelectionModel().select(tbLog);
+		if (isRingenVerdeeld(sportfeestPlannerService.getSportfeest())) {
+			sportfeestPlannerService.start();
+			tbLog.getTabPane().getSelectionModel().select(tbLog);
+		} else {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Ringen niet verdeeld");
+			alert.setHeaderText("Nog niet alle ringen zijn verdeeld");
+			alert.setContentText("Nog niet alle inschrijvingen hebben een ring toegewezen gekregen!");
+
+			alert.showAndWait();
+		}
 	}
 
 	@FXML

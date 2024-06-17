@@ -7,6 +7,7 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
+
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
@@ -24,6 +25,7 @@ public class Inschrijving implements InschrijvingInterface {
 	private Discipline discipline;
 	private int korps;
 	private List<Ring> mogelijkeRingen;
+	private Inschrijving verbondenInschrijving;
 
 	@XmlTransient
 	@PlanningId
@@ -56,6 +58,10 @@ public class Inschrijving implements InschrijvingInterface {
 	public Discipline getDiscipline() { return discipline; }
 	public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
 
+	@XmlIDREF
+	public Inschrijving getVerbondenInschrijving() { return verbondenInschrijving; }
+	public void setVerbondenInschrijving(Inschrijving inschrijving) { this.verbondenInschrijving = inschrijving; }
+
 	public int getKorps() {	return korps; }
 	public void setKorps(int korps) { this.korps = korps; }
 
@@ -75,6 +81,13 @@ public class Inschrijving implements InschrijvingInterface {
 	@XmlIDREF
 	public void setMogelijkeRingen(List<Ring> ringen) {	this.mogelijkeRingen = ringen; }
 	public List<Ring> getMogelijkeRingen(){	return this.mogelijkeRingen; }
+
+	public boolean isVerbonden(Inschrijving o) {
+		if (this == o) return false;
+		if (verbondenInschrijving == null) return false;
+		if (o.verbondenInschrijving == null) return false;
+		return verbondenInschrijving.id.equals(o.id);
+	}
 
 	@Override
 	public boolean equals(Object o) {

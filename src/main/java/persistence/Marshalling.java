@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 
 public class Marshalling {
 	public static final int MINMINUTEN = 3;
-	public static final int TOTALETIJD = 151;
+	public static final int TOTALETIJD = 176;
+	public static final int TOTALETIJDRINGMETFINALE = 150;
 	public static final int TABELMINUTEN = 180;
 	public static final int ROW_HEIGHT = 18;
 	public static final String STARTTIJD = "08:00";

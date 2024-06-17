@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import persistence.Marshalling;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class WizardImportSportfeestController extends WizardImportController {
 
@@ -40,7 +41,7 @@ public class WizardImportSportfeestController extends WizardImportController {
 		model.setTitle("Instellingen");
 		model.setSubtitle("Duid het sportfeest aan, de tekst en de datum komen op verdeling");
 
-		if(fromPrevious && model.getFilename() != null && model.getFilename() != "") {
+		if(fromPrevious && (model.getFilename() != null) && !Objects.equals(model.getFilename(), "")) {
 			columns = FXCollections.observableArrayList();
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
@@ -54,14 +55,14 @@ public class WizardImportSportfeestController extends WizardImportController {
 		}
 
 		txtSportfeest.setOnAction(event -> {
-			txtTitel.setText(txtSportfeest.getValue());
+			txtTitel.setText(txtSportfeest.getValue().replaceAll("(?i)sportfeest", "").trim());
 		});
 	}
 
 	@Validate
 	public boolean validate() throws Exception {
 
-		if( txtSportfeest.getValue() == null || txtSportfeest.getValue().equals("") ) {
+		if( txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText( "Niet toegewezen" );

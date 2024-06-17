@@ -7,7 +7,8 @@ import javafx.fxml.FXML;
 import persistence.Visualisatie;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class AfdelingenController {
 	@FXML
@@ -27,7 +28,9 @@ public class AfdelingenController {
 	public void setSportfeest(Sportfeest sportfeest) {
 		this.sportfeest = sportfeest;
 		agenda.columns().clear();
-		agenda.columns().addAll(new ArrayList<>(sportfeest.getAfdelingen()));
+		agenda.columns().addAll(sportfeest.getAfdelingen().stream()
+				.sorted(Comparator.comparing(Afdeling::getNaam))
+				.collect(Collectors.toList()));
 		agenda.createDefaultSkin();
 		agenda.appointments().clear();
 		agenda.appointments().addAll(sportfeest.getInschrijvingen());
