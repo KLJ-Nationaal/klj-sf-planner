@@ -77,7 +77,7 @@ end
 /***************************** SOFT CONSTRAINTS *********************************/
 rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien verschillende ring"
 	when
-		Inschrijving (
+		$leftInschrijving : Inschrijving (
 			$id : id,
 			tijdslot != null,
 			$tijdslot : tijdslot,
@@ -90,6 +90,7 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien
 			discipline != $discipline,
 			($discipline.isJongens() == true && discipline.isJongens() == true) ||
 			($discipline.isMeisjes() == true && discipline.isMeisjes() == true),
+			!isVerbonden($leftInschrijving),
 			tijdslot.timeBetween($tijdslot) < 6)
 		then
 			scoreHolder.addSoftConstraintMatch(kcontext, -5);
