@@ -15,8 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
         <javafx.version>11</javafx.version>
-        <jfxtra.version>8.0-r6</jfxtra.version>
-        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -28,7 +26,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.13</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -63,7 +61,7 @@
         <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-controls</artifactId>
-            <version>${jfxtra.version}</version>
+            <version>8.0-r6</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
