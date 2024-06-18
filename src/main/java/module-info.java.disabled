@@ -1,0 +1,22 @@
+module kljsfplanner {
+	requires javafx.controls;
+	requires javafx.graphics;
+	requires javafx.fxml;
+	requires jfxtras.controls;
+	requires jfxtras.common;
+	requires org.optaplanner.core;
+	requires java.xml.bind;
+	requires logback.core;
+	requires logback.classic;
+	requires guice;
+	requires slf4j.api;
+	requires org.fxmisc.richtext;
+	requires xstream;
+	requires org.apache.commons.lang3;
+	requires java.sql;
+	requires poi;
+	requires poi.ooxml;
+	requires java.desktop;
+
+	opens ui to javafx.fxml,javafx.graphics;
+}

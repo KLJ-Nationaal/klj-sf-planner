@@ -3,6 +3,7 @@ package persistence;
 import ch.qos.logback.classic.Logger;
 import domain.*;
 import domain.importing.Groepsinschrijving;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -37,8 +38,7 @@ public class Marshalling {
 			XSSFWorkbook workbook = new XSSFWorkbook(fis);
 			return workbook.getActiveSheetIndex();
 		} catch (IOException ioe) {
-			logger.error("KON DATA XLSX NIET INLEZEN");
-			ioe.printStackTrace();
+			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
 		}
 		return 0;
 	}
@@ -55,7 +55,7 @@ public class Marshalling {
 
 			if(row != null) {
 				row.forEach(cell -> {
-					if(cell.getStringCellValue() != null && cell.getStringCellValue() != "") {
+					if(cell.getStringCellValue() != null && !Objects.equals(cell.getStringCellValue(), "")) {
 						columns.add(cell.getStringCellValue());
 					} else {
 						columns.add("");
@@ -63,8 +63,7 @@ public class Marshalling {
 				});
 			}
 		} catch (IOException ioe) {
-			logger.error("KON DATA XLSX NIET INLEZEN");
-			ioe.printStackTrace();
+			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
 		}
 		return columns;
 	}
@@ -94,20 +93,17 @@ public class Marshalling {
 						aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
 					}
 					if (aantal == 0) {
-						logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdeling +
-								", discipline " + discipline);
+						logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}", afdeling, discipline);
 					}
 
 					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
 				} catch (NullPointerException npe){
-					logger.error("Fout op rij " + (row.getRowNum() + 1) + ": " + npe.getLocalizedMessage());
-					//npe.printStackTrace();
+					logger.error("Fout op rij {}: {}", row.getRowNum() + 1, npe.getLocalizedMessage());
 				}
 			}
 
 		} catch (IOException ioe) {
-			logger.error("KON DATA XLSX NIET INLEZEN");
-			ioe.printStackTrace();
+			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
 		}
 		return groepsinschrijvingen;
 	}
@@ -159,7 +155,7 @@ public class Marshalling {
 
 			sf.setLocatie(rowIt.next().getCell(1).getStringCellValue());
 			sf.setDatum(Date.from(rowIt.next().getCell(1).getDateCellValue().toInstant()));
-			rowIt.next(); rowIt.next(); //rijen overslaan overslaan
+			rowIt.next(); rowIt.next(); //rijen overslaan
 
 			int aantalInschrijvingen = 0;
 
@@ -172,8 +168,7 @@ public class Marshalling {
 				if(row.getCell(2) != null && row.getCell(2).getCellType() == CellType.NUMERIC) {
 					aantal = (int) row.getCell(2).getNumericCellValue();
 				} else {
-					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling " + afdelingsNaam +
-							", discipline " + disciplineNaam);
+					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}.", afdelingsNaam, disciplineNaam);
 				}
 				String ringLetter;
 				if(row.getCell(3) != null) {
@@ -213,9 +208,7 @@ public class Marshalling {
 
 			return sf;
 		} catch (IOException ioe) {
-			logger.error("KON DATA XLSX NIET INLEZEN");
-			ioe.printStackTrace();
-
+			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
 		}
 		return new Sportfeest();
 	}
@@ -232,7 +225,7 @@ public class Marshalling {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while unmarshalling XML", e);
 		}
 		return sf;
 	}
@@ -248,12 +241,12 @@ public class Marshalling {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while marshalling XML", e);
 		}
 	}
 
 	public static void marshall(Sportfeest map, String path) throws Exception {
-		if(path.endsWith(".xslx")) path = path.substring(0, path.length() - 4);
+		if(path.endsWith(".xlsx")) path = path.substring(0, path.length() - 5);
 		File fileAfdelingen = new File(path + "-afdelingen.xlsx");
 		File fileRingen = new File(path + "-ringen.xlsx");
 		if(fileAfdelingen.exists() && !fileAfdelingen.delete())
@@ -334,8 +327,8 @@ public class Marshalling {
 					}
 
 					if (!edited) {
-						logger.error("Inschrijving in " + inschrijving.getRing() + " van "
-								+ inschrijving.getAfdeling() + ": jongens/meisjes kan niet bepaald worden en werd dus overgeslagen!");
+						logger.error("Inschrijving in {} van {}: jongens/meisjes kan niet bepaald worden en werd dus overgeslagen!",
+								inschrijving.getRing(), inschrijving.getAfdeling());
 					}
 				}
 			}
@@ -380,7 +373,7 @@ public class Marshalling {
 			}
 		}
 
-		logger.info("Schrijven van bestand " + fileAfdelingen);
+		logger.info("Schrijven van bestand {}", fileAfdelingen);
 		FileOutputStream out = new FileOutputStream(fileAfdelingen);
 		wb.write(out);
 		out.close();
@@ -470,8 +463,8 @@ public class Marshalling {
 
 				for(Inschrijving inschrijving : ringInschrijvingen){
 					if (inschrijving.getTijdslot() == null) {
-						logger.error("Inschrijving in " + inschrijving.getRing() + " van "
-								+ inschrijving.getAfdeling() + " heeft geen tijdslot toegewezen!");
+						logger.error("Inschrijving in {} van {} heeft geen tijdslot toegewezen!",
+								inschrijving.getRing(), inschrijving.getAfdeling());
 					} else {
 						String tijd = inschrijving.getTijdslot().getStartTijdFormatted();
 						boolean tijdFound = false;
@@ -502,8 +495,9 @@ public class Marshalling {
 								break;
 							}
 						}
-						if(!tijdFound) logger.error("Inschrijving in " + inschrijving.getRing() + " van "
-								+ inschrijving.getAfdeling() + ", kon het tijdslot in de ring niet vinden!");
+						if(!tijdFound)
+							logger.error("Inschrijving in {} van {}, kon het tijdslot in de ring niet vinden!",
+									inschrijving.getRing(), inschrijving.getAfdeling());
 
 					}
 				}
@@ -527,7 +521,7 @@ public class Marshalling {
 			}
 		}
 
-		logger.info("Schrijven van bestand " + fileRingen);
+		logger.info("Schrijven van bestand {}", fileRingen);
 		out = new FileOutputStream(fileRingen);
 		wb.write(out);
 		out.close();
@@ -561,11 +555,12 @@ public class Marshalling {
 			cell = row.getCell(column-1);
 			cell.setCellStyle(styles.get("tijdonderleeg"));
 			cell = row.getCell(column);
-			cell.setCellValue((!cell.getStringCellValue().equals("") ? cell.getStringCellValue() + " " : "")
+			cell.setCellValue((!cell.getStringCellValue().isEmpty() ? cell.getStringCellValue() + " " : "")
 					+ inschrijving.getDiscipline().getVerkorteNaam()
 					+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "")
 					+ Optional
 					.ofNullable(inschrijving.getRing().getLetter())
+					.filter(StringUtils::isNotEmpty)
 					.map(a -> " ring " + a)
 					.orElse(""));
 			cell.setCellStyle(styles.get("ringonderleeg"));

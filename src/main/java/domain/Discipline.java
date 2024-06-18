@@ -65,6 +65,11 @@ public class Discipline {
 	}
 
 	@Override
+	public String toString() {
+		return getVerkorteNaam();
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(naam);
 	}
