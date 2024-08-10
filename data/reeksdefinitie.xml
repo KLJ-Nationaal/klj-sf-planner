@@ -184,4 +184,53 @@
     <AfdelingenPerRing>20</AfdelingenPerRing>
     <Toevoeging/>
   </Discipline>
+  <Discipline>
+    <Naam>Vrije ritmiek meisjes</Naam>
+    <Ringnaam>Vrije ritmiek meisjes &amp; gemengd</Ringnaam>
+    <Schema>6</Schema>
+    <AfdelingenPerRing>20</AfdelingenPerRing>
+    <Toevoeging/>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken -16 meisjes</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>meisjes</Toevoeging>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken -16 jongens</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>jongens</Toevoeging>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken -16 gemengd</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>gemengd</Toevoeging>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken +16 meisjes</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>meisjes</Toevoeging>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken +16 jongens</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>jongens</Toevoeging>
+  </Discipline>
+  <Discipline>
+    <Naam>Touwtrekken +16 gemengd</Naam>
+    <Ringnaam>Touwtrekken</Ringnaam>
+    <Schema>60</Schema>
+    <AfdelingenPerRing>999</AfdelingenPerRing>
+    <Toevoeging>gemengd</Toevoeging>
+  </Discipline>
 </list>

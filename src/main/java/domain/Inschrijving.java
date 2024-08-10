@@ -3,6 +3,7 @@ package domain;
 import difficulty.InschrijvingDifficultyComparator;
 import difficulty.TijdslotStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -26,6 +27,7 @@ public class Inschrijving implements InschrijvingInterface {
 	private int korps;
 	private List<Ring> mogelijkeRingen;
 	private Inschrijving verbondenInschrijving;
+	private boolean gereserveerdBlok;
 
 	@XmlTransient
 	@PlanningId
@@ -77,6 +79,10 @@ public class Inschrijving implements InschrijvingInterface {
 		if (tijdslot == null) return 0;
 		return tijdslot.getEindTijd();
 	}
+
+	@PlanningPin
+	public boolean isGereserveerdBlok() { return gereserveerdBlok; }
+	public void setGereserveerdBlok(boolean gereserveerdBlok) { this.gereserveerdBlok = gereserveerdBlok; }
 
 	@XmlIDREF
 	public void setMogelijkeRingen(List<Ring> ringen) {	this.mogelijkeRingen = ringen; }

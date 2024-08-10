@@ -11,6 +11,7 @@
              <TableColumn fx:id="tblColAantal" editable="false" prefWidth="100.0" text="Aantal inschr." />
              <TableColumn fx:id="tblColDuur" prefWidth="100.0" styleClass="editable-cells" text="Schema (min.)" />
              <TableColumn fx:id="tblColAantalRingen" prefWidth="100.0" styleClass="editable-cells" text="Aantal ringen" />
+             <TableColumn fx:id="tblColEinduur" prefWidth="100.0" styleClass="editable-cells" text="Einde" />
          </columns>
          <BorderPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

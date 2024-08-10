@@ -7,5 +7,5 @@
 }
 
 .table-view:cell-selection .table-cell:selected {
-    -fx-background-color: -fx-table-cell-border-color, -fx-background;
+    -fx-background-color: rgba(50, 140, 240, .4);
 }

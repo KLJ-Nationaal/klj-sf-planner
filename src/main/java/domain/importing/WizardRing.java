@@ -1,11 +1,14 @@
 package domain.importing;
 
+import persistence.Marshalling;
+
 public class WizardRing {
 	private String naam;
 	private int aantalRingen;
 	private int duur;
 	private int aantalAfd;
 	private int afdPerRing;
+	private int einduur;
 
 	public WizardRing(String ring, Integer aantalAfd) {
 		this.naam = ring;
@@ -44,5 +47,11 @@ public class WizardRing {
 
 	public void setAfdPerRing(int afdPerRing) {	this.afdPerRing = afdPerRing; }
 
+	public int getEinduur() {
+		if (einduur != 0) return einduur;
+		else if (aantalRingen > 1) return Marshalling.TOTALETIJDRINGMETFINALE;
+		else return Marshalling.TOTALETIJD;
+	}
 
+	public void setEinduur(int einduur) { this.einduur = einduur; }
 }

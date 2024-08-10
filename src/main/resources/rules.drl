@@ -46,10 +46,12 @@ rule "geen twee inschrijvingen voor een RING op het zelfde moment"
 		$leftInschrijving : Inschrijving(
 			tijdslot != null,
 			$tijdslot : tijdslot,
+			gereserveerdBlok == false,
 			$id : id,
 			$ring : ring)
 		$rightInschrijving : Inschrijving(
 			tijdslot != null,
+			gereserveerdBlok == false,
 			ring == $ring,
 			id > $id,
 			tijdslot.isOverlap($tijdslot) )
@@ -82,6 +84,7 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien
 			tijdslot != null,
 			$tijdslot : tijdslot,
 			$afdeling : afdeling,
+			gereserveerdBlok == false,
 			$discipline: discipline)
 		Inschrijving(
 			id > $id,
@@ -90,6 +93,7 @@ rule "minstens enkele minuten tussen twee inschrijvingen van een afdeling indien
 			discipline != $discipline,
 			($discipline.isJongens() == true && discipline.isJongens() == true) ||
 			($discipline.isMeisjes() == true && discipline.isMeisjes() == true),
+			gereserveerdBlok == false,
 			!isVerbonden($leftInschrijving),
 			tijdslot.timeBetween($tijdslot) < 6)
 		then
@@ -102,6 +106,7 @@ rule "insertAfdelingRingConsecutiveInschrijvingEnd"
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			$ring : ring,
 			$discipline : discipline,
 			$tijdslot : tijdslot,
@@ -109,6 +114,7 @@ rule "insertAfdelingRingConsecutiveInschrijvingEnd"
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			ring == $ring,
 			discipline == $discipline,
 			tijdslot > $tijdslot)
@@ -122,6 +128,7 @@ rule "insertAfdelingRingConsecutiveInschrijvingStart"
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			$ring : ring,
 			$discipline : discipline,
 			$tijdslot : tijdslot,
@@ -129,6 +136,7 @@ rule "insertAfdelingRingConsecutiveInschrijvingStart"
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			ring == $ring,
 			discipline == $discipline,
 			tijdslot < $tijdslot)
@@ -157,6 +165,7 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 		Inschrijving(
 			ring == $ringStart,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			afdeling != $afdelingStart,
 			tijdslot.startTijd >= $tussentijdStart,
 			tijdslot.eindTijd <= $tussentijdStop
@@ -191,12 +200,14 @@ rule "zo weinig mogelijk vendeluniform wissels"
 		$inschrijving : Inschrijving(
 			$afdeling : afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			$tijdslot1 : tijdslot,
 			discipline.isJongens() == true,
 			$uniform : discipline.isVendeluniform() )
 		Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			$tijdslot2 : tijdslot,
 			$tijdslot2 > $tijdslot1,
 			discipline.isJongens() == true,
@@ -204,12 +215,14 @@ rule "zo weinig mogelijk vendeluniform wissels"
 		not Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			tijdslot > $tijdslot1,
 			tijdslot < $tijdslot2,
 			discipline.isJongens() == true )
 		exists Inschrijving(
 			afdeling == $afdeling,
 			tijdslot != null,
+			gereserveerdBlok == false,
 			$tijdslot3 : tijdslot,
 			$tijdslot3 > $tijdslot2,
 			discipline.isJongens() == true,

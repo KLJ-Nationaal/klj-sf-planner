@@ -13,6 +13,7 @@ public class Discipline {
 	private boolean vendeluniform;
 	private boolean hoofdgilde;
 	private boolean dans;
+	private boolean gereserveerdBlok;
 
 	@XmlID
 	public String getNaam() { return naam; }
@@ -33,6 +34,7 @@ public class Discipline {
 		if(naam.toLowerCase().contains("dans")) dans = true;
 		if(naam.toLowerCase().contains("bondsreeks")) dans = true;
 		if(naam.toLowerCase().contains("vrije ritmiek")) dans = true;
+		if(naam.toLowerCase().contains("touwtrekken")) gereserveerdBlok = true;
 	}
 
 	public String getVerkorteNaam() {
@@ -55,6 +57,7 @@ public class Discipline {
 	public boolean isVendeluniform() { return vendeluniform; }
 	public boolean isHoofdgilde() { return hoofdgilde; }
 	public boolean isDans() { return dans; }
+	public boolean isGereserveerdBlok() { return gereserveerdBlok; }
 
 	@Override
 	public boolean equals(Object o) {
