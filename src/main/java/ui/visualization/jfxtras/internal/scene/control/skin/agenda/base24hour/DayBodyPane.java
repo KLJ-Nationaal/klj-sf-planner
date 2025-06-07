@@ -125,7 +125,7 @@ class DayBodyPane<H, I> extends Pane
 			int lStartOffsetInMinutes = lAppointmentAbstractTrackedPane.startDateTime;
 			double lY = lNumberOfPixelsPerMinute * lStartOffsetInMinutes;
 			lAppointmentAbstractTrackedPane.setLayoutY( NodeUtil.snapXY(lY) );
-			
+
 			// the width is the remaining width (subtracting the wholeday appointments) divided by the number of tracks in the cluster
 			double lW = lTrackWidth;
 			// all but the most right appointment get 50% extra width, so they underlap the next track 
@@ -229,7 +229,7 @@ class DayBodyPane<H, I> extends Pane
 			double lHeightOffset = (y -  r.getY());
 			return (int)(lHeightOffset * layoutHelp.durationInMSPerPixelProperty.get());
 		}
-		return 0;
+		return -1;
 	}
 }
 

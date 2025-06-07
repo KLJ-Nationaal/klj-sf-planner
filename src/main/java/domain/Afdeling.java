@@ -16,9 +16,8 @@ public class Afdeling {
 	public Afdeling(String afdelingsNaam) {
 		naam = afdelingsNaam;
 		inschrijvingen = new ArrayList<>();
-		meisjesDansenVendelen = afdelingsNaam.toLowerCase().contains("kluizen");
-		if(afdelingsNaam.toLowerCase().contains("ertvelde")) meisjesDansenVendelen = true;
 	}
+
 
 	public Afdeling() {
 		this("Afdeling zonder naam " + Math.random());

@@ -232,6 +232,7 @@ class AppointmentMenu extends Rectangle {
 			actionImageViewButton.setOnMouseClicked( (mouseEvent) -> {
 				popup.hide();
 				layoutHelp.skinnable.getActionCallback().call(appointment);
+				layoutHelp.callAppointmentChangedCallback(appointment);
 				// any refresh is done via the collection events
 			});
 			lHBox.getChildren().add(actionImageViewButton);

@@ -33,8 +33,6 @@ import javafx.collections.ObservableList;
 import javafx.css.CssMetaData;
 import javafx.css.SimpleStyleableObjectProperty;
 import javafx.css.Styleable;
-import javafx.print.PageLayout;
-import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -42,14 +40,12 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Scale;
 import javafx.util.Pair;
 import jfxtras.css.CssMetaDataForSkinProperty;
 import jfxtras.css.converters.DoubleConverter;
 import persistence.Marshalling;
 import ui.visualization.jfxtras.internal.scene.control.skin.agenda.AgendaSkin;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
-import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.*;
 
@@ -72,7 +68,7 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 	/**
 	 * Reconstruct the UI part
 	 */
-	protected void reconstruct() {
+	public void reconstruct() {
 		weekBodyPane.reconstruct();
 		weekHeaderPane.reconstruct();
 		
@@ -89,10 +85,10 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 		createNodes();
 		
 		// react to changes in the appointments 
-		getSkinnable().appointments().addListener(appointmentsListChangeListener);
+		getSkinnable().getAppointmentsProperty().addListener(appointmentsListChangeListener);
 
         // clean up removed appointments from appointmentNodeMap
-        getSkinnable().appointments().addListener(appointmentNodeMapCleanUpListChangeListener);
+        getSkinnable().getAppointmentsProperty().addListener(appointmentNodeMapCleanUpListChangeListener);
 
 		// initial setup
 		refresh();
@@ -108,8 +104,8 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 
 	public void dispose() {
 		// remove listeners
-		getSkinnable().appointments().removeListener((InvalidationListener) appointmentsListChangeListener);
-        getSkinnable().appointments().removeListener((InvalidationListener) appointmentNodeMapCleanUpListChangeListener);
+		getSkinnable().getAppointmentsProperty().removeListener((InvalidationListener) appointmentsListChangeListener);
+        getSkinnable().getAppointmentsProperty().removeListener((InvalidationListener) appointmentNodeMapCleanUpListChangeListener);
 		
 		// reset style classes
 		getSkinnable().getStyleClass().clear();
@@ -136,8 +132,6 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 		setupAppointments();
 	}
 
-	@Override
-    public Pane getNodeForPopup(InschrijvingInterface appointment) { return appointmentNodeMap.get(System.identityHashCode(appointment)); }
     final private Map<Integer, Pane> appointmentNodeMap = new HashMap<>();
     Map<Integer, Pane> appointmentNodeMap() { return appointmentNodeMap; }
 	
@@ -275,9 +269,9 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 				lDayHeader.prefHeightProperty().bind(heightProperty()); // same height as the week pane
 				getChildren().add(lDayHeader);
 
-				String lWeekendOrWeekday = (dayHeaderPanes.size() % 2 == 0 ? "weekend" : "weekday");
-				lDayHeader.getStyleClass().removeAll("weekend", "weekday");
-				lDayHeader.getStyleClass().add(lWeekendOrWeekday);
+				String lEvenOrOdd = (dayHeaderPanes.size() % 2 == 0 ? "Even" : "Odd");
+				lDayHeader.getStyleClass().removeAll("Even", "Odd");
+				lDayHeader.getStyleClass().add(lEvenOrOdd);
 
 				// remember
 				dayHeaderPanes.add(lDayHeader);
@@ -301,7 +295,6 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 		final List<DayBodyPane<H, I>> dayBodyPanes = new ArrayList<>();
 
 		public WeekBodyPane() {
-			getStyleClass().add("Week");
 			construct();
 		}
 		
@@ -319,9 +312,9 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 				lDayPane.prefHeightProperty().bind(layoutHelp.dayHeightProperty.add(layoutHelp.headerHeightProperty));
 				getChildren().add(lDayPane);
 
-				String lWeekendOrWeekday = (i % 2 == 0 ? "weekend" : "weekday" );
-				lDayPane.getStyleClass().removeAll("weekend", "weekday");
-				lDayPane.getStyleClass().add(lWeekendOrWeekday);
+				String lEvenOrOdd = (dayBodyPanes.size() % 2 == 0 ? "Even" : "Odd");
+				lDayPane.getStyleClass().removeAll("Even", "Odd");
+				lDayPane.getStyleClass().add(lEvenOrOdd);
 
 				// remember
 				dayBodyPanes.add(lDayPane);
@@ -372,7 +365,7 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 		// the click has only value in either the day panes 
 		for (DayBodyPane<H, I> lDayPane : weekBodyPane.dayBodyPanes) {
 			int  lTime = lDayPane.convertClickInSceneToDateTime(x, y);
-			if (lTime == -1) return new Pair<>(lDayPane.columnValueObjectProperty.getValue(), lTime);
+			if (lTime != -1) return new Pair<>(lDayPane.columnValueObjectProperty.getValue(), lTime);
 		}
 		// or the day header panes
 		for (DayHeaderPane<H> lDayHeaderPane : weekHeaderPane.dayHeaderPanes) {
@@ -381,48 +374,4 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H, I> extends SkinBase<A
 		}
 		return null;
 	}
-	
-	
-	// ==================================================================================================================
-	// Print
-
-    /**
-     * Prints the current skin using the given printer job.
-     * <p>This method does not modify the state of the job, nor does it call
-     * {@link PrinterJob#endJob}, so the job may be safely reused afterwards.
-     * 
-     * @param job printer job used for printing
-     * @since JavaFX 8.0
-     */
-    public void print(PrinterJob job) {
-        float width = 5000; 
-        float height = 5000; 
-        
-		// we use a borderpane
-		BorderPane borderPane = new BorderPane();
-		borderPane.prefWidthProperty().set(width);
-		borderPane.prefHeightProperty().set(height);
-		
-		// borderpane center
-		WeekBodyPane weekBodyPane = new WeekBodyPane();
-		borderPane.setCenter(weekBodyPane);
-		
-		// borderpane top: header has to be created after the content, because there is a binding
-		WeekHeaderPane weekHeaderPane = new WeekHeaderPane(); // must be done after the WeekBodyPane
-		borderPane.setTop(weekHeaderPane);
-		
-		// style
-		borderPane.getStyleClass().add(Agenda.class.getSimpleName()); // always add self as style class, because CSS should relate to the skin not the control		
-		borderPane.getStyleClass().add(getClass().getSimpleName()); // always add self as style class, because CSS should relate to the skin not the control		
-
-		// scale to match page
-        PageLayout pageLayout = job.getJobSettings().getPageLayout();
-        double scaleX = pageLayout.getPrintableWidth() / borderPane.getBoundsInParent().getWidth();
-		double scaleY = pageLayout.getPrintableHeight() / borderPane.getBoundsInParent().getHeight();
-		scaleY *= 0.9; // for some reason the height doesn't fit
-		borderPane.getTransforms().add(new Scale(scaleX, scaleY));
-
-        // print
-        job.printPage(pageLayout, borderPane);
-    }
 }

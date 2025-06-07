@@ -6,8 +6,12 @@
 	-fx-font-family: "Roboto Condensed Light"; 	
 }
 
-.Agenda .Week {
+.Agenda .Even {
 	-fx-background-color: WHITE;
+}
+
+.Agenda .Odd {
+	-fx-background-color: #eeeeee90;
 }
 
 .Agenda .HourLabel {
@@ -31,22 +35,11 @@
 	-fx-border-width: 0px 0px 0px 1px;
 }
 
-/*
-.Agenda .DayHeader .weekend { 
-	-fx-text-fill: BLACK;
-	-fx-font-weight: bold;
-}
-*/
-
 .Agenda .Day {
 	-fx-fill: transparent;
 	-fx-stroke: transparent;
 	-fx-border-color:LIGHTGRAY;
 	-fx-border-width: 0px 0px 0px 1px;
-}
-
-.Agenda .weekend {
-	-fx-background-color: #eeeeee90;
 }
 
 .Agenda .Appointment {
@@ -74,10 +67,15 @@
 }
 
 .Agenda .GhostRectangle {
-	-fx-fill: transparent;
+	-fx-fill: #00000030;
 	-fx-stroke: #00000080;
     -fx-stroke-width: 1;
     -fx-stroke-dash-array: 4 4 4 4;
+}
+
+.Agenda .GhostRectangleText {
+	-fx-stroke: transparent;
+	-fx-font-size: 0.8em;
 }
 
 .Agenda .Selected { 

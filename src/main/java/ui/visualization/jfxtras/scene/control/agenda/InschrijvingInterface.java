@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Supplier;
 
 public interface InschrijvingInterface {
 	@XmlTransient
@@ -72,9 +71,11 @@ public interface InschrijvingInterface {
 
 
 	default Boolean isWholeDay() { return getTijdslot() == null; }
+	// either sets the timeslot to null if it's a whole day, otherwise assign the first valid timeslot
 	default void setWholeDay(Boolean b) {
 		if(b) setTijdslot(null);
-		else setTijdslot(getTijdslots().get(0));
+		// if it's not a whole day any longer, assign the first timeslot
+		else setTijdslot((getTijdslot() == null ? getTijdslots().get(0) : getTijdslot()));
 	}
 
 	default Boolean isDraggable() { return Boolean.TRUE; }
@@ -82,10 +83,15 @@ public interface InschrijvingInterface {
 	/** This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface **/
 	default int getStartTime() { return getStartTijd();	}
 	default void setStartTime(int startTime) {
-		setTijdslot(getTijdslots().stream()
-			.min(Comparator.comparingInt(i -> Math.abs(i.getStartTijd() - startTime)))
-			.orElseGet((Supplier<? extends Tijdslot>) getTijdslot()));
+		setTijdslot(getClosestTijdslot(startTime));
 	}
 	/** This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface **/
 	default int getEndTime() { return getEindTijd(); }
+
+	default Tijdslot getClosestTijdslot(int wantedStartTime){
+		if (getRing() == null) return getTijdslot();
+		return getRing().getTijdslots().stream()
+				.min(Comparator.comparingInt(ts -> Math.abs(ts.getStartTijd() - wantedStartTime)))
+				.orElse(getTijdslot());
+	}
 }

@@ -26,10 +26,7 @@
  */
 package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
-import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.util.Pair;
-import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 public interface AgendaSkin<H> {
 	/**
@@ -49,15 +46,4 @@ public interface AgendaSkin<H> {
 	 * @return a localDateTime equivalent of the click location, where a drop in the day section has nano seconds == 1, and a drop in a header (wholeday) section has nano seconds == 0
 	 */
 	Pair<H, Integer> convertClickInSceneToDateTime(double x, double y);
-	
-	/**
-	 * Finds rendered node for appointment.  The node can be used as the owner for a popup.
-	 * or finding its x, y coordinates.
-	 * 
-	 * @param appointment
-	 * @return rendered node that represents appointment
-	 */
-	Node getNodeForPopup(InschrijvingInterface appointment);
-	
-	void print(PrinterJob job);
 }

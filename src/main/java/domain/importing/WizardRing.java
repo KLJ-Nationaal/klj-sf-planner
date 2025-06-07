@@ -5,7 +5,7 @@ public class WizardRing {
 	private int aantalRingen;
 	private int duur;
 	private int aantalAfd;
-	private int afdPerRing;
+	private int maxAfdPerRing;
 
 	public WizardRing(String ring, Integer aantalAfd) {
 		this.naam = ring;
@@ -15,7 +15,6 @@ public class WizardRing {
 	public String getNaam() {
 		return naam;
 	}
-
 	public void setNaam(String naam) {
 		this.naam = naam;
 	}
@@ -23,7 +22,6 @@ public class WizardRing {
 	public int getAantalRingen() {
 		return aantalRingen;
 	}
-
 	public void setAantalRingen(int aantalRingen) {
 		this.aantalRingen = aantalRingen;
 	}
@@ -31,18 +29,21 @@ public class WizardRing {
 	public int getDuur() {
 		return duur;
 	}
-
 	public void setDuur(int duur) {
 		this.duur = duur;
 	}
 
-	public int getAantalAfd() { return aantalAfd;	}
+	public int getAantalAfd() {
+		return aantalAfd;
+	}
+	public void setAantalAfd(int aantal) {
+		this.aantalAfd = aantal;
+	}
 
-	public void setAantalAfd(int aantal) { this.aantalAfd = aantal; }
-
-	public int getAfdPerRing() { return afdPerRing;	}
-
-	public void setAfdPerRing(int afdPerRing) {	this.afdPerRing = afdPerRing; }
-
-
+	public int getMaxAfdPerRing() {
+		return maxAfdPerRing;
+	}
+	public void setMaxAfdPerRing(int maxAfdPerRing) {
+		this.maxAfdPerRing = maxAfdPerRing;
+	}
 }

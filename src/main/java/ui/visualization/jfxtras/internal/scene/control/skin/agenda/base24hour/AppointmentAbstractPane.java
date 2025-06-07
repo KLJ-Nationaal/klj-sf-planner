@@ -169,29 +169,33 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 				layoutHelp.dragPane.getChildren().add(endTimeText);
 
 				// we use a clone for calculating the current time during the drag
-				appointmentForDrag = new AppointmentForDrag();
+				appointmentForDrag = new AppointmentForDrag((Inschrijving) appointment);
 			}
-			
-			// move the drag rectangle
-			double lX = NodeUtil.xInParent(this, layoutHelp.dragPane) + (mouseEvent.getX() - startX); // top-left of the original appointment pane + offset of drag 
-			double lY = NodeUtil.yInParent(this, layoutHelp.dragPane) + (mouseEvent.getY() - startY); // top-left of the original appointment pane + offset of drag 
-			dragRectangle.setX(NodeUtil.snapXY(lX));
-			dragRectangle.setY(NodeUtil.snapXY(lY));
-			startTimeText.layoutXProperty().set(dragRectangle.getX()); 
-			startTimeText.layoutYProperty().set(dragRectangle.getY()); 
-			endTimeText.layoutXProperty().set(dragRectangle.getX()); 
-			endTimeText.layoutYProperty().set(dragRectangle.getY() + dragRectangle.getHeight() + endTimeText.getBoundsInParent().getHeight()); 
-			mouseActuallyHasDragged = true;
-			
+
+			//double lX = NodeUtil.xInParent(this, layoutHelp.dragPane) + (mouseEvent.getX() - startX); // top-left of the original appointment pane + offset of drag
+			double lX = NodeUtil.xInParent(this, layoutHelp.dragPane); // top-left of the original appointment pane + offset of drag
+			double lY = NodeUtil.yInParent(this, layoutHelp.dragPane) + (mouseEvent.getY() - startY); // top-left of the original appointment pane + offset of drag
+
 			// update the start time
-			appointmentForDrag.setStartTime(appointment.getStartTime());
-			appointmentForDrag.setWholeDay(appointment.isWholeDay());
-			// determine start and end DateTime of the drag
+			double lMinutes = (lY - dragRectangle.getHeight()/2) / layoutHelp.hourHeightProperty.get() * 60;
+			appointmentForDrag.setStartTime((int) lMinutes);
+			appointmentForDrag.setWholeDay(lMinutes < 0);
+			startTimeText.setText(appointmentForDrag.isWholeDay() ? "" : layoutHelp.formatTime(appointmentForDrag.getStartTime()));
+			endTimeText.setText(appointmentForDrag.isWholeDay() ? "" : layoutHelp.formatTime(appointmentForDrag.getEndTime()));
+
+			// move the drag rectangle
+			dragRectangle.setX(lX);
+			dragRectangle.setY((appointmentForDrag.getStartTime() * layoutHelp.hourHeightProperty.get() / 60) + layoutHelp.headerHeightProperty.get());
+			startTimeText.layoutXProperty().set(dragRectangle.getX()); 
+			startTimeText.layoutYProperty().set(dragRectangle.getY() - 3);
+			endTimeText.layoutXProperty().set(dragRectangle.getX()); 
+			endTimeText.layoutYProperty().set(dragRectangle.getY() + dragRectangle.getHeight() + endTimeText.getBoundsInParent().getHeight() - 3);
+			mouseActuallyHasDragged = true;
+
+			// determine start and end DateTime of the drag, if we're dragging between panes (TODO)
 			Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 			if (dragTime != null) { // not dropped somewhere outside
-				handleDrag(appointmentForDrag, dragPickupDateTime, dragTime);
-				startTimeText.setText(appointmentForDrag.isWholeDay() ? "" : layoutHelp.formatTime(appointmentForDrag.getStartTime()));
-				endTimeText.setText(appointmentForDrag.isWholeDay() ? "" : layoutHelp.formatTime(appointmentForDrag.getEndTime()));
+				//TODO: handleDrag(appointmentForDrag, dragPickupDateTime, dragTime);
 			}
 			
 		});
@@ -204,6 +208,23 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			mouseEvent.consume();
 			dragging = false;
 
+			// if not dragged, then we're selecting
+			if (!mouseActuallyHasDragged) {
+				handleSelect(mouseEvent);
+				return;
+			}
+
+			// determine start and end DateTime of the drag
+			appointment.setTijdslot(appointmentForDrag.getTijdslot());
+			//Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+			//if (dragTime != null) { // not dropped somewhere outside
+				//handleDrag(appointment, dragPickupDateTime, dragTime);
+
+				// relayout whole week
+				layoutHelp.skin.setupAppointments();
+			layoutHelp.callAppointmentChangedCallback(appointment);
+			//}
+
 			// reset ui
 			setCursor(Cursor.HAND);
 			if (dragRectangle != null) {
@@ -214,21 +235,6 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 				startTimeText = null;
 				endTimeText = null;
 				appointmentForDrag = null;
-			}
-			
-			// if not dragged, then we're selecting
-			if (!mouseActuallyHasDragged) {
-				handleSelect(mouseEvent);
-				return;
-			}
-			
-			// determine start and end DateTime of the drag
-			Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-			if (dragTime != null) { // not dropped somewhere outside
-				handleDrag(appointment, dragPickupDateTime, dragTime);
-
-				// relayout whole week
-				layoutHelp.skin.setupAppointments();
 			}
 		});
 	}
@@ -242,7 +248,19 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 	private Text endTimeText = null;
 	private InschrijvingInterface appointmentForDrag = null;
 
-	public static class AppointmentForDrag extends Inschrijving {}
+	public static class AppointmentForDrag extends Inschrijving {
+		public AppointmentForDrag(Inschrijving inschrijving) {
+			this.setStartTime(inschrijving.getStartTime());
+			this.setAfdeling(inschrijving.getAfdeling());
+			this.setDiscipline(inschrijving.getDiscipline());
+			this.setId(inschrijving.getId());
+			this.setTijdslot(inschrijving.getTijdslot());
+			this.setKorps(inschrijving.getKorps());
+			this.setMogelijkeRingen(inschrijving.getMogelijkeRingen());
+			this.setVerbondenInschrijving(inschrijving.getVerbondenInschrijving());
+			this.setRing(inschrijving.getRing());
+		}
+	}
 
 	private void handleDrag(InschrijvingInterface appointment, Pair<H,Integer> dragPickupDateTime, Pair<H,Integer> dragDropDateTime) {
 		
@@ -260,11 +278,7 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 		if ( (dragPickupInDayBody && dragDropInDayBody) || (dragPickupInDayHeader && dragDropInDayHeader)) {
 			// simply add the duration
 			if (appointment.getTijdslot() != null) {
-				appointment.setTijdslot(
-					appointment.getTijdslots().stream()
-						.min(Comparator.comparingInt(i -> Math.abs(i.getStartTijd() - dragDropDateTime.getValue())))
-						.orElseGet((Supplier<? extends Tijdslot>) appointment.getTijdslot())
-				);
+				appointment.setTijdslot(appointment.getClosestTijdslot(dragDropDateTime.getValue()));
 			}
 			//TODO: setRing for between ringen
 			layoutHelp.callAppointmentChangedCallback(appointment);

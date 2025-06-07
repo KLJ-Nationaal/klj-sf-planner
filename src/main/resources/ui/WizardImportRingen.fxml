@@ -8,9 +8,11 @@
      <TableView fx:id="tblRingen" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <columns>
              <TableColumn fx:id="tblColRing" editable="false" prefWidth="220.0" text="Ring" />
-             <TableColumn fx:id="tblColAantal" editable="false" prefWidth="100.0" text="Aantal inschr." />
+             <TableColumn fx:id="tblColAantalAfdelingen" editable="false" prefWidth="100.0" text="Aantal inschr." />
              <TableColumn fx:id="tblColDuur" prefWidth="100.0" styleClass="editable-cells" text="Schema (min.)" />
              <TableColumn fx:id="tblColAantalRingen" prefWidth="100.0" styleClass="editable-cells" text="Aantal ringen" />
+             <TableColumn fx:id="tblColAfdPerRing" editable="false" prefWidth="100.0" text="Afd. per ring" />
+             <TableColumn fx:id="tblColMaxPerRing" editable="false" prefWidth="100.0" text="Max. per ring" />
          </columns>
          <BorderPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

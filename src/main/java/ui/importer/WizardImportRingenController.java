@@ -10,10 +10,7 @@ import domain.importing.WizardRing;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
@@ -28,10 +25,14 @@ import java.util.stream.Collectors;
 
 public class WizardImportRingenController extends WizardImportController{
 	@FXML
-	private TableView tblRingen;
+	private TableView<WizardRing> tblRingen;
 
 	@FXML
-	private TableColumn tblColRing, tblColAantal, tblColDuur, tblColAantalRingen;
+	private TableColumn<WizardRing, String> tblColRing;
+	@FXML
+	private TableColumn<WizardRing, Integer> tblColDuur, tblColAantalAfdelingen, tblColAantalRingen, tblColMaxPerRing;
+	@FXML
+	private TableColumn<WizardRing, Void> tblColAfdPerRing;
 
 	@FXML
 	private Button btnNext;
@@ -44,8 +45,28 @@ public class WizardImportRingenController extends WizardImportController{
 
 	@FXML
 	public void initialize() {
-		tblColRing.setCellValueFactory(new PropertyValueFactory<WizardRing,String>("naam"));
-		tblColAantal.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("aantalAfd"));
+		tblColRing.setCellValueFactory(new PropertyValueFactory<>("naam"));
+		tblColAantalAfdelingen.setCellValueFactory(new PropertyValueFactory<>("aantalAfd"));
+		tblColAfdPerRing.setCellFactory(column -> new TableCell<WizardRing, Void>() {
+			@Override
+			protected void updateItem(Void item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+					setText(null);
+				} else {
+					WizardRing ring = (WizardRing) getTableRow().getItem();
+
+					if (ring.getAantalRingen() > 0) {
+						double resultaat = 1.0 * ring.getAantalAfd() / ring.getAantalRingen();
+						setText(String.format("%.1f", resultaat));
+					} else {
+						setText("-");
+					}
+				}
+			}
+		});
+		tblColMaxPerRing.setCellValueFactory(new PropertyValueFactory<>("maxAfdPerRing"));
 		tblColDuur.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
 			@Override
 			public void updateIndex(int i) {
@@ -60,7 +81,7 @@ public class WizardImportRingenController extends WizardImportController{
 				wizardRing.setDuur(newValue);
 			}
 		});
-		tblColDuur.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("duur"));
+		tblColDuur.setCellValueFactory(new PropertyValueFactory<>("duur"));
 		tblColAantalRingen.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
 			@Override
 			public void updateIndex(int i) {
@@ -73,9 +94,10 @@ public class WizardImportRingenController extends WizardImportController{
 			public void commitEditHandler(Integer newValue){
 				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
 				wizardRing.setAantalRingen(newValue);
+				tblRingen.refresh(); //update berekende kolommen
 			}
 		});
-		tblColAantalRingen.setCellValueFactory(new PropertyValueFactory<WizardRing,Integer>("aantalRingen"));
+		tblColAantalRingen.setCellValueFactory(new PropertyValueFactory<>("aantalRingen"));
 
 		tblRingen.setItems(data);
 		tblRingen.getSelectionModel().setCellSelectionEnabled(true);
@@ -98,12 +120,18 @@ public class WizardImportRingenController extends WizardImportController{
 				.filter(ring -> ring.getNaam().equalsIgnoreCase(conf.getRingNaam()))
 				.forEach(ring -> {
 					ring.setDuur(Math.max(ring.getDuur(),conf.getDuur()));
-					ring.setAfdPerRing(Math.max(ring.getAfdPerRing(),conf.getAfdPerRing()));
+					ring.setMaxAfdPerRing(Math.max(ring.getMaxAfdPerRing(),conf.getAfdPerRing()));
 				});
 		}
 		//voorstel aantal ringen
 		for(WizardRing ring : data) {
-			ring.setAantalRingen((int)Math.ceil(1.0 * ring.getAantalAfd() / ring.getAfdPerRing()));
+			ring.setAantalRingen((int) Math.ceil(1.0 * ring.getAantalAfd() / ring.getMaxAfdPerRing()));
+			// als er toch finales zijn, verlaag aantal per ring
+			if (ring.getAantalRingen() > 1) {
+				ring.setMaxAfdPerRing((int) Math.floor(0.85 * ring.getMaxAfdPerRing()));
+				// herbereken aantal ringen
+				ring.setAantalRingen((int) Math.ceil(1.0 * ring.getAantalAfd() / ring.getMaxAfdPerRing()));
+			}
 		}
 	}
 

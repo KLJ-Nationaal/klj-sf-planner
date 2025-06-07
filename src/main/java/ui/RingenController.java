@@ -3,17 +3,13 @@ package ui;
 import domain.Inschrijving;
 import domain.Ring;
 import domain.Sportfeest;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import persistence.Visualisatie;
-import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 
 import java.util.ArrayList;
 
-public class RingenController {
-	@FXML
-	private Agenda<Ring, Inschrijving> agenda;
-	private Sportfeest sportfeest;
-
+public class RingenController extends AgendaController<Ring>{
 	@FXML
 	public void initialize() {
 		agenda.setAllowDragging(true);
@@ -22,19 +18,13 @@ public class RingenController {
 		agenda.setItemValueFactory(inschr -> inschr.getAfdeling().toString());
 		agenda.setItemColorFactory(inschr -> Visualisatie.getKleur(inschr.getAfdeling().getNaam()));
 		agenda.setItemIsHeaderFactory(inschr -> inschr.getTijdslot() == null);
+		agenda.appointmentChangedCallbackProperty().bind(appointmentChangedCallbackObjectProperty);
 	}
 
 	public void setSportfeest(Sportfeest sportfeest) {
-		this.sportfeest = sportfeest;
 		agenda.columns().clear();
 		agenda.columns().addAll(new ArrayList<>(sportfeest.getRingen()));
+		agenda.setAppointmentsProperty(FXCollections.observableArrayList(sportfeest.getInschrijvingen()));
 		agenda.createDefaultSkin();
-		agenda.appointments().clear();
-		agenda.appointments().addAll(sportfeest.getInschrijvingen());
-		agenda.refresh();
-	}
-
-	public Sportfeest getSportfeest() {
-		return sportfeest;
 	}
 }

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
 import ui.importer.WizardImportController;
 import ui.importer.WizardModule;
+import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -389,6 +390,15 @@ public class SportfeestPlannerGUI extends Application {
 		mnuSFSave.disableProperty().bind(sportfeestPlannerService.getSportfeestProperty().isNull());
 		mnuScore.disableProperty().bind(sportfeestPlannerService.getSportfeestProperty().isNull());
 		progressUpdater.setCycleCount(Animation.INDEFINITE);
+		ringenController.setAppointmentChangedCallback(this::refreshAgendas);
+		afdelingenController.setAppointmentChangedCallback(this::refreshAgendas);
+	}
+
+	private Void refreshAgendas(InschrijvingInterface inschrijving) {
+		System.out.println("Callback veranderd:" + inschrijving);
+		ringenController.refresh();
+		afdelingenController.refresh();
+		return null;
 	}
 
 	private void bestSolutionChanged(BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) {

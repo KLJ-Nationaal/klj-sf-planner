@@ -6,12 +6,12 @@
 
     <groupId>klj</groupId>
     <artifactId>KljSfPlanner</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 
     <properties>
         <package.filename>sf-planner</package.filename>
         <package.mainclass>ui.SportfeestPlannerGUI</package.mainclass>
-        <package.year>2024</package.year>
+        <package.year>2025</package.year>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
         <javafx.version>11</javafx.version>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.13</version>
+            <version>1.2.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

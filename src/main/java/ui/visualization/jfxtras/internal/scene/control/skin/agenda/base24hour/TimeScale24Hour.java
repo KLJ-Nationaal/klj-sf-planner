@@ -69,26 +69,27 @@ class TimeScale24Hour extends Pane {
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 		}
-		final int mStart = cal.get(Calendar.HOUR_OF_DAY) * 60;
+		final int mStart = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
 		
 		// draw hours
-		for (int lMinute = 0; lMinute < Marshalling.TOTALETIJD + 16; lMinute++)
+		for (int lMinute = mStart; lMinute < (mStart + Marshalling.TOTALETIJD + 16); lMinute++)
 		{
+			int relMinute = lMinute - mStart;
 			// hour
 			if (lMinute % 60 == 0){
 				// line
 				Line l = new Line(0,10,100,10);
-				l.setId("hourLine" + lMinute);
+				l.setId("hourLine" + relMinute);
 				l.getStyleClass().add("HourLine");
 				l.startXProperty().set(0.0);
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(lMinute / 60.0)) );
+				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)) );
 				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
 				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 				// text
-				Text t = new Text((mStart + lMinute) / 60 + ":00");
+				Text t = new Text(lMinute / 60 + ":00");
 				t.xProperty().bind(layoutHelp.timeWidthProperty.subtract(t.getBoundsInParent().getWidth()).subtract(layoutHelp.timeColumnWhitespaceProperty.get() / 2));
-				t.yProperty().bind(layoutHelp.hourHeightProperty.multiply(lMinute / 60.0));
+				t.yProperty().bind(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0));
 				t.setTranslateY(t.getBoundsInParent().getHeight()); // move it under the line
 				t.getStyleClass().add("HourLabel");
 				t.setFontSmoothingType(FontSmoothingType.LCD);
@@ -98,17 +99,17 @@ class TimeScale24Hour extends Pane {
 			if (lMinute % 30 == 0 && lMinute % 60 != 0){
 				// line
 				Line l = new Line(0,10,100,10);
-				l.setId("HourLine" + lMinute);
+				l.setId("HourLine" + relMinute);
 				l.getStyleClass().add("HourLine");
 				l.startXProperty().bind( NodeUtil.snapXY(layoutHelp.timeWidthProperty));
 				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(lMinute / 60.0)));
+				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
 				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 				// text
-				Text t = new Text((mStart + lMinute) / 60 + ":30");
+				Text t = new Text(lMinute / 60 + ":30");
 				t.xProperty().bind(layoutHelp.timeWidthProperty.subtract(t.getBoundsInParent().getWidth()).subtract(layoutHelp.timeColumnWhitespaceProperty.get() / 2));
-				t.yProperty().bind(layoutHelp.hourHeightProperty.multiply(lMinute / 60.0));
+				t.yProperty().bind(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0));
 				t.setTranslateY(t.getBoundsInParent().getHeight()); // move it under the line
 				t.getStyleClass().add("HourLabel");
 				t.setFontSmoothingType(FontSmoothingType.LCD);
@@ -117,11 +118,11 @@ class TimeScale24Hour extends Pane {
 			//graticule lines
 			if (lMinute % Marshalling.MINMINUTEN == 0) {
 				Line l = new Line(0,10,100,10);
-				l.setId("halfHourLine" + lMinute);
+				l.setId("halfHourLine" + relMinute);
 				l.getStyleClass().add("HalfHourLine");
 				l.startXProperty().bind( NodeUtil.snapXY(layoutHelp.timeWidthProperty));
 				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(lMinute / 60.0)));
+				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
 				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 			}

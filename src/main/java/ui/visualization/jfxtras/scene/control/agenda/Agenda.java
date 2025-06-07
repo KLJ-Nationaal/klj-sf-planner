@@ -29,10 +29,10 @@ package ui.visualization.jfxtras.scene.control.agenda;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.WeakListChangeListener;
-import javafx.print.PrinterJob;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.util.Callback;
@@ -80,16 +80,21 @@ public class Agenda<H, I> extends Control
 	// PROPERTIES
 
 	/** Appointments: */
-	public ObservableList<I> appointments() { return appointments; }
-	final private ObservableList<I> appointments = javafx.collections.FXCollections.observableArrayList();
+	private ObjectProperty<ObservableList<I>> appointments() { return appointmentsProperty; }
+	public final void setAppointmentsProperty(ObservableList<I> value) { appointmentsProperty.set(value); }
+	public final ObservableList<I> getAppointmentsProperty() { return appointmentsProperty.get(); }
+	public  ObjectProperty<ObservableList<I>> appointmentsProperty = new SimpleObjectProperty<>(this, "itemAppointmentsProperty", FXCollections.observableArrayList());
+
+	//public ObservableList<I> appointments() { return appointments; }
+	//final private ObservableList<I> appointments = javafx.collections.FXCollections.observableArrayList();
 	private void constructAppointments() {
 		// when appointments are removed, they can't be selected anymore
-		appointments.addListener((ListChangeListener<I>) changes -> {
+		getAppointmentsProperty().addListener((ListChangeListener<I>) changes -> {
 			while (changes.next()) {
 				for (I lAppointment : changes.getRemoved()) selectedAppointments.remove(lAppointment);
 			}
 		});
-		appointments.addListener( new WeakListChangeListener<>(c -> runnables.forEach(Runnable::run)) );
+		getAppointmentsProperty().addListener( new WeakListChangeListener<>(c -> runnables.forEach(Runnable::run)) );
 	}
 	public void addOnChangeListener(Runnable runnable) {
 		this.runnables.add(runnable);
@@ -99,13 +104,13 @@ public class Agenda<H, I> extends Control
 	}
 	private final List<Runnable> runnables = new ArrayList<>();
 	public List<I> collectWholedayFor(H columnValue) {
-		return appointments.stream()
+		return getAppointmentsProperty().stream()
 			.filter(i -> getItemIsHeaderFactory().call(i))
 			.filter(i -> columnValue.equals(getItemColumnValueFactory().call(i)))
 			.collect(Collectors.toList());
 	}
 	public List<I> collectRegularFor(H columnValue) {
-		return appointments.stream()
+		return getAppointmentsProperty().stream()
 			.filter(i -> !getItemIsHeaderFactory().call(i))
 			.filter(i -> columnValue.equals(getItemColumnValueFactory().call(i)))
 			.collect(Collectors.toList());
@@ -190,22 +195,6 @@ public class Agenda<H, I> extends Control
 	 */
 	public void refresh()
 	{
-		((AgendaSkin)getSkin()).refresh();
+		((AgendaSkin<?>)getSkin()).refresh();
 	}
-	
-	// ==================================================================================================================
-	// Print
-
-    /**
-     * Prints the current agenda using the given printer job.
-     * <p>This method does not modify the state of the job, nor does it call
-     * {@link PrinterJob#endJob}, so the job may be safely reused afterwards.
-     * 
-     * This method is experimental.
-     * 
-     * @param job printer job used for printing
-     */
-    public void print(PrinterJob job) {
-    	((AgendaSkin)getSkin()).print(job);
-    }
 }
