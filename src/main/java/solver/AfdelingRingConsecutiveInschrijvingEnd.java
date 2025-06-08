@@ -24,17 +24,17 @@ public class AfdelingRingConsecutiveInschrijvingEnd implements Comparable<Afdeli
 		this.eindTijd = eindTijd;
 	}
 
-	public Ring getRing() {	return ring; }
+	public Ring getRing() { return ring; }
 	public void setRing(Ring ring) { this.ring = ring; }
 
-	public Afdeling getAfdeling() {	return afdeling; }
+	public Afdeling getAfdeling() { return afdeling; }
 	public void setAfdeling(Afdeling afdeling) { this.afdeling = afdeling; }
 
 	public Discipline getDiscipline() { return discipline; }
 	public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
 
 	public int getEindTijd() { return eindTijd; }
-	public void setEindTijd(int eindTijd) {	this.eindTijd = eindTijd; }
+	public void setEindTijd(int eindTijd) { this.eindTijd = eindTijd; }
 
 	@Override
 	public int compareTo(AfdelingRingConsecutiveInschrijvingEnd o) {
@@ -75,7 +75,7 @@ public class AfdelingRingConsecutiveInschrijvingEnd implements Comparable<Afdeli
 
 	@Override
 	public String toString() {
-		return ring.toString()  + " (" + discipline.toString() + ") " + afdeling.toString() + " tijd " + eindTijd + " - ...";
+		return ring.toString() + " (" + discipline.toString() + ") " + afdeling.toString() + " tijd " + eindTijd + " - ...";
 	}
 
 }

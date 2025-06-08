@@ -30,7 +30,7 @@ public interface InschrijvingInterface {
 	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
 			strengthComparatorClass = TijdslotStrengthComparator.class,
-			nullable=true)
+			nullable = true)
 	Tijdslot getTijdslot();
 	void setTijdslot(Tijdslot tijdslot);
 
@@ -53,7 +53,6 @@ public interface InschrijvingInterface {
 	List<Tijdslot> getTijdslots();
 
 	int getStartTijd();
-
 	int getEindTijd();
 
 	@XmlIDREF
@@ -69,26 +68,29 @@ public interface InschrijvingInterface {
 	@Override
 	String toString();
 
-
 	default Boolean isWholeDay() { return getTijdslot() == null; }
+
 	// either sets the timeslot to null if it's a whole day, otherwise assign the first valid timeslot
 	default void setWholeDay(Boolean b) {
-		if(b) setTijdslot(null);
-		// if it's not a whole day any longer, assign the first timeslot
+		if (b) setTijdslot(null);
+			// if it's not a whole day any longer, assign the first timeslot
 		else setTijdslot((getTijdslot() == null ? getTijdslots().get(0) : getTijdslot()));
 	}
 
 	default Boolean isDraggable() { return Boolean.TRUE; }
 
-	/** This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface **/
-	default int getStartTime() { return getStartTijd();	}
-	default void setStartTime(int startTime) {
-		setTijdslot(getClosestTijdslot(startTime));
-	}
-	/** This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface **/
+	/**
+	 * This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface
+	 **/
+	default int getStartTime() { return getStartTijd(); }
+	default void setStartTime(int startTime) { setTijdslot(getClosestTijdslot(startTime)); }
+
+	/**
+	 * This method is not used by the control, it can only be called when implemented by the user through the default Datetime methods on this interface
+	 **/
 	default int getEndTime() { return getEindTijd(); }
 
-	default Tijdslot getClosestTijdslot(int wantedStartTime){
+	default Tijdslot getClosestTijdslot(int wantedStartTime) {
 		if (getRing() == null) return getTijdslot();
 		return getRing().getTijdslots().stream()
 				.min(Comparator.comparingInt(ts -> Math.abs(ts.getStartTijd() - wantedStartTime)))

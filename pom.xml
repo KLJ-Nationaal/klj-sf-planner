@@ -207,6 +207,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- TODO: vervangen door jpackage en Java naar 14+ -->
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <version>1.7.25</version>

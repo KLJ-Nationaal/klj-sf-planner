@@ -31,17 +31,17 @@ public class WizardImportSportfeestController extends WizardImportController {
 
 	@FXML
 	public void initialize() {
-		txtSportfeest.valueProperty().bindBidirectional( model.sportfeestProperty() );
-		txtTitel.textProperty().bindBidirectional( model.sfTitelProperty());
-		txtDatum.valueProperty().bindBidirectional( model.sfDatumProperty() );
+		txtSportfeest.valueProperty().bindBidirectional(model.sportfeestProperty());
+		txtTitel.textProperty().bindBidirectional(model.sfTitelProperty());
+		txtDatum.valueProperty().bindBidirectional(model.sfDatumProperty());
 	}
 
 	@Override
-	public void activate(boolean fromPrevious){
+	public void activate(boolean fromPrevious) {
 		model.setTitle("Instellingen");
 		model.setSubtitle("Duid het sportfeest aan, de tekst en de datum komen op verdeling");
 
-		if(fromPrevious && (model.getFilename() != null) && !Objects.equals(model.getFilename(), "")) {
+		if (fromPrevious && (model.getFilename() != null) && !Objects.equals(model.getFilename(), "")) {
 			columns = FXCollections.observableArrayList();
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
@@ -62,11 +62,11 @@ public class WizardImportSportfeestController extends WizardImportController {
 	@Validate
 	public boolean validate() throws Exception {
 
-		if( txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
+		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
-			alert.setHeaderText( "Niet toegewezen" );
-			alert.setContentText( "Je moet een bestaande keuze selecteren" );
+			alert.setHeaderText("Niet toegewezen");
+			alert.setContentText("Je moet een bestaande keuze selecteren");
 			alert.showAndWait();
 			return false;
 		}

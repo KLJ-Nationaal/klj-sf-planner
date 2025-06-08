@@ -36,7 +36,7 @@ public class EditingCell<H, I> extends TableCell<H, I> {
 		updateItem(newValue, false);
 	}
 
-	public void commitEditHandler(I newValue){}
+	public void commitEditHandler(I newValue) {}
 
 	@Override
 	public void cancelEdit() {
@@ -67,7 +67,7 @@ public class EditingCell<H, I> extends TableCell<H, I> {
 		}
 	}
 
-	public void updateItemHandler(I item){}
+	public void updateItemHandler(I item) {}
 
 	private void createTextField() {
 		textField = new TextField(getString());

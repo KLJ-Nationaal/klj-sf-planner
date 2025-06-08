@@ -31,7 +31,7 @@ public class Sportfeest {
 	@XmlTransient
 	public List<Inschrijving> getInschrijvingen() {
 		List<Inschrijving> all = new ArrayList<>();
-		for(Afdeling afdeling : afdelingen){
+		for (Afdeling afdeling : afdelingen) {
 			all.addAll(afdeling.getInschrijvingen());
 		}
 		return all;
@@ -41,7 +41,7 @@ public class Sportfeest {
 	@XmlTransient
 	public List<Tijdslot> getTijdslots() {
 		List<Tijdslot> all = new ArrayList<>();
-		for(Ring ring : ringen){
+		for (Ring ring : ringen) {
 			all.addAll(ring.getTijdslots());
 		}
 		return all;
@@ -74,7 +74,7 @@ public class Sportfeest {
 		this.disciplines = disciplines;
 	}
 
-	public Sportfeest(){
+	public Sportfeest() {
 		this(new HashSet<>(), new HashSet<>(), new HashMap<>());
 	}
 }

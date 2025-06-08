@@ -23,16 +23,16 @@ public class AfdelingRingConsecutiveInschrijvingStart implements Comparable<Afde
 		this.discipline = discipline;
 		this.startTijd = startTijd;
 	}
-	public Ring getRing() {	return ring; }
+	public Ring getRing() { return ring; }
 	public void setRing(Ring ring) { this.ring = ring; }
 
-	public Afdeling getAfdeling() {	return afdeling; }
+	public Afdeling getAfdeling() { return afdeling; }
 	public void setAfdeling(Afdeling afdeling) { this.afdeling = afdeling; }
 
 	public Discipline getDiscipline() { return discipline; }
 	public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
 
-	public int getStartTijd() {	return startTijd; }
+	public int getStartTijd() { return startTijd; }
 	public void setStartTijd(int startTijd) { this.startTijd = startTijd; }
 
 	@Override

@@ -1,20 +1,20 @@
 package ui;
 
-import domain.Inschrijving;
 import domain.Ring;
 import domain.Sportfeest;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import persistence.Visualisatie;
+import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.ArrayList;
 
-public class RingenController extends AgendaController<Ring>{
+public class RingenController extends AgendaController<Ring> {
 	@FXML
 	public void initialize() {
 		agenda.setAllowDragging(true);
 		agenda.setColumnValueFactory(Ring::toString);
-		agenda.setItemColumnValueFactory(Inschrijving::getRing);
+		agenda.setItemColumnValueFactory(InschrijvingInterface::getRing);
 		agenda.setItemValueFactory(inschr -> inschr.getAfdeling().toString());
 		agenda.setItemColorFactory(inschr -> Visualisatie.getKleur(inschr.getAfdeling().getNaam()));
 		agenda.setItemIsHeaderFactory(inschr -> inschr.getTijdslot() == null);

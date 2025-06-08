@@ -4,8 +4,8 @@ import ch.qos.logback.classic.Logger;
 import domain.*;
 import domain.importing.Groepsinschrijving;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.*;
@@ -17,8 +17,8 @@ import javax.xml.bind.Unmarshaller;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Marshalling {
@@ -53,9 +53,9 @@ public class Marshalling {
 			Iterator<Row> rowIt = sheet.iterator();
 			Row row = rowIt.next();
 
-			if(row != null) {
+			if (row != null) {
 				row.forEach(cell -> {
-					if(cell.getStringCellValue() != null && !Objects.equals(cell.getStringCellValue(), "")) {
+					if (cell.getStringCellValue() != null && !Objects.equals(cell.getStringCellValue(), "")) {
 						columns.add(cell.getStringCellValue());
 					} else {
 						columns.add("");
@@ -69,7 +69,7 @@ public class Marshalling {
 	}
 
 	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex,
-	              boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colAantal) {
+	                                                                       boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colAantal) {
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = new ArrayList<>();
 		try {
 			File excelFile = new File(filename);
@@ -78,9 +78,9 @@ public class Marshalling {
 			XSSFSheet sheet = workbook.getSheetAt(worksheetIndex);
 			Iterator<Row> rowIt = sheet.iterator();
 
-			if(hasTitles) rowIt.next();
+			if (hasTitles) rowIt.next();
 
-			while(rowIt.hasNext()) {
+			while (rowIt.hasNext()) {
 				Row row = rowIt.next();
 				try {
 					String sportfeest = row.getCell(colSportfeest).getStringCellValue();
@@ -97,7 +97,7 @@ public class Marshalling {
 					}
 
 					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
-				} catch (NullPointerException npe){
+				} catch (NullPointerException npe) {
 					logger.error("Fout op rij {}: {}", row.getRowNum() + 1, npe.getLocalizedMessage());
 				}
 			}
@@ -121,22 +121,22 @@ public class Marshalling {
 			XSSFSheet sheet = workbook.getSheet("Ringen");
 			Iterator<Row> rowIt = sheet.iterator();
 
-			while(rowIt.hasNext()) {
+			while (rowIt.hasNext()) {
 				Row row = rowIt.next();
 
 				String reeks = row.getCell(0).getStringCellValue();
 				String ringNaam = row.getCell(2).getStringCellValue();
 				int minuten = 30;
-				if(row.getCell(3) != null && row.getCell(3).getCellType() == CellType.NUMERIC) {
+				if (row.getCell(3) != null && row.getCell(3).getCellType() == CellType.NUMERIC) {
 					minuten = (int) row.getCell(3).getNumericCellValue();
 				}
 				String extensie = null;
-				if(row.getCell(4) != null && row.getCell(4).getCellType() == CellType.STRING) {
+				if (row.getCell(4) != null && row.getCell(4).getCellType() == CellType.STRING) {
 					extensie = row.getCell(4).getStringCellValue();
 				}
 
-				if(reeks.length() > 12) { //reeksen hebben altijd een naam met meer dan 12 karakters
-					if(minuten == 30) logger.error("Kon aantal minuten voor discipline " + reeks + " niet bepalen!");
+				if (reeks.length() > 12) { //reeksen hebben altijd een naam met meer dan 12 karakters
+					if (minuten == 30) logger.error("Kon aantal minuten voor discipline " + reeks + " niet bepalen!");
 
 					Discipline discipline = new Discipline();
 					discipline.setNaam(reeks);
@@ -145,7 +145,7 @@ public class Marshalling {
 					discipline.setDuur(minuten);
 					sf.getDisciplines().put(reeks, discipline);
 				} else {
-					if(row.getRowNum() > 10) break; //dit is waarschijnlijk het einde van de lijst
+					if (row.getRowNum() > 10) break; //dit is waarschijnlijk het einde van de lijst
 				}
 			}
 
@@ -155,23 +155,24 @@ public class Marshalling {
 
 			sf.setLocatie(rowIt.next().getCell(1).getStringCellValue());
 			sf.setDatum(Date.from(rowIt.next().getCell(1).getDateCellValue().toInstant()));
-			rowIt.next(); rowIt.next(); //rijen overslaan
+			rowIt.next();
+			rowIt.next(); //rijen overslaan
 
 			int aantalInschrijvingen = 0;
 
-			while(rowIt.hasNext()) {
+			while (rowIt.hasNext()) {
 				Row row = rowIt.next();
 
 				String afdelingsNaam = row.getCell(0).getStringCellValue();
 				String disciplineNaam = row.getCell(1).getStringCellValue();
 				int aantal = 1;
-				if(row.getCell(2) != null && row.getCell(2).getCellType() == CellType.NUMERIC) {
+				if (row.getCell(2) != null && row.getCell(2).getCellType() == CellType.NUMERIC) {
 					aantal = (int) row.getCell(2).getNumericCellValue();
 				} else {
 					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}.", afdelingsNaam, disciplineNaam);
 				}
 				String ringLetter;
-				if(row.getCell(3) != null) {
+				if (row.getCell(3) != null) {
 					ringLetter = row.getCell(3).getStringCellValue();
 				} else {
 					ringLetter = null;
@@ -182,20 +183,20 @@ public class Marshalling {
 				Ring ring = sf.getRingen().stream()
 						.filter(rng -> ringNaam.equals(rng.getNaam()))
 						.findAny()
-						.orElse(new Ring(ringNaam, ringLetter, sf.getRingen().size()+1));
+						.orElse(new Ring(ringNaam, ringLetter, sf.getRingen().size() + 1));
 				Afdeling afdeling = sf.getAfdelingen().stream()
 						.filter(afd -> afdelingsNaam.equals(afd.getNaam()))
 						.findAny()
 						.orElse(new Afdeling(afdelingsNaam));
 				ring.addDiscipline(sf.getDisciplines().get(disciplineNaam));
 
-				for(int i = 0; i < aantal; i++) {  //aantal korpsen
+				for (int i = 0; i < aantal; i++) {  //aantal korpsen
 					Inschrijving inschrijving = new Inschrijving();
 					inschrijving.setAfdeling(afdeling);
 					inschrijving.setRing(ring);
 					inschrijving.setId(aantalInschrijvingen);
 					inschrijving.setDiscipline(sf.getDisciplines().get(disciplineNaam));
-					if(aantal > 1) inschrijving.setKorps(i+1);
+					if (aantal > 1) inschrijving.setKorps(i + 1);
 					afdeling.getInschrijvingen().add(inschrijving);
 					aantalInschrijvingen++;
 				}
@@ -213,7 +214,7 @@ public class Marshalling {
 		return new Sportfeest();
 	}
 
-	public static Sportfeest unmarshallXml(String filename){
+	public static Sportfeest unmarshallXml(String filename) {
 		//TODO diagnostische XML uitvoer van score
 		Sportfeest sf = new Sportfeest();
 		try {
@@ -230,7 +231,7 @@ public class Marshalling {
 		return sf;
 	}
 
-	public static void marshallXml(Sportfeest map, String filename){
+	public static void marshallXml(Sportfeest map, String filename) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
 			Marshaller m = context.createMarshaller();
@@ -246,15 +247,15 @@ public class Marshalling {
 	}
 
 	public static void marshall(Sportfeest map, String path) throws Exception {
-		if(path.endsWith(".xlsx")) path = path.substring(0, path.length() - 5);
+		if (path.endsWith(".xlsx")) path = path.substring(0, path.length() - 5);
 		File fileAfdelingen = new File(path + "-afdelingen.xlsx");
 		File fileRingen = new File(path + "-ringen.xlsx");
-		if(fileAfdelingen.exists() && !fileAfdelingen.delete())
+		if (fileAfdelingen.exists() && !fileAfdelingen.delete())
 			throw new Exception("Kon bestaand bestand " + fileAfdelingen.getName() + " niet overschrijven. Houd Excel dit bestand misschien open?");
-		if(fileRingen.exists() && !fileRingen.delete())
+		if (fileRingen.exists() && !fileRingen.delete())
 			throw new Exception("Kon bestaand bestand " + fileRingen.getName() + " niet overschrijven. Houd Excel dit bestand misschien open?");
 
-		int rijen = (int)Math.ceil(1.0 * TABELMINUTEN / MINMINUTEN / 2) + 3;
+		int rijen = (int) Math.ceil(1.0 * TABELMINUTEN / MINMINUTEN / 2) + 3;
 		fixRingNumbersOrder(map);
 
 		//***************************************
@@ -266,7 +267,7 @@ public class Marshalling {
 		List<Afdeling> sortedAfdelingen = map.getAfdelingen().stream()
 				.sorted(Comparator.comparing(Afdeling::getNaam))
 				.collect(Collectors.toList());
-		for(Afdeling afdeling : sortedAfdelingen) {
+		for (Afdeling afdeling : sortedAfdelingen) {
 			XSSFSheet sheet = wb.createSheet(afdeling.getNaam());
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
@@ -293,30 +294,30 @@ public class Marshalling {
 				Date d = df.parse(STARTTIJD);
 				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(d);
-				cal1.add(Calendar.MINUTE, MINMINUTEN * (i-2));
+				cal1.add(Calendar.MINUTE, MINMINUTEN * (i - 2));
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(d);
-				cal2.add(Calendar.MINUTE, MINMINUTEN * (i-2) + (TABELMINUTEN/2+3));
+				cal2.add(Calendar.MINUTE, MINMINUTEN * (i - 2) + (TABELMINUTEN / 2 + 3));
 				for (int col = 0; col < 9; col++) {
 					Cell cell = row.createCell(col);
-					if(col == 0 || col == 5) cell.setCellValue(df.format(cal1.getTime()));
-					if(col == 2 || col == 7) cell.setCellValue(df.format(cal2.getTime()));
-					if(col == 0 || col == 5 || col == 2 || col == 7) cell.setCellStyle(styles.get("tijd"));
-					if(col == 1 || col == 6 || col == 3 || col == 8) cell.setCellStyle(styles.get("ring"));
-					if(i == (rijen-1) && (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
+					if (col == 0 || col == 5) cell.setCellValue(df.format(cal1.getTime()));
+					if (col == 2 || col == 7) cell.setCellValue(df.format(cal2.getTime()));
+					if (col == 0 || col == 5 || col == 2 || col == 7) cell.setCellStyle(styles.get("tijd"));
+					if (col == 1 || col == 6 || col == 3 || col == 8) cell.setCellStyle(styles.get("ring"));
+					if (i == (rijen - 1) && (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
 				}
 			}
 
 			//gegevens invullen
-			for (int i = 0; i <= TABELMINUTEN; i = i + MINMINUTEN){
-				int row = 2 + (i % (TABELMINUTEN/2+3)) / 3;
-				int column = (i > (TABELMINUTEN/2) ? 3 : 1);
+			for (int i = 0; i <= TABELMINUTEN; i = i + MINMINUTEN) {
+				int row = 2 + (i % (TABELMINUTEN / 2 + 3)) / 3;
+				int column = (i > (TABELMINUTEN / 2) ? 3 : 1);
 				final int time = i;
 				List<Inschrijving> inschrijvingList = afdeling.getInschrijvingen().stream()
 						.filter(inschr -> inschr.getTijdslot() != null)
 						.filter(inschr -> inschr.getTijdslot().isIncluded(time))
 						.collect(Collectors.toList());
-				for(Inschrijving inschrijving : inschrijvingList) {
+				for (Inschrijving inschrijving : inschrijvingList) {
 					boolean edited = false;
 
 					if (inschrijving.getDiscipline().isMeisjes()) {
@@ -335,32 +336,32 @@ public class Marshalling {
 
 			//SF informatie
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			String dateString = format.format( new Date()   );
+			String dateString = format.format(new Date());
 
 			String sfInfo = "Sportfeest te " + map.getLocatie() + " op "
 					+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 			Row infoRow = sheet.createRow(1);
 			infoRow.setHeightInPoints(20);
-			for(int i = 0; i <= 3; i++) {
+			for (int i = 0; i <= 3; i++) {
 				Cell infoCell = infoRow.createCell(i);
-				if(i==0) infoCell.setCellValue(sfInfo);
+				if (i == 0) infoCell.setCellValue(sfInfo);
 				infoCell.setCellStyle(styles.get("info"));
 			}
 			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 3));
-			for(int i = 5; i <= 8; i++) {
+			for (int i = 5; i <= 8; i++) {
 				Cell infoCell = infoRow.createCell(i);
-				if(i==5) infoCell.setCellValue(sfInfo);
+				if (i == 5) infoCell.setCellValue(sfInfo);
 				infoCell.setCellStyle(styles.get("info"));
 			}
 			sheet.addMergedRegion(new CellRangeAddress(1, 1, 5, 8));
 
 			//dikke lijn rondomrond
-			CellRangeAddress region = CellRangeAddress.valueOf("A1:D"+rijen);
+			CellRangeAddress region = CellRangeAddress.valueOf("A1:D" + rijen);
 			RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, sheet);
 			RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, sheet);
 			RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
 			RegionUtil.setBorderRight(BorderStyle.MEDIUM, region, sheet);
-			region = CellRangeAddress.valueOf("F1:I"+rijen);
+			region = CellRangeAddress.valueOf("F1:I" + rijen);
 			RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, sheet);
 			RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, sheet);
 			RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
@@ -369,7 +370,7 @@ public class Marshalling {
 			//kolombreedtes instellen
 			int[] columnWidths = {6, 28, 6, 28, 2, 6, 28, 6, 28};
 			for (int i = 0; i < 9; i++) {
-				sheet.setColumnWidth(i, columnWidths[i]*256);
+				sheet.setColumnWidth(i, columnWidths[i] * 256);
 			}
 		}
 
@@ -390,10 +391,10 @@ public class Marshalling {
 
 		//tabblad groepen maken
 		List<String> ringGroepen = new ArrayList<>();
-		for(Discipline discipline : map.getDisciplines().values()) ringGroepen.add(discipline.getRingNaam());
+		for (Discipline discipline : map.getDisciplines().values()) ringGroepen.add(discipline.getRingNaam());
 		List<String> sortedRingGroepen = ringGroepen.stream().distinct().sorted().collect(Collectors.toList());
 
-		for(String ringGroep : sortedRingGroepen) {
+		for (String ringGroep : sortedRingGroepen) {
 			XSSFSheet sheet = wb.createSheet(ringGroep);
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
@@ -414,15 +415,15 @@ public class Marshalling {
 			int aantalrijen = (int) Math.ceil(
 					(3 + (TOTALETIJD / 2f / ringGroepDuur))
 							* Math.ceil(sortedRingen.size() / 2f));
-			for(int i = 0; i <= aantalrijen; i++){
+			for (int i = 0; i <= aantalrijen; i++) {
 				Row row = sheet.createRow(i);
 				row.setHeightInPoints(ROW_HEIGHT);
 			}
 
-			for(int i = 0; i < sortedRingen.size(); i++) {
+			for (int i = 0; i < sortedRingen.size(); i++) {
 				Ring currentRing = sortedRingen.get(i);
 				int tbRowBase = (int) ((i / 2) * (4 + (TOTALETIJD / ringGroepDuur / 2f)));
-				int tbColBase = (i % 2 ) * 5;
+				int tbColBase = (i % 2) * 5;
 
 				//Ringtitel
 				Cell titleCell = sheet.getRow(tbRowBase).createCell(tbColBase);
@@ -457,45 +458,45 @@ public class Marshalling {
 						.collect(Collectors.toList());
 
 				//font voor extensie
-				XSSFFont fontExtensie= wb.createFont();
+				XSSFFont fontExtensie = wb.createFont();
 				fontExtensie.setItalic(true);
 				fontExtensie.setFontHeight(9);
 
-				for(Inschrijving inschrijving : ringInschrijvingen){
+				for (Inschrijving inschrijving : ringInschrijvingen) {
 					if (inschrijving.getTijdslot() == null) {
 						logger.error("Inschrijving in {} van {} heeft geen tijdslot toegewezen!",
 								inschrijving.getRing(), inschrijving.getAfdeling());
 					} else {
 						String tijd = inschrijving.getTijdslot().getStartTijdFormatted();
 						boolean tijdFound = false;
-						for(int j = 0; j < aantalrijen; j++) {
+						for (int j = 0; j < aantalrijen; j++) {
 							Row row = sheet.getRow(tbRowBase + j);
 							Cell cell = row.getCell(tbColBase);
-							if(cell != null && cell.getStringCellValue().equals(tijd)) {
+							if (cell != null && cell.getStringCellValue().equals(tijd)) {
 								String value = row.getCell(tbColBase + 1).getStringCellValue()
 										+ inschrijving.getAfdeling().getNaam()
 										+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "");
 								XSSFRichTextString rts = new XSSFRichTextString(value);
-								if(inschrijving.getDiscipline().getExtensie() != null)
+								if (inschrijving.getDiscipline().getExtensie() != null)
 									rts.append("  " + inschrijving.getDiscipline().getExtensie(), fontExtensie);
 								row.getCell(tbColBase + 1).setCellValue(rts);
 								tijdFound = true;
 								break;
 							}
 							cell = row.getCell(tbColBase + 2);
-							if(cell != null && cell.getStringCellValue().equals(tijd)) {
+							if (cell != null && cell.getStringCellValue().equals(tijd)) {
 								String value = row.getCell(tbColBase + 3).getStringCellValue()
 										+ inschrijving.getAfdeling().getNaam()
 										+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "");
 								XSSFRichTextString rts = new XSSFRichTextString(value);
-								if(inschrijving.getDiscipline().getExtensie() != null)
+								if (inschrijving.getDiscipline().getExtensie() != null)
 									rts.append("  " + inschrijving.getDiscipline().getExtensie(), fontExtensie);
 								row.getCell(tbColBase + 3).setCellValue(rts);
 								tijdFound = true;
 								break;
 							}
 						}
-						if(!tijdFound)
+						if (!tijdFound)
 							logger.error("Inschrijving in {} van {}, kon het tijdslot in de ring niet vinden!",
 									inschrijving.getRing(), inschrijving.getAfdeling());
 
@@ -504,11 +505,11 @@ public class Marshalling {
 
 				//voeg bovenaan de ring een eindemarkering in indien groter dan één pagina
 				int lastBreakIndex = 0;
-				if(sheet.getRowBreaks().length - 1 >= 0) {
+				if (sheet.getRowBreaks().length - 1 >= 0) {
 					lastBreakIndex = sheet.getRowBreaks()[sheet.getRowBreaks().length - 1];
 				}
 				int lastRowPageIndex = tbRowBase + (int) Math.ceil(slots / 2f) - lastBreakIndex;
-				if(lastRowPageIndex >= 550 / ROW_HEIGHT) {
+				if (lastRowPageIndex >= 550 / ROW_HEIGHT) {
 					sheet.setRowBreak(tbRowBase - 1);
 				}
 
@@ -517,7 +518,7 @@ public class Marshalling {
 			//kolombreedtes instellen
 			double[] columnWidths = {6, 27, 6, 27, 7, 6, 27, 6, 27};
 			for (int i = 0; i < 9; i++) {
-				sheet.setColumnWidth(i, (int)columnWidths[i]*256);
+				sheet.setColumnWidth(i, (int) columnWidths[i] * 256);
 			}
 		}
 
@@ -532,16 +533,16 @@ public class Marshalling {
 	}
 
 	private static void fixRingNumbersOrder(Sportfeest map) {
-		for(Afdeling afdeling : map.getAfdelingen()) {
+		for (Afdeling afdeling : map.getAfdelingen()) {
 			List<Inschrijving> sortedInschrijvingen = afdeling.getInschrijvingen().stream()
 					.sorted(Comparator.comparing(Inschrijving::getTijdslot))
 					.collect(Collectors.toList());
 			HashMap<Discipline, Integer> ringCounter = new HashMap<>();
-			for(Inschrijving inschrijving : sortedInschrijvingen) {
+			for (Inschrijving inschrijving : sortedInschrijvingen) {
 				int count = 1;
-				if(ringCounter.containsKey(inschrijving.getDiscipline()))
+				if (ringCounter.containsKey(inschrijving.getDiscipline()))
 					count += ringCounter.get(inschrijving.getDiscipline());
-				if(inschrijving.getKorps()>0) {
+				if (inschrijving.getKorps() > 0) {
 					inschrijving.setKorps(count);
 					ringCounter.put(inschrijving.getDiscipline(), count);
 				}
@@ -552,7 +553,7 @@ public class Marshalling {
 	private static boolean setCellInschrijvingForAfdeling(Map<String, CellStyle> styles, XSSFRow row, int column, int i, Inschrijving inschrijving) {
 		Cell cell;
 		if (i == inschrijving.getTijdslot().getStartTijd()) {
-			cell = row.getCell(column-1);
+			cell = row.getCell(column - 1);
 			cell.setCellStyle(styles.get("tijdonderleeg"));
 			cell = row.getCell(column);
 			cell.setCellValue((!cell.getStringCellValue().isEmpty() ? cell.getStringCellValue() + " " : "")
@@ -565,9 +566,9 @@ public class Marshalling {
 					.orElse(""));
 			cell.setCellStyle(styles.get("ringonderleeg"));
 		} else {
-			cell = row.getCell(column-1);
+			cell = row.getCell(column - 1);
 			//cell.setCellValue("");
-			if (i != inschrijving.getTijdslot().getEindTijd() - MINMINUTEN){
+			if (i != inschrijving.getTijdslot().getEindTijd() - MINMINUTEN) {
 				cell.setCellStyle(styles.get("tijdonderleeg"));
 				cell = row.getCell(column);
 				cell.setCellStyle(styles.get("ringonderleeg"));
@@ -576,11 +577,11 @@ public class Marshalling {
 		return cell != null;
 	}
 
-	private static Map<String, CellStyle> createStyles(XSSFWorkbook wb){
+	private static Map<String, CellStyle> createStyles(XSSFWorkbook wb) {
 		Map<String, CellStyle> styles = new HashMap<>();
 		CellStyle style;
 		Font hoofdingFont = wb.createFont();
-		hoofdingFont.setFontHeightInPoints((short)11);
+		hoofdingFont.setFontHeightInPoints((short) 11);
 		hoofdingFont.setColor(IndexedColors.WHITE.getIndex());
 		hoofdingFont.setBold(true);
 
@@ -593,9 +594,9 @@ public class Marshalling {
 		styles.put("hoofding", style);
 
 		Font standaardFont10 = wb.createFont();
-		standaardFont10.setFontHeightInPoints((short)10);
+		standaardFont10.setFontHeightInPoints((short) 10);
 		Font standaardFont11 = wb.createFont();
-		standaardFont11.setFontHeightInPoints((short)11);
+		standaardFont11.setFontHeightInPoints((short) 11);
 
 		style = wb.createCellStyle();
 		style.setFillForegroundColor(IndexedColors.BLACK.getIndex());

@@ -36,7 +36,7 @@ public class WizardImportColumnsController extends WizardImportController {
 	}
 
 	@Override
-	public void activate(boolean fromPrevious){
+	public void activate(boolean fromPrevious) {
 		model.setTitle("Kolommen toewijzen");
 		model.setSubtitle("Selecteer de juiste kolommen uit het Excel bestand");
 	}
@@ -62,38 +62,38 @@ public class WizardImportColumnsController extends WizardImportController {
 	@Validate
 	public boolean validate() throws Exception {
 
-		if( txtSportfeest.getValue() == null || txtSportfeest.getValue().equals("") ) {
+		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().equals("")) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
-			alert.setHeaderText( "Niet toegewezen kolom" );
-			alert.setContentText( "Kolom Sportfeest niet toegewezen" );
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Sportfeest niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}
 
-		if( txtAfdeling.getValue() == null || txtAfdeling.getValue().equals("") ) {
+		if (txtAfdeling.getValue() == null || txtAfdeling.getValue().equals("")) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
-			alert.setHeaderText( "Niet toegewezen kolom" );
-			alert.setContentText( "Kolom Afdeling niet toegewezen" );
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Afdeling niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}
 
-		if( txtDiscipline.getValue() == null || txtDiscipline.getValue().equals("") ) {
+		if (txtDiscipline.getValue() == null || txtDiscipline.getValue().equals("")) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
-			alert.setHeaderText( "Niet toegewezen kolom" );
-			alert.setContentText( "Kolom Discipline niet toegewezen" );
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Discipline niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}
 
-		if( txtAantal.getValue() == null || txtAantal.getValue().equals("") ) {
+		if (txtAantal.getValue() == null || txtAantal.getValue().equals("")) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
-			alert.setHeaderText( "Niet toegewezen kolom" );
-			alert.setContentText( "Kolom Aantal niet toegewezen" );
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Aantal niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}

@@ -41,20 +41,20 @@ public class AnalyseResultaatController {
 		scoreDirector.setWorkingSolution(sportfeest);
 		sportfeest.setScore((HardSoftScore) scoreDirector.calculateScore());
 		TreeItem<String> root = new TreeItem<>("Score: " + sportfeest.getScore().toString());
-		if(!sportfeest.getScore().isFeasible()) {
+		if (!sportfeest.getScore().isFeasible()) {
 			root.getChildren().add(new TreeItem<>("DEZE OPLOSSING IS NIET HAALBAAR!", getIcon(IconType.EXCLAMATION)));
 		}
 
-		for(ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()){
+		for (ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()) {
 			ImageView icon = getIcon(IconType.WARNING);
-			if( ((HardSoftScore)cmt.getScore()).getHardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
+			if (((HardSoftScore) cmt.getScore()).getHardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
 			TreeItem<String> constr = new TreeItem<>(
 					"Voorwaarde: " + cmt.getConstraintName() + "\nGewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount(),
-					icon );
-			for(ConstraintMatch cm : cmt.getConstraintMatchSet()){
+					icon);
+			for (ConstraintMatch cm : cmt.getConstraintMatchSet()) {
 				constr.getChildren().add(new TreeItem<>(cm.getJustificationList().stream()
 						.map(Object::toString)
-						.collect( Collectors.joining( ", " ) )));
+						.collect(Collectors.joining(", "))));
 			}
 			root.getChildren().add(constr);
 		}
@@ -66,11 +66,11 @@ public class AnalyseResultaatController {
 
 	@FXML
 	public void CloseAction(ActionEvent actionEvent) {
-		Stage stage = (Stage) ((Button)actionEvent.getSource()).getScene().getWindow();
+		Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
 		stage.close();
 	}
 
-	private ImageView getIcon(int iconType){
+	private ImageView getIcon(int iconType) {
 		ColorAdjust bright = new ColorAdjust(0, 1, 1, 1);
 		ImageView imageview = new ImageView(new Image(getClass().getResourceAsStream("/icons/times-circle.png")));
 		Lighting lighting = new Lighting(new Light.Distant(45, 90, Color.RED));

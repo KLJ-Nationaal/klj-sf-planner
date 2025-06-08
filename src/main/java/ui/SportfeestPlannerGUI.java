@@ -79,7 +79,7 @@ public class SportfeestPlannerGUI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		SportfeestPlannerGUI.primaryStage = primaryStage;
-		Parent root = FXMLLoader.load( getClass().getResource("/ui/Main.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/ui/Main.fxml"));
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		this.setTitle("");
@@ -94,21 +94,21 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	private void setTitle(String subtitle) {
-		if(subtitle.equals("")) ((Stage)primaryStage).setTitle("KLJ Sportfeest Planner");
-		else ((Stage)primaryStage).setTitle("KLJ Sportfeest Planner - " + subtitle);
+		if (subtitle.isEmpty()) ((Stage) primaryStage).setTitle("KLJ Sportfeest Planner");
+		else ((Stage) primaryStage).setTitle("KLJ Sportfeest Planner - " + subtitle);
 	}
 
 	@FXML
-	public void SFOpen(ActionEvent actionEvent){
+	public void SFOpen(ActionEvent actionEvent) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("XML-bestanden", "*.xml")
-				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
-		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showOpenDialog(parentWindow);
-		if(selectedFile != null) {
+		if (selectedFile != null) {
 			try {
 				Sportfeest sf = Marshalling.unmarshallXml(selectedFile.getCanonicalPath());
 				setNewSportfeest(sf);
@@ -144,7 +144,7 @@ public class SportfeestPlannerGUI extends Application {
 
 	private void setNewSportfeest(Sportfeest sf) {
 		ringverdeling.clear();
-		for(Afdeling afdeling : sf.getAfdelingen()){
+		for (Afdeling afdeling : sf.getAfdelingen()) {
 			ringverdeling.addAll(afdeling.getInschrijvingen());
 		}
 		afdelingenController.setSportfeest(sf);
@@ -154,16 +154,16 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	@FXML
-	public void SFSave(ActionEvent actionEvent){
+	public void SFSave(ActionEvent actionEvent) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("XML-bestanden", "*.xml")
-				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
-		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showSaveDialog(parentWindow);
-		if(selectedFile != null) {
+		if (selectedFile != null) {
 			try {
 				Marshalling.marshallXml(sportfeestPlannerService.getSportfeest(), selectedFile.getCanonicalPath());
 			} catch (IOException e) {
@@ -177,14 +177,14 @@ public class SportfeestPlannerGUI extends Application {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Excel-bestanden", "*.xlsx;*.xlsb;*.xlsm")
-				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
-		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showOpenDialog(parentWindow);
-		if(selectedFile != null) {
+		if (selectedFile != null) {
 			try {
-				final Injector injector = Guice.createInjector( new WizardModule() );
+				final Injector injector = Guice.createInjector(new WizardModule());
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/WizardImport.fxml"),
 						null,
 						new JavaFXBuilderFactory(),
@@ -199,9 +199,8 @@ public class SportfeestPlannerGUI extends Application {
 				stage.initModality(Modality.WINDOW_MODAL);
 				stage.initOwner(primaryStage);
 				stage.show();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				logger.debug(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -231,13 +230,13 @@ public class SportfeestPlannerGUI extends Application {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Excel-bestanden", "*.xlsx")
-				,new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
+				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
 		fileChooser.setInitialFileName("uurschema");
-		Window parentWindow = ((MenuItem)(actionEvent.getTarget())).getParentPopup().getOwnerWindow();
+		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showSaveDialog(parentWindow);
-		if(selectedFile != null) {
+		if (selectedFile != null) {
 			try {
 				Marshalling.marshall(sportfeestPlannerService.getSportfeest(), selectedFile.getPath());
 			} catch (Exception e) {
@@ -271,7 +270,7 @@ public class SportfeestPlannerGUI extends Application {
 							.orElse(new AbstractMap.SimpleEntry<Ring, Long>(null, 0L))
 							.getKey();
 					inschrijvingen.forEach(inschrijving -> {
-						logger.debug("Ring " + leastUsedRing + " toewijzen aan inschrijving " + inschrijving);
+						logger.debug("Ring {} toewijzen aan inschrijving {}", leastUsedRing, inschrijving);
 						inschrijving.setRing(leastUsedRing);
 					});
 				});
@@ -293,9 +292,8 @@ public class SportfeestPlannerGUI extends Application {
 			stage.initModality(Modality.NONE);
 			stage.initOwner(primaryStage);
 			stage.show();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.debug(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -316,7 +314,7 @@ public class SportfeestPlannerGUI extends Application {
 			}
 		});
 		tblColRingnaam.setCellValueFactory(inschr -> new SimpleStringProperty(((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getDiscipline().getRingNaam()));
-		tblColRingnummer.setCellFactory(col -> new EditingCell<Inschrijving, String>(){
+		tblColRingnummer.setCellFactory(col -> new EditingCell<Inschrijving, String>() {
 			@Override
 			public void updateItemHandler(String str) {
 				Inschrijving inschrijving = (Inschrijving) getTableRow().getItem();
@@ -329,7 +327,7 @@ public class SportfeestPlannerGUI extends Application {
 				}
 			}
 			@Override
-			public void commitEditHandler(String newValue){
+			public void commitEditHandler(String newValue) {
 				Inschrijving inschr = (Inschrijving) getTableRow().getItem();
 				inschr.setRing(inschr.getMogelijkeRingen().stream()
 						.filter(ring -> ring.getLetter().equals(newValue.trim()))
@@ -339,7 +337,7 @@ public class SportfeestPlannerGUI extends Application {
 		});
 		tblColRingnummer.setCellValueFactory(inschr -> new SimpleStringProperty(
 				Optional.ofNullable(
-						((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getRing())
+								((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getRing())
 						.map(Ring::getLetter)
 						.orElse("")
 		));
@@ -402,7 +400,7 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	private void bestSolutionChanged(BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) {
-		if(bestSolutionChangedEvent.isEveryProblemFactChangeProcessed()) {
+		if (bestSolutionChangedEvent.isEveryProblemFactChangeProcessed()) {
 			//TODO: optie om te updaten
 			//final Sportfeest nSportfeest = (Sportfeest) bestSolutionChangedEvent.getNewBestSolution();
 			Platform.runLater(() -> {
@@ -414,8 +412,8 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	private void progressUpdate() {
-		if(sportfeestPlannerService.isRunning()) {
-			if(sportfeestPlannerService.getTimeScheduled() == Long.MAX_VALUE) {
+		if (sportfeestPlannerService.isRunning()) {
+			if (sportfeestPlannerService.getTimeScheduled() == Long.MAX_VALUE) {
 				prgStatusProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 			} else {
 				prgStatusProgress.setProgress(sportfeestPlannerService.getTimeScheduled());

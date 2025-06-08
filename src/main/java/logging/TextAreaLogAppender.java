@@ -45,18 +45,18 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 			//if the buffer is full and we are in timeout, wait
 			boolean bufferoverflow = false;
 			while (count >= buf.length && inTimeout.get()) {
-				if(!bufferoverflow) {
+				if (!bufferoverflow) {
 					bufferoverflow = true;
 					System.err.println("Buffer overflow in TextAreaLogAppender!");
 				}
 				try {
 					Thread.sleep(20);
-				} catch (InterruptedException e) { e.printStackTrace();	}
+				} catch (InterruptedException e) { e.printStackTrace(); }
 			}
-			buf[count++] = (byte)b;
+			buf[count++] = (byte) b;
 
 			//check not in timeout and set to timeout
-			if(inTimeout.compareAndSet(false, true)) {
+			if (inTimeout.compareAndSet(false, true)) {
 				//writeout the buffer
 				flush();
 				//setup some wait time before the next write
@@ -64,7 +64,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 					try {
 						Thread.sleep(250);
 						inTimeout.set(false);
-					} catch (InterruptedException e) { e.printStackTrace();	}
+					} catch (InterruptedException e) { e.printStackTrace(); }
 				};
 				Thread thread = new Thread(runnable);
 				thread.start();
@@ -72,7 +72,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 		}
 
 		public synchronized void flush() {
-			if(textArea == null) return;
+			if (textArea == null) return;
 			if (count > 0) {
 				String text = new String(buf, 0, count);
 

@@ -34,13 +34,13 @@ public class Inschrijving implements InschrijvingInterface {
 
 	@XmlAttribute(name = "id")
 	@XmlID
-	public String getRef() { return "I"+ id; }
+	public String getRef() { return "I" + id; }
 	public void setRef(String s) { this.id = Integer.parseInt(s.substring(1)); }
 
 	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
 			strengthComparatorClass = TijdslotStrengthComparator.class,
-			nullable=true)
+			nullable = true)
 	public Tijdslot getTijdslot() {
 		return tijdslot;
 	}
@@ -62,25 +62,25 @@ public class Inschrijving implements InschrijvingInterface {
 	public Inschrijving getVerbondenInschrijving() { return verbondenInschrijving; }
 	public void setVerbondenInschrijving(Inschrijving inschrijving) { this.verbondenInschrijving = inschrijving; }
 
-	public int getKorps() {	return korps; }
+	public int getKorps() { return korps; }
 	public void setKorps(int korps) { this.korps = korps; }
 
 	@ValueRangeProvider(id = "Tijdslot")
-	public List<Tijdslot> getTijdslots(){ return ring.getTijdslots(); }
+	public List<Tijdslot> getTijdslots() { return ring.getTijdslots(); }
 
-	public int getStartTijd(){
+	public int getStartTijd() {
 		if (tijdslot == null) return 0;
 		return tijdslot.getStartTijd();
 	}
 
-	public int getEindTijd(){
+	public int getEindTijd() {
 		if (tijdslot == null) return 0;
 		return tijdslot.getEindTijd();
 	}
 
 	@XmlIDREF
-	public void setMogelijkeRingen(List<Ring> ringen) {	this.mogelijkeRingen = ringen; }
-	public List<Ring> getMogelijkeRingen(){	return this.mogelijkeRingen; }
+	public void setMogelijkeRingen(List<Ring> ringen) { this.mogelijkeRingen = ringen; }
+	public List<Ring> getMogelijkeRingen() { return this.mogelijkeRingen; }
 
 	public boolean isVerbonden(Inschrijving o) {
 		if (this == o) return false;

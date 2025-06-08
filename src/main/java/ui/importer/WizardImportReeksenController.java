@@ -18,20 +18,21 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 
-public class WizardImportReeksenController extends WizardImportController{
+public class WizardImportReeksenController extends WizardImportController {
 	@FXML
-	private TableView tblReeksen;
-
+	private TableView<Reeks> tblReeksen;
 	@FXML
-	private TableColumn tblColDiscipline, tblColAantal, tblColRing, tblColExtensie;
+	private TableColumn<Reeks, String> tblColDiscipline, tblColRing, tblColExtensie;
+	@FXML
+	private TableColumn<Reeks, Integer> tblColAantal;
 
 	@Inject
 	WizardData model;
 
 	@FXML
 	public void initialize() {
-		tblColDiscipline.setCellValueFactory(new PropertyValueFactory<Reeks,String>("naam"));
-		tblColAantal.setCellValueFactory(new PropertyValueFactory<Reeks,Integer>("aantal"));
+		tblColDiscipline.setCellValueFactory(new PropertyValueFactory<>("naam"));
+		tblColAantal.setCellValueFactory(new PropertyValueFactory<>("aantal"));
 		tblColRing.setCellFactory(col -> new EditingCell<Reeks, String>() {
 			@Override
 			public void updateIndex(int i) {
@@ -41,12 +42,12 @@ public class WizardImportReeksenController extends WizardImportController{
 				}
 			}
 			@Override
-			public void commitEditHandler(String newValue){
+			public void commitEditHandler(String newValue) {
 				Reeks reeks = (Reeks) getTableRow().getItem();
 				reeks.setRingNaam(newValue.trim());
 			}
 		});
-		tblColRing.setCellValueFactory(new PropertyValueFactory<Reeks,String>("ringNaam"));
+		tblColRing.setCellValueFactory(new PropertyValueFactory<>("ringNaam"));
 		tblColExtensie.setCellFactory(col -> new EditingCell<Reeks, String>() {
 			@Override
 			public void updateIndex(int i) {
@@ -56,23 +57,23 @@ public class WizardImportReeksenController extends WizardImportController{
 				}
 			}
 			@Override
-			public void commitEditHandler(String newValue){
+			public void commitEditHandler(String newValue) {
 				Reeks reeks = (Reeks) getTableRow().getItem();
 				reeks.setExtensie(newValue.trim());
 			}
 		});
-		tblColExtensie.setCellValueFactory(new PropertyValueFactory<Reeks,String>("extensie"));
+		tblColExtensie.setCellValueFactory(new PropertyValueFactory<>("extensie"));
 
 		tblReeksen.setItems(model.getReeksen());
 		tblReeksen.getSelectionModel().setCellSelectionEnabled(true);
 	}
 
 	@Override
-	public void activate(boolean fromPrevious){
+	public void activate(boolean fromPrevious) {
 		model.setTitle("Disciplines aan ringen toewijzen");
 		model.setSubtitle("Disciplines die in dezelfde ring moeten zitten, worden hier aangeduid, eventueel aangevuld met een extensie");
 
-		if(fromPrevious) {
+		if (fromPrevious) {
 			model.getReeksen().clear();
 			//TODO: errors in Marshalling controlleren
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
@@ -98,11 +99,11 @@ public class WizardImportReeksenController extends WizardImportController{
 	@Validate
 	public boolean validate() throws Exception {
 		//ringnamen moeten minstens 6 characters zijn
-		if(!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam() != null && reeks.getRingNaam().length() > 5)) {
+		if (!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam() != null && reeks.getRingNaam().length() > 5)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Ringen");
-			alert.setHeaderText( "Ringnaam te kort" );
-			alert.setContentText( "Alle ringnamen moeten minsten 6 characters lang zijn" );
+			alert.setHeaderText("Ringnaam te kort");
+			alert.setContentText("Alle ringnamen moeten minsten 6 characters lang zijn");
 			alert.showAndWait();
 			return false;
 		}

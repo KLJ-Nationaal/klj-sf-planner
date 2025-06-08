@@ -15,14 +15,15 @@ import java.util.ArrayList;
 
 public class Visualisatie {
 	private static final String[] kleuren = {
-		"#ff0000","#ff4d00","#ff8400","#ffb700","#ffd000","#ffea00",
-		"#fbff00","#e1ff00","#aaff00","#77ff00","#00ff40","#00ffa6",
-		"#00ffd9","#00eeff","#00d5ff","#00a2ff","#006fff","#9900ff",
-		"#b300ff","#cc00ff","#e600ff","#ff00ff","#ffbaba","#ffc8ba",
-		"#ffdeba","#fff9ba","#feffba","#e8ffba","#daffba","#c6ffba",
-		"#baffe0","#baf4ff","#badfff","#bac9ff","#c7baff","#d4baff",
-		"#e3baff","#ffbaff","#cfcfcf","#b0b0b0"
+			"#ff0000", "#ff4d00", "#ff8400", "#ffb700", "#ffd000", "#ffea00",
+			"#fbff00", "#e1ff00", "#aaff00", "#77ff00", "#00ff40", "#00ffa6",
+			"#00ffd9", "#00eeff", "#00d5ff", "#00a2ff", "#006fff", "#9900ff",
+			"#b300ff", "#cc00ff", "#e600ff", "#ff00ff", "#ffbaba", "#ffc8ba",
+			"#ffdeba", "#fff9ba", "#feffba", "#e8ffba", "#daffba", "#c6ffba",
+			"#baffe0", "#baf4ff", "#badfff", "#bac9ff", "#c7baff", "#d4baff",
+			"#e3baff", "#ffbaff", "#cfcfcf", "#b0b0b0"
 	};
+
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	private static class Afdelingsopties {
@@ -30,10 +31,11 @@ public class Visualisatie {
 		public ArrayList<Afdelingsoptie> list = new ArrayList<>();
 
 	}
+
 	private static Afdelingsopties afdelingsopties = new Afdelingsopties();
 
 	public static String getKleur(String afdeling) {
-		if(afdelingsopties.list == null) unMarshall();
+		if (afdelingsopties.list == null) unMarshall();
 
 		return afdelingsopties.list.stream()
 				.filter(afdelingsoptie -> afdelingsoptie.naam.equals(afdeling))

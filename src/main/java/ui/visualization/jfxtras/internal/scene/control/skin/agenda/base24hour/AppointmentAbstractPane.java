@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011-2020, JFXtras
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *    Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *    Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *    Neither the name of the organization nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * Neither the name of the organization nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,6 @@
 package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
 
 import domain.Inschrijving;
-import domain.Tijdslot;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
 import javafx.scene.Cursor;
@@ -43,26 +42,24 @@ import jfxtras.util.NodeUtil;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.Comparator;
-import java.util.function.Supplier;
 
-abstract class AppointmentAbstractPane<H, I> extends Pane {
+abstract class AppointmentAbstractPane<H> extends Pane {
 
-	AppointmentAbstractPane(InschrijvingInterface appointment, LayoutHelp layoutHelp)
-	{
+	AppointmentAbstractPane(InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
 		this.appointment = appointment;
 		this.layoutHelp = layoutHelp;
-		appointmentMenu = new AppointmentMenu(this, appointment, layoutHelp);
-		
+		appointmentMenu = new AppointmentMenu<>(this, appointment, layoutHelp);
+
 		// for debugging setStyle("-fx-border-color:PINK;-fx-border-width:1px;");
 		getStyleClass().add("Appointment");
 		color = "#AAAAAA";
 		if (layoutHelp.skinnable.getItemColorFactory() != null) {
-			color = (String) layoutHelp.skinnable.getItemColorFactory().call(appointment);
+			color = layoutHelp.skinnable.getItemColorFactory().call(appointment);
 		}
 		setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
 		layoutHelp.divergentSelectedProperty.addListener((observable, oldValue, newValue) -> {
 			Object col = layoutHelp.skinnable.getItemValueFactory().call(appointment);
-			if(newValue.equals("") | col.equals(newValue) ) {
+			if (newValue.isEmpty() | col.equals(newValue)) {
 				setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
 			} else {
 				setStyle("-fx-background-color: #efefef; -fx-border-color: " + color + "; -fx-border-width: 1px; -fx-fill: efefef;");
@@ -71,41 +68,43 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 
 		// tooltip
 		if (layoutHelp.skinnable.getItemValueFactory() != null) {
-			Tooltip.install(this, new Tooltip((String) layoutHelp.skinnable.getItemValueFactory().call(appointment)));
+			Tooltip.install(this, new Tooltip(layoutHelp.skinnable.getItemValueFactory().call(appointment)));
 		}
-		
+
 		// dragging
 		setupDragging();
-		
+
 		// react to changes in the selected appointments
-		layoutHelp.skinnable.selectedAppointments().addListener( new WeakListChangeListener<>(listChangeListener) );
+		ListChangeListener<InschrijvingInterface> listChangeListener = changes -> setOrRemoveSelected();
+		layoutHelp.skinnable.selectedAppointments().addListener(new WeakListChangeListener<>(listChangeListener));
 	}
+
 	final protected InschrijvingInterface appointment;
-	final protected LayoutHelp layoutHelp;
-	final protected AppointmentMenu appointmentMenu;
-	final private ListChangeListener<InschrijvingInterface> listChangeListener = changes -> setOrRemoveSelected();
+	final protected LayoutHelp<H> layoutHelp;
+	final protected AppointmentMenu<H> appointmentMenu;
 	protected String color;
 
 	private void setOrRemoveSelected() {
 		// remove class if not selected
-		if ( getStyleClass().contains(SELECTED) // visually selected
-		  && !layoutHelp.skinnable.selectedAppointments().contains(appointment) // but no longer in the selected collection
+		if (getStyleClass().contains(SELECTED) // visually selected
+				&& !layoutHelp.skinnable.selectedAppointments().contains(appointment) // but no longer in the selected collection
 		) {
 			getStyleClass().remove(SELECTED);
 		}
-		
+
 		// add class if selected
-		if ( !getStyleClass().contains(SELECTED) // visually not selected
-		  && layoutHelp.skinnable.selectedAppointments().contains(appointment) // but still in the selected collection
+		if (!getStyleClass().contains(SELECTED) // visually not selected
+				&& layoutHelp.skinnable.selectedAppointments().contains(appointment) // but still in the selected collection
 		) {
-			getStyleClass().add(SELECTED); 
+			getStyleClass().add(SELECTED);
 		}
 	}
+
 	private static final String SELECTED = "Selected";
-	
+
 	private void setupDragging() {
 		// start drag
-		setOnMousePressed( (mouseEvent) -> {
+		setOnMousePressed((mouseEvent) -> {
 			// action without select: middle button
 			if (mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
 				handleAction();
@@ -143,22 +142,22 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			mouseActuallyHasDragged = false;
 			dragging = true;
 		});
-		
+
 		// visualize dragging
-		setOnMouseDragged( (mouseEvent) -> {
+		setOnMouseDragged((mouseEvent) -> {
 			if (!dragging) return;
 
 			// we handle this event
 			mouseEvent.consume();
-			
+
 			// show the drag rectangle when we actually drag
 			if (dragRectangle == null) {
 				setCursor(Cursor.MOVE);
 				// TODO: when dropping an appointment overlapping the day edge, the appointment is correctly(?) split in two. When dragging up such a splitted appointment the visualization does not match the actual time 
-				dragRectangle = new Rectangle(0, 0, NodeUtil.snapWH(0, getWidth()), NodeUtil.snapWH(0, (appointment.isWholeDay() ? layoutHelp.titleDateTimeHeightProperty.get() : getHeight())) );
+				dragRectangle = new Rectangle(0, 0, NodeUtil.snapWH(0, getWidth()), NodeUtil.snapWH(0, (appointment.isWholeDay() ? layoutHelp.titleDateTimeHeightProperty.get() : getHeight())));
 				dragRectangle.getStyleClass().add("GhostRectangle");
 				layoutHelp.dragPane.getChildren().add(dragRectangle);
-				
+
 				// place a text node at the bottom of the resize rectangle
 				startTimeText = new Text("...");
 				startTimeText.getStyleClass().add("GhostRectangleText");
@@ -169,7 +168,7 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 				layoutHelp.dragPane.getChildren().add(endTimeText);
 
 				// we use a clone for calculating the current time during the drag
-				appointmentForDrag = new AppointmentForDrag((Inschrijving) appointment);
+				appointmentForDrag = new AppointmentForDrag(appointment);
 			}
 
 			//double lX = NodeUtil.xInParent(this, layoutHelp.dragPane) + (mouseEvent.getX() - startX); // top-left of the original appointment pane + offset of drag
@@ -177,7 +176,7 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			double lY = NodeUtil.yInParent(this, layoutHelp.dragPane) + (mouseEvent.getY() - startY); // top-left of the original appointment pane + offset of drag
 
 			// update the start time
-			double lMinutes = (lY - dragRectangle.getHeight()/2) / layoutHelp.hourHeightProperty.get() * 60;
+			double lMinutes = (lY - dragRectangle.getHeight() / 2) / layoutHelp.hourHeightProperty.get() * 60;
 			appointmentForDrag.setStartTime((int) lMinutes);
 			appointmentForDrag.setWholeDay(lMinutes < 0);
 			startTimeText.setText(appointmentForDrag.isWholeDay() ? "" : layoutHelp.formatTime(appointmentForDrag.getStartTime()));
@@ -186,24 +185,24 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			// move the drag rectangle
 			dragRectangle.setX(lX);
 			dragRectangle.setY((appointmentForDrag.getStartTime() * layoutHelp.hourHeightProperty.get() / 60) + layoutHelp.headerHeightProperty.get());
-			startTimeText.layoutXProperty().set(dragRectangle.getX()); 
+			startTimeText.layoutXProperty().set(dragRectangle.getX());
 			startTimeText.layoutYProperty().set(dragRectangle.getY() - 3);
-			endTimeText.layoutXProperty().set(dragRectangle.getX()); 
+			endTimeText.layoutXProperty().set(dragRectangle.getX());
 			endTimeText.layoutYProperty().set(dragRectangle.getY() + dragRectangle.getHeight() + endTimeText.getBoundsInParent().getHeight() - 3);
 			mouseActuallyHasDragged = true;
 
 			// determine start and end DateTime of the drag, if we're dragging between panes (TODO)
-			Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+			Pair<H, Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 			if (dragTime != null) { // not dropped somewhere outside
 				//TODO: handleDrag(appointmentForDrag, dragPickupDateTime, dragTime);
 			}
-			
+
 		});
 
 		// end drag
 		setOnMouseReleased((mouseEvent) -> {
 			if (!dragging) return;
-			
+
 			// we handle this event
 			mouseEvent.consume();
 			dragging = false;
@@ -218,10 +217,10 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			appointment.setTijdslot(appointmentForDrag.getTijdslot());
 			//Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 			//if (dragTime != null) { // not dropped somewhere outside
-				//handleDrag(appointment, dragPickupDateTime, dragTime);
+			//handleDrag(appointment, dragPickupDateTime, dragTime);
 
-				// relayout whole week
-				layoutHelp.skin.setupAppointments();
+			// relayout whole week
+			layoutHelp.skin.setupAppointments();
 			layoutHelp.callAppointmentChangedCallback(appointment);
 			//}
 
@@ -238,18 +237,19 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			}
 		});
 	}
+
 	private boolean dragging = false;
 	private Rectangle dragRectangle = null;
 	private double startX = 0;
 	private double startY = 0;
-	private Pair<H,Integer> dragPickupDateTime;
+	private Pair<H, Integer> dragPickupDateTime;
 	private boolean mouseActuallyHasDragged = false;
 	private Text startTimeText = null;
 	private Text endTimeText = null;
 	private InschrijvingInterface appointmentForDrag = null;
 
 	public static class AppointmentForDrag extends Inschrijving {
-		public AppointmentForDrag(Inschrijving inschrijving) {
+		public AppointmentForDrag(InschrijvingInterface inschrijving) {
 			this.setStartTime(inschrijving.getStartTime());
 			this.setAfdeling(inschrijving.getAfdeling());
 			this.setDiscipline(inschrijving.getDiscipline());
@@ -257,25 +257,25 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			this.setTijdslot(inschrijving.getTijdslot());
 			this.setKorps(inschrijving.getKorps());
 			this.setMogelijkeRingen(inschrijving.getMogelijkeRingen());
-			this.setVerbondenInschrijving(inschrijving.getVerbondenInschrijving());
+			this.setVerbondenInschrijving(((Inschrijving) inschrijving).getVerbondenInschrijving());
 			this.setRing(inschrijving.getRing());
 		}
 	}
 
-	private void handleDrag(InschrijvingInterface appointment, Pair<H,Integer> dragPickupDateTime, Pair<H,Integer> dragDropDateTime) {
-		
+	private void handleDrag(InschrijvingInterface appointment, Pair<H, Integer> dragPickupDateTime, Pair<H, Integer> dragDropDateTime) {
+
 		// drag start
 		boolean dragPickupInDayBody = dragInDayBody(dragPickupDateTime);
 		boolean dragPickupInDayHeader = dragInDayHeader(dragPickupDateTime);
 		//TODO: dragPickupDateTime = layoutHelp.roundTimeToNearestMinutes(dragPickupDateTime, roundToMinutes);
-		
+
 		// drag end
 		boolean dragDropInDayBody = dragInDayBody(dragDropDateTime);
 		boolean dragDropInDayHeader = dragInDayHeader(dragDropDateTime);
 		//TODO: dragDropDateTime = layoutHelp.roundTimeToNearestMinutes(dragDropDateTime, roundToMinutes);
 
 		// if dragged from day to day or header to header
-		if ( (dragPickupInDayBody && dragDropInDayBody) || (dragPickupInDayHeader && dragDropInDayHeader)) {
+		if ((dragPickupInDayBody && dragDropInDayBody) || (dragPickupInDayHeader && dragDropInDayHeader)) {
 			// simply add the duration
 			if (appointment.getTijdslot() != null) {
 				appointment.setTijdslot(appointment.getClosestTijdslot(dragDropDateTime.getValue()));
@@ -283,20 +283,20 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			//TODO: setRing for between ringen
 			layoutHelp.callAppointmentChangedCallback(appointment);
 		}
-		
+
 		// if dragged from day to header
-		else if ( (dragPickupInDayBody && dragDropInDayHeader) ) {
+		else if ((dragPickupInDayBody && dragDropInDayHeader)) {
 			appointment.setTijdslot(null);
 			//TODO: setRing for between ringen
 			layoutHelp.callAppointmentChangedCallback(appointment);
 		}
-		
+
 		// if dragged from header to day
-		else if ( (dragPickupInDayHeader && dragDropInDayBody) ) {
+		else if ((dragPickupInDayHeader && dragDropInDayBody)) {
 			appointment.setTijdslot(
 					appointment.getTijdslots().stream()
 							.min(Comparator.comparingInt(i -> Math.abs(i.getStartTijd() - dragDropDateTime.getValue())))
-							.orElseGet((Supplier<? extends Tijdslot>) appointment.getTijdslot())
+							.orElse(appointment.getTijdslot())
 			);
 			//TODO: setRing for between ringen
 			layoutHelp.callAppointmentChangedCallback(appointment);
@@ -311,13 +311,13 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 
 		//double click
 		if (mouseEvent.getClickCount() > 1) {
-			if(layoutHelp.divergentSelectedProperty.getValue().equals(layoutHelp.skinnable.getItemValueFactory().call(appointment))) {
+			if (layoutHelp.divergentSelectedProperty.getValue().equals(layoutHelp.skinnable.getItemValueFactory().call(appointment))) {
 				layoutHelp.divergentSelectedProperty.setValue("");
 			} else {
-				layoutHelp.divergentSelectedProperty.setValue((String)layoutHelp.skinnable.getItemValueFactory().call(appointment));
+				layoutHelp.divergentSelectedProperty.setValue(layoutHelp.skinnable.getItemValueFactory().call(appointment));
 			}
 		}
-		
+
 		// add to selection if not already added
 		if (!layoutHelp.skinnable.selectedAppointments().contains(appointment)) {
 			layoutHelp.skinnable.selectedAppointments().add(appointment);
@@ -327,7 +327,7 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 			layoutHelp.skinnable.selectedAppointments().remove(appointment);
 		}
 	}
-	
+
 	private void handleAction() {
 		// has the client registered an action
 		Callback<InschrijvingInterface, Void> lCallback = layoutHelp.skinnable.getActionCallback();
@@ -336,17 +336,16 @@ abstract class AppointmentAbstractPane<H, I> extends Pane {
 		}
 	}
 
-	private boolean dragInDayBody(Pair<H,Integer> localDateTime) {
-		return ((InschrijvingInterface)localDateTime.getKey()).getTijdslot() != null;
+	private boolean dragInDayBody(Pair<H, Integer> localDateTime) {
+		return ((InschrijvingInterface) localDateTime.getKey()).getTijdslot() != null;
 	}
-	
-	private boolean dragInDayHeader(Pair<H,Integer> localDateTime) {
-		return ((InschrijvingInterface)localDateTime.getKey()).getTijdslot() == null;
+
+	private boolean dragInDayHeader(Pair<H, Integer> localDateTime) {
+		return ((InschrijvingInterface) localDateTime.getKey()).getTijdslot() == null;
 	}
-	
-	public String toString()
-	{
+
+	public String toString() {
 		return "appointment=" + appointment.getStartTime() + "-" + appointment.getEndTime()
-		     + ";" + "summary=" + appointment.toString();
+				+ ";" + "summary=" + appointment;
 	}
 }

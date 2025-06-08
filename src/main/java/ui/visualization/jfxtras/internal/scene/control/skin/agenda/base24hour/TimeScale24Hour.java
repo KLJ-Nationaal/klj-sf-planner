@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011-2020, JFXtras
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *    Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *    Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *    Neither the name of the organization nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * Neither the name of the organization nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,13 +39,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-class TimeScale24Hour extends Pane {
+class TimeScale24Hour<H> extends Pane {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(TimeScale24Hour.class);
 
-	TimeScale24Hour(Pane pane, LayoutHelp layoutHelp) {
+	TimeScale24Hour(Pane pane, LayoutHelp<H> layoutHelp) {
 		this.pane = pane;
 		this.layoutHelp = layoutHelp;
-		
+
 		// position
 		layoutXProperty().set(0);
 		layoutYProperty().set(0);
@@ -54,13 +54,14 @@ class TimeScale24Hour extends Pane {
 
 		// make completely transparent for all events
 		setMouseTransparent(true);
-		
+
 		// add contents
 		addTimeScale();
 	}
+
 	final Pane pane;
-	final LayoutHelp layoutHelp;
-	
+	final LayoutHelp<H> layoutHelp;
+
 	private void addTimeScale() {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 		Calendar cal = Calendar.getInstance();
@@ -70,21 +71,20 @@ class TimeScale24Hour extends Pane {
 			logger.error(e.getLocalizedMessage());
 		}
 		final int mStart = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-		
+
 		// draw hours
-		for (int lMinute = mStart; lMinute < (mStart + Marshalling.TOTALETIJD + 16); lMinute++)
-		{
+		for (int lMinute = mStart; lMinute < (mStart + Marshalling.TOTALETIJD + 16); lMinute++) {
 			int relMinute = lMinute - mStart;
 			// hour
-			if (lMinute % 60 == 0){
+			if (lMinute % 60 == 0) {
 				// line
-				Line l = new Line(0,10,100,10);
+				Line l = new Line(0, 10, 100, 10);
 				l.setId("hourLine" + relMinute);
 				l.getStyleClass().add("HourLine");
 				l.startXProperty().set(0.0);
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)) );
-				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
-				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
+				l.startYProperty().bind(NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
+				l.endXProperty().bind(NodeUtil.snapXY(pane.widthProperty()));
+				l.endYProperty().bind(NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 				// text
 				Text t = new Text(lMinute / 60 + ":00");
@@ -96,15 +96,15 @@ class TimeScale24Hour extends Pane {
 				getChildren().add(t);
 			}
 			// half hour
-			if (lMinute % 30 == 0 && lMinute % 60 != 0){
+			if (lMinute % 30 == 0 && lMinute % 60 != 0) {
 				// line
-				Line l = new Line(0,10,100,10);
+				Line l = new Line(0, 10, 100, 10);
 				l.setId("HourLine" + relMinute);
 				l.getStyleClass().add("HourLine");
-				l.startXProperty().bind( NodeUtil.snapXY(layoutHelp.timeWidthProperty));
-				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
-				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
+				l.startXProperty().bind(NodeUtil.snapXY(layoutHelp.timeWidthProperty));
+				l.endXProperty().bind(NodeUtil.snapXY(pane.widthProperty()));
+				l.startYProperty().bind(NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
+				l.endYProperty().bind(NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 				// text
 				Text t = new Text(lMinute / 60 + ":30");
@@ -117,13 +117,13 @@ class TimeScale24Hour extends Pane {
 			}
 			//graticule lines
 			if (lMinute % Marshalling.MINMINUTEN == 0) {
-				Line l = new Line(0,10,100,10);
+				Line l = new Line(0, 10, 100, 10);
 				l.setId("halfHourLine" + relMinute);
 				l.getStyleClass().add("HalfHourLine");
-				l.startXProperty().bind( NodeUtil.snapXY(layoutHelp.timeWidthProperty));
-				l.endXProperty().bind( NodeUtil.snapXY(pane.widthProperty()));
-				l.startYProperty().bind( NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
-				l.endYProperty().bind( NodeUtil.snapXY(l.startYProperty()));
+				l.startXProperty().bind(NodeUtil.snapXY(layoutHelp.timeWidthProperty));
+				l.endXProperty().bind(NodeUtil.snapXY(pane.widthProperty()));
+				l.startYProperty().bind(NodeUtil.snapXY(layoutHelp.hourHeightProperty.multiply(relMinute / 60.0)));
+				l.endYProperty().bind(NodeUtil.snapXY(l.startYProperty()));
 				getChildren().add(l);
 			}
 		}

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class WizardImportRingenController extends WizardImportController{
+public class WizardImportRingenController extends WizardImportController {
 	@FXML
 	private TableView<WizardRing> tblRingen;
 
@@ -76,7 +76,7 @@ public class WizardImportRingenController extends WizardImportController{
 				}
 			}
 			@Override
-			public void commitEditHandler(Integer newValue){
+			public void commitEditHandler(Integer newValue) {
 				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
 				wizardRing.setDuur(newValue);
 			}
@@ -91,7 +91,7 @@ public class WizardImportRingenController extends WizardImportController{
 				}
 			}
 			@Override
-			public void commitEditHandler(Integer newValue){
+			public void commitEditHandler(Integer newValue) {
 				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
 				wizardRing.setAantalRingen(newValue);
 				tblRingen.refresh(); //update berekende kolommen
@@ -104,7 +104,7 @@ public class WizardImportRingenController extends WizardImportController{
 	}
 
 	@Override
-	public void activate(boolean fromPrevious){
+	public void activate(boolean fromPrevious) {
 		model.setTitle("Ringen instellen");
 		model.setSubtitle("Vul hier het aantal ringen en minuten per ring in");
 
@@ -115,16 +115,16 @@ public class WizardImportRingenController extends WizardImportController{
 				.forEach((ring, aantal) -> data.add(new WizardRing(ring, aantal)));
 		data.sort(Comparator.comparing(WizardRing::getNaam));
 		//duur voor ring
-		for(Reeks conf : ReeksDefinitie.unMarshall()){
+		for (Reeks conf : ReeksDefinitie.unMarshall()) {
 			data.stream()
-				.filter(ring -> ring.getNaam().equalsIgnoreCase(conf.getRingNaam()))
-				.forEach(ring -> {
-					ring.setDuur(Math.max(ring.getDuur(),conf.getDuur()));
-					ring.setMaxAfdPerRing(Math.max(ring.getMaxAfdPerRing(),conf.getAfdPerRing()));
-				});
+					.filter(ring -> ring.getNaam().equalsIgnoreCase(conf.getRingNaam()))
+					.forEach(ring -> {
+						ring.setDuur(Math.max(ring.getDuur(), conf.getDuur()));
+						ring.setMaxAfdPerRing(Math.max(ring.getMaxAfdPerRing(), conf.getAfdPerRing()));
+					});
 		}
 		//voorstel aantal ringen
-		for(WizardRing ring : data) {
+		for (WizardRing ring : data) {
 			ring.setAantalRingen((int) Math.ceil(1.0 * ring.getAantalAfd() / ring.getMaxAfdPerRing()));
 			// als er toch finales zijn, verlaag aantal per ring
 			if (ring.getAantalRingen() > 1) {
@@ -138,20 +138,20 @@ public class WizardImportRingenController extends WizardImportController{
 	@Validate
 	public boolean validate() throws Exception {
 		//aantal ringen groter dan 0
-		if(!data.stream().allMatch(ring -> ring.getAantalRingen() > 0)) {
+		if (!data.stream().allMatch(ring -> ring.getAantalRingen() > 0)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Ringen");
-			alert.setHeaderText( "Te weinig ringen" );
-			alert.setContentText( "Aantal ringen moet groter zijn dan 0 " );
+			alert.setHeaderText("Te weinig ringen");
+			alert.setContentText("Aantal ringen moet groter zijn dan 0 ");
 			alert.showAndWait();
 			return false;
 		}
 		//schema minuten groter dan 2
-		if(!data.stream().allMatch(ring -> ring.getDuur() > 2)) {
+		if (!data.stream().allMatch(ring -> ring.getDuur() > 2)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Ringen");
-			alert.setHeaderText( "Schema te kort" );
-			alert.setContentText( "Alle schema's moeten minsten 3 minuten zijn" );
+			alert.setHeaderText("Schema te kort");
+			alert.setContentText("Alle schema's moeten minsten 3 minuten zijn");
 			alert.showAndWait();
 			return false;
 		}
@@ -202,7 +202,7 @@ public class WizardImportRingenController extends WizardImportController{
 							.findAny()
 							.orElse(new Afdeling(inschr.getAfdeling()));
 
-					for(int i = 0; i < inschr.getAantal(); i++) {  //aantal korpsen
+					for (int i = 0; i < inschr.getAantal(); i++) {  //aantal korpsen
 						Inschrijving inschrijving = new Inschrijving();
 						inschrijving.setAfdeling(afdeling);
 						inschrijving.setId(aantal.getAndAdd(1));
@@ -212,9 +212,9 @@ public class WizardImportRingenController extends WizardImportController{
 										.anyMatch(discipline -> discipline.getNaam().equals(inschr.getSport())))
 								.collect(Collectors.toList())
 						);
-						if(inschrijving.getMogelijkeRingen().size() == 1)
+						if (inschrijving.getMogelijkeRingen().size() == 1)
 							inschrijving.setRing(inschrijving.getMogelijkeRingen().get(0));
-						if(inschr.getAantal() > 1) inschrijving.setKorps(i+1);
+						if (inschr.getAantal() > 1) inschrijving.setKorps(i + 1);
 						afdeling.getInschrijvingen().add(inschrijving);
 					}
 					sf.getAfdelingen().add(afdeling);
@@ -234,6 +234,6 @@ public class WizardImportRingenController extends WizardImportController{
 
 		});
 
-		if(dataCallback != null) dataCallback.accept(sf);
+		if (dataCallback != null) dataCallback.accept(sf);
 	}
 }

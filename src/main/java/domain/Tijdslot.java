@@ -21,7 +21,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	private Ring ring;
 	@XmlAttribute
 	@XmlID
-	@XmlJavaTypeAdapter(type=int.class,value=IntegerAdapter.class)
+	@XmlJavaTypeAdapter(type = int.class, value = IntegerAdapter.class)
 	private final int id;
 
 	public Tijdslot(int startTijd, int duur, Ring ring) {
@@ -32,8 +32,8 @@ public class Tijdslot implements Comparable<Tijdslot> {
 		this.id = ring.getRingIndex() * 10000 + startTijd;
 	}
 
-	public Tijdslot(){
-		this(0,1, new Ring());
+	public Tijdslot() {
+		this(0, 1, new Ring());
 	}
 
 	public Ring getRing() {
@@ -85,7 +85,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	}
 
 	public boolean isOverlap(Tijdslot a) {
-		if(a == null) return false;
+		if (a == null) return false;
 		return a.startTijd < eindTijd && a.eindTijd > startTijd;
 	}
 
@@ -94,8 +94,8 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	}
 
 	public int timeBetween(Tijdslot a) {
-		if(a == null) return Integer.MAX_VALUE;
-		if(startTijd < a.startTijd) return a.startTijd - eindTijd;
+		if (a == null) return Integer.MAX_VALUE;
+		if (startTijd < a.startTijd) return a.startTijd - eindTijd;
 		else return startTijd - a.eindTijd;
 	}
 

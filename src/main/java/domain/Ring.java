@@ -28,7 +28,7 @@ public class Ring {
 		disciplines = new HashSet<>();
 	}
 
-	public Ring(){
+	public Ring() {
 		this("Ring zonder naam " + Math.random(), "", 0);
 	}
 
@@ -40,7 +40,7 @@ public class Ring {
 
 	@XmlID
 	@XmlAttribute(name = "id")
-	public String getRef() { return "R"+ index; }
+	public String getRef() { return "R" + index; }
 	public void setRef(String s) { this.index = Integer.parseInt(s.substring(1)); }
 
 	public int getRingIndex() { return index; }
@@ -52,11 +52,11 @@ public class Ring {
 	}
 
 	@XmlTransient
-	public HashSet<Discipline> getDisciplines() { return disciplines;}
+	public HashSet<Discipline> getDisciplines() { return disciplines; }
 	public void addDiscipline(Discipline discipline) {
 		disciplines.add(discipline);
 		//tijdslots voor ring maken als ze nog niet bestaan
-		if(tijdslots.isEmpty()) {
+		if (tijdslots.isEmpty()) {
 			int totaletijd = Marshalling.TOTALETIJDRINGMETFINALE;
 			if (Objects.equals(letter, "")) totaletijd = Marshalling.TOTALETIJD;
 			for (int i = 0; i < totaletijd; i = i + discipline.getDuur()) {  //TODO: property van maken
@@ -68,9 +68,9 @@ public class Ring {
 
 	public String getVerkorteNotatie() {
 		return naam
-				.replace("meisjes","")
-				.replace("jongens","")
-				.replace("gemengd","");
+				.replace("meisjes", "")
+				.replace("jongens", "")
+				.replace("gemengd", "");
 	}
 
 	@Override

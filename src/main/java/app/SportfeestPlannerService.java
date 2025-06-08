@@ -29,30 +29,30 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 	private final List<SolverEventListener<Sportfeest>> eventListeners = new ArrayList<>();
 	private final ObjectProperty<Sportfeest> sportfeestProperty = new SimpleObjectProperty<>(this, "sportfeest");
 
-	public SportfeestPlannerService(){
+	public SportfeestPlannerService() {
 		solver.addEventListener((BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) -> eventListeners.forEach(
 				solverEventListener -> solverEventListener.bestSolutionChanged(bestSolutionChangedEvent)
 		));
 	}
 
 	public ObjectProperty<Sportfeest> getSportfeestProperty() { return sportfeestProperty; }
-	public void setSportfeest(Sportfeest sportfeest){ sportfeestProperty.set(sportfeest); }
+	public void setSportfeest(Sportfeest sportfeest) { sportfeestProperty.set(sportfeest); }
 	public Sportfeest getSportfeest() { return sportfeestProperty.get(); }
 
 	public Long getTimeScheduled() {
-		if(solverFactory.getSolverConfig().getTerminationConfig() != null)
+		if (solverFactory.getSolverConfig().getTerminationConfig() != null)
 			//TODO: werkt niet !!!
 			return solverFactory.getSolverConfig().getTerminationConfig().calculateTimeMillisSpentLimit();
 		return Long.MAX_VALUE;
 	}
 
-	public ScoreDirector<Sportfeest> getScoreDirector(){
+	public ScoreDirector<Sportfeest> getScoreDirector() {
 		ScoreDirector<Sportfeest> scoreDirector = solver.getScoreDirectorFactory().buildScoreDirector();
 		scoreDirector.setWorkingSolution(sportfeestProperty.get());
 		return scoreDirector;
 	}
 
-	public void addSolverEventListener(SolverEventListener<Sportfeest> solverEventListener){
+	public void addSolverEventListener(SolverEventListener<Sportfeest> solverEventListener) {
 		eventListeners.add(solverEventListener);
 	}
 
@@ -61,20 +61,20 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 		super.succeeded();
 		logger.info("Einde van de berekening");
 		logger.info("Score: " + sportfeestProperty.get().getScore().toString());
-		if(!sportfeestProperty.get().getScore().isFeasible()) logger.warn("DEZE OPLOSSING IS NIET HAALBAAR!");
+		if (!sportfeestProperty.get().getScore().isFeasible()) logger.warn("DEZE OPLOSSING IS NIET HAALBAAR!");
 
 		ScoreDirector<Sportfeest> scoreDirector = solver.getScoreDirectorFactory().buildScoreDirector();
 		scoreDirector.setWorkingSolution(sportfeestProperty.get());
-		for(ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()){
+		for (ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()) {
 			Consumer<String> c = logger::info;
-			if( ((HardSoftScore)cmt.getScore()).getHardScore() != 0) c = logger::warn;
+			if (((HardSoftScore) cmt.getScore()).getHardScore() != 0) c = logger::warn;
 
 			c.accept("  Voorwaarde: " + cmt.getConstraintName());
 			c.accept("  Gewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount());
-			for(ConstraintMatch cm : cmt.getConstraintMatchSet()){
+			for (ConstraintMatch cm : cmt.getConstraintMatchSet()) {
 				c.accept("    " + cm.getJustificationList().stream()
 						.map(Object::toString)
-						.collect( Collectors.joining( ", " ) ));
+						.collect(Collectors.joining(", ")));
 			}
 		}
 	}
@@ -88,7 +88,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 			}
 
 			@Override
-			public boolean isCancelled() { return solver.isTerminateEarly() && super.isCancelled();	}
+			public boolean isCancelled() { return solver.isTerminateEarly() && super.isCancelled(); }
 
 			protected Sportfeest call() {
 				sportfeestProperty.set(solver.solve(sportfeestProperty.get()));

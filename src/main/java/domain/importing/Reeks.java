@@ -63,7 +63,7 @@ public class Reeks {
 		this.afdPerRing = afdPerRing;
 	}
 
-	public int getAantal() { return aantal;	}
+	public int getAantal() { return aantal; }
 
 	public void setAantal(int aantal) { this.aantal = aantal; }
 

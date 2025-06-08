@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011-2020, JFXtras
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *    Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *    Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *    Neither the name of the organization nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * Neither the name of the organization nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,42 +44,43 @@ import jfxtras.scene.control.ImageViewButton;
 import jfxtras.util.NodeUtil;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
-class AppointmentMenu extends Rectangle {
+class AppointmentMenu<H> extends Rectangle {
 
-	AppointmentMenu(Pane pane, InschrijvingInterface appointment, LayoutHelp layoutHelp) {
+	AppointmentMenu(Pane pane, InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
 		this.pane = pane;
 		this.appointment = appointment;
 		this.layoutHelp = layoutHelp;
-		
+
 		// layout
 		setX(NodeUtil.snapXY(layoutHelp.paddingProperty.get()));
 		setY(NodeUtil.snapXY(layoutHelp.paddingProperty.get()));
 		setWidth(6);
 		setHeight(3);
-		
+
 		// style
 		getStyleClass().add("MenuIcon");
-		
+
 		// mouse
 		layoutHelp.setupMouseOverAsBusy(this);
 		setupMouseClick();
 	}
+
 	final Pane pane;
 	final InschrijvingInterface appointment;
-	final LayoutHelp layoutHelp;
+	final LayoutHelp<H> layoutHelp;
 
 	/**
-	 * 
+	 *
 	 */
 	private void setupMouseClick() {
 		setOnMousePressed(Event::consume);
 		setOnMouseReleased(Event::consume);
-		setOnMouseClicked( (mouseEvent) -> {
+		setOnMouseClicked((mouseEvent) -> {
 			mouseEvent.consume();
 			showMenu(mouseEvent);
 		});
 	}
-	
+
 	void showMenu(MouseEvent mouseEvent) {
 		// has the client done his own popup?
 		Callback<InschrijvingInterface, Void> lEditCallback = layoutHelp.skinnable.getEditAppointmentCallback();
@@ -90,13 +91,13 @@ class AppointmentMenu extends Rectangle {
 
 		// only if not already showing
 		if (popup != null && popup.isShowing()) return;
-		
+
 		// create popup
 		popup = new Popup();
 		popup.setAutoFix(true);
 		popup.setAutoHide(true);
 		popup.setHideOnEscape(true);
-		popup.setOnHidden( (windowEvent) -> layoutHelp.skin.setupAppointments());
+		popup.setOnHidden((windowEvent) -> layoutHelp.skin.setupAppointments());
 
 		// popup contents
 		BorderPane lBorderPane = new BorderPane() {
@@ -111,7 +112,7 @@ class AppointmentMenu extends Rectangle {
 
 		// close icon
 		lBorderPane.setRight(createCloseIcon());
-		
+
 		// initial layout
 		VBox lVBox = new VBox(layoutHelp.paddingProperty.get());
 		lBorderPane.setCenter(lVBox);
@@ -123,23 +124,24 @@ class AppointmentMenu extends Rectangle {
 		// wholeday
 		//lVBox.getChildren().add(createWholedayCheckbox());
 
-		lVBox.getChildren().add(createLabelTextField("Afdeling:", appointment.getAfdeling().toString() ));
+		lVBox.getChildren().add(createLabelTextField("Afdeling:", appointment.getAfdeling().toString()));
 		lVBox.getChildren().add(createLabelTextField("Korps:", String.valueOf(appointment.getKorps())));
-		lVBox.getChildren().add(createLabelTextField("Discipline:", appointment.getDiscipline().getNaam() ));
-		lVBox.getChildren().add(createLabelTextField("Ring:", appointment.getRing().toString() ));
+		lVBox.getChildren().add(createLabelTextField("Discipline:", appointment.getDiscipline().getNaam()));
+		lVBox.getChildren().add(createLabelTextField("Ring:", appointment.getRing().toString()));
 
 		lVBox.getChildren().add(createActions());
 
 		// show it just below the menu icon
 		popup.show(pane, NodeUtil.screenX(pane), NodeUtil.screenY(pane));
 	}
+
 	private Popup popup;
-	
+
 	private ImageViewButton createCloseIcon() {
 		ImageViewButton closeIconImageView = new ImageViewButton();
 		closeIconImageView.getStyleClass().add("close-icon");
 		closeIconImageView.setPickOnBounds(true);
-		closeIconImageView.setOnMouseClicked( (mouseEvent2) -> popup.hide());
+		closeIconImageView.setOnMouseClicked((mouseEvent2) -> popup.hide());
 		return closeIconImageView;
 	}
 
@@ -160,9 +162,9 @@ class AppointmentMenu extends Rectangle {
 
 		TextField startTextField = new TextField();
 		startTextField.setText(layoutHelp.formatTime(appointment.getStartTijd()));
-		
+
 		// event handling
-		startTextField.textProperty().addListener( (observable, oldValue, newValue) ->  {
+		startTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			// set
 			appointment.setTijdslot(new Tijdslot(
 					layoutHelp.parseTime(newValue),
@@ -183,7 +185,7 @@ class AppointmentMenu extends Rectangle {
 		wholedayCheckBox.setId("wholeday-checkbox");
 		wholedayCheckBox.selectedProperty().set(appointment.isWholeDay());
 
-		wholedayCheckBox.selectedProperty().addListener( (observable, oldValue, newValue) ->  {
+		wholedayCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			appointment.setWholeDay(newValue);
 			if (newValue) {
 				appointment.setTijdslot(null);
@@ -203,13 +205,11 @@ class AppointmentMenu extends Rectangle {
 
 		TextField duurTextField = new TextField();
 		duurTextField.setText(String.valueOf(appointment.getDiscipline().getDuur()));
-		duurTextField.textProperty().addListener( (observable, oldValue, newValue) ->  {
+		duurTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			int duur = appointment.getTijdslot().getDuur();
 			try {
 				duur = Integer.parseUnsignedInt(newValue);
-			} catch (NumberFormatException nfe) {
-				nfe.printStackTrace();
-			}
+			} catch (NumberFormatException ignored) {}
 			appointment.setTijdslot(new Tijdslot(appointment.getStartTijd(), duur, appointment.getRing()));
 			// refresh is done upon popup close
 			layoutHelp.callAppointmentChangedCallback(appointment);
@@ -224,12 +224,11 @@ class AppointmentMenu extends Rectangle {
 
 	private HBox createActions() {
 		HBox lHBox = new HBox();
-		
+
 		// action
-		if (layoutHelp.skinnable.getActionCallback() != null)
-		{
+		if (layoutHelp.skinnable.getActionCallback() != null) {
 			ImageViewButton actionImageViewButton = createActionButton("action-icon", "Action");
-			actionImageViewButton.setOnMouseClicked( (mouseEvent) -> {
+			actionImageViewButton.setOnMouseClicked((mouseEvent) -> {
 				popup.hide();
 				layoutHelp.skinnable.getActionCallback().call(appointment);
 				layoutHelp.callAppointmentChangedCallback(appointment);
@@ -237,7 +236,7 @@ class AppointmentMenu extends Rectangle {
 			});
 			lHBox.getChildren().add(actionImageViewButton);
 		}
-		
+
 		return lHBox;
 	}
 
@@ -245,7 +244,7 @@ class AppointmentMenu extends Rectangle {
 		ImageViewButton lImageViewButton = new ImageViewButton();
 		lImageViewButton.getStyleClass().add(styleClass);
 		lImageViewButton.setPickOnBounds(true);
-		Tooltip.install(lImageViewButton, new Tooltip(tooltipText)); 
+		Tooltip.install(lImageViewButton, new Tooltip(tooltipText));
 		return lImageViewButton;
 	}
 }
