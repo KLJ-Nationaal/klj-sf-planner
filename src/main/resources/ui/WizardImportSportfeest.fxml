@@ -3,17 +3,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.importer.WizardImportSportfeestController">
-   <center>
-      <AnchorPane prefHeight="400.0" prefWidth="600.0">
-         <children>
-            <Label layoutX="14.0" layoutY="14.0" text="Sportfeest" />
-            <ChoiceBox fx:id="txtSportfeest" layoutX="184.0" layoutY="10.0" prefHeight="25.0" prefWidth="345.0" />
-             <Label layoutX="14.0" layoutY="44.0" text="Locatie" />
-             <TextField fx:id="txtTitel" layoutX="184.0" layoutY="40.0" prefHeight="25.0" prefWidth="345.0" />
-             <Label layoutX="14.0" layoutY="74.0" text="Datum" />
-            <DatePicker fx:id="txtDatum" layoutX="184.0" layoutY="70.0" />
-         </children>
-      </AnchorPane>
-   </center>
+<BorderPane prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.importer.WizardImportSportfeestController">
+    <center>
+        <AnchorPane prefHeight="400.0" prefWidth="600.0">
+            <Label layoutX="14.0" layoutY="14.0" text="Sportfeest"/>
+            <ChoiceBox fx:id="txtSportfeest" layoutX="184.0" layoutY="10.0" prefHeight="25.0" prefWidth="345.0"/>
+            <Label layoutX="14.0" layoutY="44.0" text="Locatie"/>
+            <TextField fx:id="txtTitel" layoutX="184.0" layoutY="40.0" prefHeight="25.0" prefWidth="345.0"/>
+            <Label layoutX="14.0" layoutY="74.0" text="Datum"/>
+            <DatePicker fx:id="txtDatum" layoutX="184.0" layoutY="70.0"/>
+        </AnchorPane>
+    </center>
 </BorderPane>

@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -42,8 +42,6 @@ import java.util.List;
  * Responsible for rendering the day header (whole day appointments).
  */
 public class DayHeaderPane<H> extends Pane {
-
-
 	public DayHeaderPane(H columnValue, LayoutHelp<H> layoutHelp) {
 		this.columnValueObjectProperty.set(columnValue);
 		this.layoutHelp = layoutHelp;

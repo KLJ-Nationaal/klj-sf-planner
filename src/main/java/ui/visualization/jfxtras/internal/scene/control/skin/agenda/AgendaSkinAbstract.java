@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
@@ -44,7 +44,6 @@ import javafx.util.Pair;
 import jfxtras.css.CssMetaDataForSkinProperty;
 import jfxtras.css.converters.DoubleConverter;
 import persistence.Marshalling;
-import ui.visualization.jfxtras.internal.scene.control.skin.agenda.AgendaSkin;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
@@ -54,17 +53,18 @@ import java.util.*;
  * @author Tom Eugelink
  */
 // TODO: number of call to determineDisplayedColumns, can we cache?
-abstract public class AgendaSkinTimeScale24HourAbstract<H> extends SkinBase<Agenda<H>> implements AgendaSkin<H> {
-	// ==================================================================================================================
-	// CONSTRUCTOR
+abstract public class AgendaSkinAbstract<H> extends SkinBase<Agenda<H>> {
+	protected final Agenda<H> control;
+	protected BorderPane borderPane = null;
+	private WeekHeaderPane weekHeaderPane = null;
+	private ScrollPane weekScrollPane = null;
+	private WeekBodyPane weekBodyPane = null;
 
-	public AgendaSkinTimeScale24HourAbstract(Agenda<H> control) {
+	public AgendaSkinAbstract(Agenda<H> control) {
 		super(control);
 		this.control = control;
 		construct();
 	}
-
-	protected final Agenda<H> control;
 
 	/**
 	 * Reconstruct the UI part
@@ -129,39 +129,30 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H> extends SkinBase<Agen
 		calculateSizes(); // must be done after setting up the panes
 	}
 
-	public void refresh() {
-		setupAppointments();
-	}
+	public void refresh() { setupAppointments(); }
 
 	final private Map<Integer, Pane> appointmentNodeMap = new HashMap<>();
-
-	Map<Integer, Pane> appointmentNodeMap() {
-		return appointmentNodeMap;
-	}
+	Map<Integer, Pane> appointmentNodeMap() { return appointmentNodeMap; }
 
 	// ==================================================================================================================
 	// StyleableProperties
 
 	/**
 	 * snapToMinutes
-	 * InschrijvingInterface am clueless why the Integer version of this property gets a double pushed in (which results in a ClassCastException)
+	 * I am clueless why the Integer version of this property gets a double pushed in (which results in a ClassCastException)
 	 */
 	// TBEERNOT: reattempt converting this to Integer
 	public final ObjectProperty<Double> snapToMinutesProperty() { return snapToMinutesProperty; }
 	private final ObjectProperty<Double> snapToMinutesProperty = new SimpleStyleableObjectProperty<>(StyleableProperties.SNAPTOMINUTES_CSSMETADATA, StyleableProperties.SNAPTOMINUTES_CSSMETADATA.getInitialValue(null));
 	public final void setSnapToMinutes(double value) { snapToMinutesProperty().set(value); }
 	public final double getSnapToMinutes() { return snapToMinutesProperty.get().intValue(); }
-	public final AgendaSkinTimeScale24HourAbstract<H> withSnapToMinutes(double value) {
-		setSnapToMinutes(value);
-		return this;
-	}
 
 	// -------------------------
 
 	private static class StyleableProperties {
-		private static final CssMetaData<Agenda<?>, Double> SNAPTOMINUTES_CSSMETADATA = new CssMetaDataForSkinProperty<Agenda<?>, AgendaSkinTimeScale24HourAbstract<?>, Double>("-fxx-snap-to-minutes", DoubleConverter.getInstance(), (double) Marshalling.MINMINUTEN) {
+		private static final CssMetaData<Agenda<?>, Double> SNAPTOMINUTES_CSSMETADATA = new CssMetaDataForSkinProperty<Agenda<?>, AgendaSkinAbstract<?>, Double>("-fxx-snap-to-minutes", DoubleConverter.getInstance(), (double) Marshalling.MINMINUTEN) {
 			@Override
-			protected ObjectProperty<Double> getProperty(AgendaSkinTimeScale24HourAbstract<?> s) {
+			protected ObjectProperty<Double> getProperty(AgendaSkinAbstract<?> s) {
 				return s.snapToMinutesProperty;
 			}
 		};
@@ -220,7 +211,6 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H> extends SkinBase<Agen
 		weekScrollPane.setContent(weekBodyPane);
 		weekScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		weekScrollPane.setFitToWidth(true);
-		weekScrollPane.setPannable(false); // panning would conflict with creating a new appointment
 		weekScrollPane.getContent().setOnScroll(scrollEvent -> {
 			double deltaY = scrollEvent.getDeltaY() * 0.002;
 			weekScrollPane.setVvalue(weekScrollPane.getVvalue() - deltaY);
@@ -243,23 +233,16 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H> extends SkinBase<Agen
 		getSkinnable().getStyleClass().add(getClass().getSimpleName()); // always add self as style class, because CSS should relate to the skin not the control		
 	}
 
-	protected BorderPane borderPane = null;
-	private WeekHeaderPane weekHeaderPane = null;
-	private ScrollPane weekScrollPane = null;
-	private WeekBodyPane weekBodyPane = null;
-
 	// ==================================================================================================================
 	// PANES
 
 	/**
 	 * Responsible for rendering the day headers within the week
 	 */
-	class WeekHeaderPane extends Pane {
-		final List<DayHeaderPane<H>> dayHeaderPanes = new ArrayList<>();
+	public class WeekHeaderPane extends Pane {
+		public final List<DayHeaderPane<H>> dayHeaderPanes = new ArrayList<>();
 
-		public WeekHeaderPane() {
-			construct();
-		}
+		public WeekHeaderPane() { construct(); }
 
 		private void construct() {
 			// one day header pane per day body pane 
@@ -296,15 +279,13 @@ abstract public class AgendaSkinTimeScale24HourAbstract<H> extends SkinBase<Agen
 	/**
 	 * Responsible for rendering the days within the week
 	 */
-	class WeekBodyPane extends Pane {
-		final List<DayBodyPane<H>> dayBodyPanes = new ArrayList<>();
+	public class WeekBodyPane extends Pane {
+		public final List<DayBodyPane<H>> dayBodyPanes = new ArrayList<>();
 
-		public WeekBodyPane() {
-			construct();
-		}
+		public WeekBodyPane() { construct(); }
 
 		private void construct() {
-			getChildren().add(new TimeScale24Hour<>(this, layoutHelp));
+			getChildren().add(new TimeScale<>(this, layoutHelp));
 
 			int i = 0;
 			ObservableList<H> cols = layoutHelp.skinnable.columns();

@@ -24,8 +24,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
+import ch.qos.logback.classic.Logger;
 import domain.Tijdslot;
 import javafx.event.Event;
 import javafx.scene.control.CheckBox;
@@ -42,9 +43,13 @@ import javafx.stage.Popup;
 import javafx.util.Callback;
 import jfxtras.scene.control.ImageViewButton;
 import jfxtras.util.NodeUtil;
+import org.slf4j.LoggerFactory;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
+import java.util.Objects;
+
 class AppointmentMenu<H> extends Rectangle {
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(AppointmentMenu.class);
 
 	AppointmentMenu(Pane pane, InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
 		this.pane = pane;
@@ -97,7 +102,7 @@ class AppointmentMenu<H> extends Rectangle {
 		popup.setAutoFix(true);
 		popup.setAutoHide(true);
 		popup.setHideOnEscape(true);
-		popup.setOnHidden((windowEvent) -> layoutHelp.skin.setupAppointments());
+		popup.setOnHidden(this::menuHidden);
 
 		// popup contents
 		BorderPane lBorderPane = new BorderPane() {
@@ -141,7 +146,7 @@ class AppointmentMenu<H> extends Rectangle {
 		ImageViewButton closeIconImageView = new ImageViewButton();
 		closeIconImageView.getStyleClass().add("close-icon");
 		closeIconImageView.setPickOnBounds(true);
-		closeIconImageView.setOnMouseClicked((mouseEvent2) -> popup.hide());
+		closeIconImageView.setOnMouseClicked(this::menuHidden);
 		return closeIconImageView;
 	}
 
@@ -165,14 +170,17 @@ class AppointmentMenu<H> extends Rectangle {
 
 		// event handling
 		startTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-			// set
-			appointment.setTijdslot(new Tijdslot(
+			// try get the timeslot with whatever the user entered, if invalid, the current timeslot should be returned
+			Tijdslot tijdslot = new Tijdslot(
 					layoutHelp.parseTime(newValue),
 					appointment.getTijdslot().getDuur(),
-					appointment.getRing()));
-
+					appointment.getRing());
+			// verify something has actually changed and store
+			if (!Objects.equals(tijdslot, appointment.getTijdslot())) {
+				logger.info("Aanpassing {} gewenst startuur {} naar {}", appointment, newValue, tijdslot);
+				appointment.setTijdslot(tijdslot);
+			}
 			// refresh is done upon popup close
-			layoutHelp.callAppointmentChangedCallback(appointment);
 		});
 		startTextField.setPrefWidth(100);
 
@@ -206,13 +214,17 @@ class AppointmentMenu<H> extends Rectangle {
 		TextField duurTextField = new TextField();
 		duurTextField.setText(String.valueOf(appointment.getDiscipline().getDuur()));
 		duurTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-			int duur = appointment.getTijdslot().getDuur();
 			try {
-				duur = Integer.parseUnsignedInt(newValue);
+				int duur = Integer.parseUnsignedInt(newValue);
+				// try get the timeslot with whatever the user entered, if invalid, the current timeslot should be returned
+				Tijdslot tijdslot = new Tijdslot(appointment.getStartTijd(), duur, appointment.getRing());
+				// verify something has actually changed and store
+				if (!Objects.equals(tijdslot, appointment.getTijdslot())) {
+					appointment.setTijdslot(tijdslot);
+					logger.info("Aanpassing {} gewenste duur {}, opgeslagen {}", appointment, duur, appointment.getTijdslot().getDuur());
+				}
+				// refresh is done upon popup close
 			} catch (NumberFormatException ignored) {}
-			appointment.setTijdslot(new Tijdslot(appointment.getStartTijd(), duur, appointment.getRing()));
-			// refresh is done upon popup close
-			layoutHelp.callAppointmentChangedCallback(appointment);
 		});
 		duurTextField.setPrefWidth(60);
 
@@ -246,5 +258,10 @@ class AppointmentMenu<H> extends Rectangle {
 		lImageViewButton.setPickOnBounds(true);
 		Tooltip.install(lImageViewButton, new Tooltip(tooltipText));
 		return lImageViewButton;
+	}
+	private void menuHidden(Event event) {
+		popup.hide();
+		layoutHelp.callAppointmentChangedCallback(appointment);
+		layoutHelp.skin.setupAppointments();
 	}
 }

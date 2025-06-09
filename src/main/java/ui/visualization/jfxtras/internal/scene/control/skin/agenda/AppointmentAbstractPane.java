@@ -24,8 +24,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
+import ch.qos.logback.classic.Logger;
 import domain.Inschrijving;
 import javafx.collections.ListChangeListener;
 import javafx.collections.WeakListChangeListener;
@@ -39,11 +40,14 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import jfxtras.util.NodeUtil;
+import org.slf4j.LoggerFactory;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 abstract class AppointmentAbstractPane<H> extends Pane {
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(AppointmentAbstractPane.class);
 
 	AppointmentAbstractPane(InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
 		this.appointment = appointment;
@@ -173,7 +177,9 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 
 			//double lX = NodeUtil.xInParent(this, layoutHelp.dragPane) + (mouseEvent.getX() - startX); // top-left of the original appointment pane + offset of drag
 			double lX = NodeUtil.xInParent(this, layoutHelp.dragPane); // top-left of the original appointment pane + offset of drag
-			double lY = NodeUtil.yInParent(this, layoutHelp.dragPane) + (mouseEvent.getY() - startY); // top-left of the original appointment pane + offset of drag
+			//double lY = NodeUtil.yInParent(this, layoutHelp.dragPane) + (mouseEvent.getY() - startY); // top-left of the original appointment pane + offset of drag
+			double lY = this.getLayoutY() + (mouseEvent.getY() - startY) + layoutHelp.headerHeightProperty.get();
+			double lPaneView = this.getLayoutY() - NodeUtil.yInParent(this, layoutHelp.dragPane);
 
 			// update the start time
 			double lMinutes = (lY - dragRectangle.getHeight() / 2) / layoutHelp.hourHeightProperty.get() * 60;
@@ -184,7 +190,7 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 
 			// move the drag rectangle
 			dragRectangle.setX(lX);
-			dragRectangle.setY((appointmentForDrag.getStartTime() * layoutHelp.hourHeightProperty.get() / 60) + layoutHelp.headerHeightProperty.get());
+			dragRectangle.setY((appointmentForDrag.getStartTime() * layoutHelp.hourHeightProperty.get() / 60) - lPaneView);
 			startTimeText.layoutXProperty().set(dragRectangle.getX());
 			startTimeText.layoutYProperty().set(dragRectangle.getY() - 3);
 			endTimeText.layoutXProperty().set(dragRectangle.getX());
@@ -214,15 +220,16 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 			}
 
 			// determine start and end DateTime of the drag
-			appointment.setTijdslot(appointmentForDrag.getTijdslot());
-			//Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-			//if (dragTime != null) { // not dropped somewhere outside
-			//handleDrag(appointment, dragPickupDateTime, dragTime);
-
-			// relayout whole week
-			layoutHelp.skin.setupAppointments();
-			layoutHelp.callAppointmentChangedCallback(appointment);
-			//}
+			if (!Objects.equals(appointment.getTijdslot(),appointmentForDrag.getTijdslot())) {
+				logger.info("Verplaatsing {} van {} naar {}", appointment, appointment.getTijdslot(), appointmentForDrag.getTijdslot());
+				appointment.setTijdslot(appointmentForDrag.getTijdslot());
+				//Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+				//if (dragTime != null) { // not dropped somewhere outside
+				//handleDrag(appointment, dragPickupDateTime, dragTime);
+				layoutHelp.callAppointmentChangedCallback(appointment);
+				// relayout whole week
+				layoutHelp.skin.setupAppointments();
+			}
 
 			// reset ui
 			setCursor(Cursor.HAND);

@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import ch.qos.logback.classic.Logger;
 import javafx.scene.layout.Pane;
@@ -39,10 +39,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-class TimeScale24Hour<H> extends Pane {
-	private final static Logger logger = (Logger) LoggerFactory.getLogger(TimeScale24Hour.class);
+class TimeScale<H> extends Pane {
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(TimeScale.class);
 
-	TimeScale24Hour(Pane pane, LayoutHelp<H> layoutHelp) {
+	TimeScale(Pane pane, LayoutHelp<H> layoutHelp) {
 		this.pane = pane;
 		this.layoutHelp = layoutHelp;
 

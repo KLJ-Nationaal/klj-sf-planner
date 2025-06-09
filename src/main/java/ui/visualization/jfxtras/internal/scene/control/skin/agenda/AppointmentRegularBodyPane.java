@@ -24,16 +24,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
+import javafx.scene.text.Text;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
-/**
- * Responsible for rendering a wholeday appointment on a single day.
- */
-class AppointmentWholedayBodyPane<H> extends AppointmentAbstractPane<H> {
-	AppointmentWholedayBodyPane(H columnValue, InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
-		super(appointment, layoutHelp);
+public class AppointmentRegularBodyPane<H> extends AppointmentAbstractTrackedPane<H> {
+
+	public AppointmentRegularBodyPane(H columnValue, InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
+		super(columnValue, appointment, layoutHelp);
+
+		// strings
+		String startAsString = layoutHelp.formatTime(this.startDateTime);
+		String endAsString = layoutHelp.formatTime(this.endDateTime);
+
+		// add summary
+		Text lSummaryText = new Text(layoutHelp.skinnable.getItemValueFactory().call(appointment));
+		{
+			lSummaryText.getStyleClass().add("AppointmentLabel");
+			lSummaryText.setX(layoutHelp.paddingProperty.get());
+			lSummaryText.setY(lSummaryText.prefHeight(5));
+			layoutHelp.clip(this, lSummaryText, widthProperty().add(0.0), heightProperty().subtract(layoutHelp.paddingProperty), false, 0.0);
+			getChildren().add(lSummaryText);
+		}
+
+		// add the duration as text
+		Text lTimeText = new Text(startAsString + "-" + endAsString);
+		{
+			lTimeText.getStyleClass().add("AppointmentTimeLabel");
+			lTimeText.setX(layoutHelp.paddingProperty.get());
+			lTimeText.setY(lSummaryText.getY() + layoutHelp.textHeightProperty.get());
+			layoutHelp.clip(this, lTimeText, widthProperty().subtract(layoutHelp.paddingProperty), heightProperty().add(0.0), true, 0.0);
+			getChildren().add(lTimeText);
+		}
+
+		// add the menu header
+		getChildren().add(appointmentMenu);
 	}
 }
-

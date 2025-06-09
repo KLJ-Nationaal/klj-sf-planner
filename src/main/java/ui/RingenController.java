@@ -25,6 +25,6 @@ public class RingenController extends AgendaController<Ring> {
 		agenda.columns().clear();
 		agenda.columns().addAll(new ArrayList<>(sportfeest.getRingen()));
 		agenda.setAppointmentsProperty(FXCollections.observableArrayList(sportfeest.getInschrijvingen()));
-		agenda.createDefaultSkin();
+		agenda.refresh();
 	}
 }

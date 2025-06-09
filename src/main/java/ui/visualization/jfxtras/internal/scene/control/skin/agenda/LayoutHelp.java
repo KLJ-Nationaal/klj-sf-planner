@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import ch.qos.logback.classic.Logger;
 import javafx.beans.binding.DoubleBinding;
@@ -38,7 +38,6 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
-import ui.visualization.jfxtras.internal.scene.control.skin.agenda.AgendaSkin;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
@@ -54,7 +53,7 @@ import java.time.format.DateTimeParseException;
 public class LayoutHelp<H> {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(LayoutHelp.class);
 
-	public LayoutHelp(Agenda<H> skinnable, AgendaSkin<H> skin) {
+	public LayoutHelp(Agenda<H> skinnable, AgendaSkinAbstract<H> skin) {
 		this.skinnable = skinnable;
 		this.skin = skin;
 		dragPane = new DragPane<>(this);
@@ -84,7 +83,7 @@ public class LayoutHelp<H> {
 	}
 
 	final Agenda<H> skinnable;
-	final AgendaSkin<H> skin;
+	final AgendaSkinAbstract<H> skin;
 	final DragPane<H> dragPane;
 
 	final DoubleProperty msPerDayProperty = new SimpleDoubleProperty(24 * 60 * 60 * 1000);

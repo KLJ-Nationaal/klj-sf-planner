@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Responsible for rendering the appointments within a day
  */
-class DayBodyPane<H> extends Pane {
+public class DayBodyPane<H> extends Pane {
 	public DayBodyPane(H columnValue, LayoutHelp<H> layoutHints) {
 		this.columnValueObjectProperty.set(columnValue);
 		this.layoutHelp = layoutHints;
@@ -176,7 +176,7 @@ class DayBodyPane<H> extends Pane {
 			// create pane
 			AppointmentWholedayBodyPane<H> lAppointmentPane = new AppointmentWholedayBodyPane<>(columnValueObjectProperty.get(), lAppointment, layoutHelp);
 			wholedayAppointmentBodyPanes.add(lAppointmentPane);
-			((AgendaSkinTimeScale24HourAbstract<H>) layoutHelp.skin).appointmentNodeMap().put(System.identityHashCode(lAppointment), lAppointmentPane);
+			((AgendaSkinAbstract<H>) layoutHelp.skin).appointmentNodeMap().put(System.identityHashCode(lAppointment), lAppointmentPane);
 			lAppointmentPane.setId(lAppointmentPane.getClass().getSimpleName() + columnValueObjectProperty.get() + "/" + lCnt); // for testing
 
 			// position by binding
@@ -209,7 +209,7 @@ class DayBodyPane<H> extends Pane {
 		for (InschrijvingInterface lAppointment : regularAppointments) {
 			AppointmentRegularBodyPane<H> lAppointmentPane = new AppointmentRegularBodyPane<>(columnValueObjectProperty.get(), lAppointment, layoutHelp);
 			regularAppointmentBodyPanes.add(lAppointmentPane);
-			((AgendaSkinTimeScale24HourAbstract<H>) layoutHelp.skin).appointmentNodeMap().put(System.identityHashCode(lAppointment), lAppointmentPane);
+			((AgendaSkinAbstract<H>) layoutHelp.skin).appointmentNodeMap().put(System.identityHashCode(lAppointment), lAppointmentPane);
 			lAppointmentPane.setId(lAppointmentPane.getClass().getSimpleName() + columnValueObjectProperty.get() + "/" + lCnt); // for testing
 
 			lCnt++;

@@ -26,18 +26,14 @@
  */
 package ui.visualization.jfxtras.scene.control.agenda;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.WeakListChangeListener;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.util.Callback;
-import ui.visualization.jfxtras.internal.scene.control.skin.agenda.AgendaSkin;
-import ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour.AgendaSkinTimeScale24HourAbstract;
+import ui.visualization.jfxtras.internal.scene.control.skin.agenda.AgendaSkinAbstract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +66,7 @@ public class Agenda<H> extends Control {
 
 	@Override
 	public Skin<?> createDefaultSkin() {
-		return new AgendaSkinTimeScale24HourAbstract<H>(this) {
-		};
+		return new AgendaSkinAbstract<H>(this) {};
 	}
 
 	// ==================================================================================================================
@@ -80,27 +75,24 @@ public class Agenda<H> extends Control {
 	/**
 	 * Appointments:
 	 */
-	private ObjectProperty<ObservableList<InschrijvingInterface>> appointments() { return appointmentsProperty; }
+	private ListProperty<InschrijvingInterface> appointments() { return appointmentsProperty; }
 	public final void setAppointmentsProperty(ObservableList<InschrijvingInterface> value) { appointmentsProperty.set(value); }
 	public final ObservableList<InschrijvingInterface> getAppointmentsProperty() { return appointmentsProperty.get(); }
-	public ObjectProperty<ObservableList<InschrijvingInterface>> appointmentsProperty = new SimpleObjectProperty<>(this, "itemAppointmentsProperty", FXCollections.observableArrayList());
+	public ListProperty<InschrijvingInterface> appointmentsProperty = new SimpleListProperty<>(this, "itemAppointmentsProperty", FXCollections.observableArrayList());
 
-	//public ObservableList<InschrijvingInterface> appointments() { return appointments; }
-	//final private ObservableList<InschrijvingInterface> appointments = javafx.collections.FXCollections.observableArrayList();
 	private void constructAppointments() {
 		// when appointments are removed, they can't be selected anymore
 		getAppointmentsProperty().addListener((ListChangeListener<InschrijvingInterface>) changes -> {
 			while (changes.next()) {
 				for (InschrijvingInterface lAppointment : changes.getRemoved())
 					selectedAppointments.remove(lAppointment);
+				runnables.forEach(Runnable::run);
 			}
 		});
-		getAppointmentsProperty().addListener(new WeakListChangeListener<>(c -> runnables.forEach(Runnable::run)));
 	}
 
 	public void addOnChangeListener(Runnable runnable) { this.runnables.add(runnable); }
 	public void removeOnChangeListener(Runnable runnable) { this.runnables.remove(runnable); }
-
 	private final List<Runnable> runnables = new ArrayList<>();
 
 	public List<InschrijvingInterface> collectWholedayFor(H columnValue) {
@@ -204,6 +196,15 @@ public class Agenda<H> extends Control {
 	 * Force the agenda to completely refresh itself
 	 */
 	public void refresh() {
-		((AgendaSkin<?>) getSkin()).refresh();
+		((AgendaSkinAbstract<?>) getSkin()).reconstruct();
+	}
+
+	@Override
+	public String toString() {
+		if (!columns.isEmpty()) {
+			Class<?> clazz = columns.get(0).getClass();
+			return String.format("Agenda-%s", clazz.getSimpleName());
+		}
+		return "Agenda";
 	}
 }

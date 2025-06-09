@@ -24,14 +24,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ui.visualization.jfxtras.internal.scene.control.skin.agenda.base24hour;
+package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
-import javafx.scene.layout.Pane;
+import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
-class DragPane<H> extends Pane {
-
-	DragPane(LayoutHelp<H> layoutHelp) {
-		prefWidthProperty().bind(layoutHelp.skinnable.widthProperty()); // the drag pane is the same size as the whole skin
-		prefHeightProperty().bind(layoutHelp.skinnable.heightProperty());
+/**
+ * Responsible for rendering a wholeday appointment on a single day.
+ */
+class AppointmentWholedayBodyPane<H> extends AppointmentAbstractPane<H> {
+	AppointmentWholedayBodyPane(H columnValue, InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
+		super(appointment, layoutHelp);
 	}
 }
+

@@ -3,42 +3,47 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.AnalyseResultaatController">
-   <top>
-      <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="80.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-          <children>
-              <Label fx:id="title" layoutX="14.0" layoutY="13.0" style="-fx-font-weight: bold;" text="Analyse van het resultaat">
-                  <padding>
-                      <Insets bottom="4.0" right="4.0" top="4.0" />
-                  </padding>
-              </Label>
-              <Label fx:id="subtitle" alignment="TOP_LEFT" layoutX="14.0" layoutY="38.0" prefHeight="42.0" prefWidth="572.0" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
-                  <padding>
-                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                  </padding>
-              </Label>
-              <Separator layoutY="79.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
-         </children>
-      </AnchorPane>
-   </top>
-   <center>
-        <GridPane fx:id="contentPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="320.0" minWidth="568.0">
-         <rowConstraints>
-            <RowConstraints percentHeight="100.0" />
-         </rowConstraints>
-         <columnConstraints>
-            <ColumnConstraints maxWidth="1.7976931348623157E308" percentWidth="100.0" />
-         </columnConstraints>
-         <children>
-            <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" />
-         </children></GridPane>
-   </center>
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ui.AnalyseResultaatController">
+    <top>
+        <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="80.0"
+                    prefWidth="600.0" BorderPane.alignment="CENTER">
+            <Label fx:id="title" layoutX="14.0" layoutY="13.0" style="-fx-font-weight: bold;"
+                   text="Analyse van het resultaat">
+                <padding>
+                    <Insets bottom="4.0" right="4.0" top="4.0"/>
+                </padding>
+            </Label>
+            <Label fx:id="subtitle" alignment="TOP_LEFT" layoutX="14.0" layoutY="38.0" prefHeight="42.0"
+                   prefWidth="572.0" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                <padding>
+                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+                </padding>
+            </Label>
+            <Separator layoutY="79.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                       AnchorPane.topAnchor="80.0"/>
+        </AnchorPane>
+    </top>
+    <center>
+        <GridPane fx:id="contentPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                  minHeight="320.0" minWidth="568.0">
+            <rowConstraints>
+                <RowConstraints percentHeight="100.0"/>
+            </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints maxWidth="1.7976931348623157E308" percentWidth="100.0"/>
+            </columnConstraints>
+            <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0"/>
+        </GridPane>
+    </center>
     <bottom>
-        <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="55.0" BorderPane.alignment="CENTER">
-            <children>
-                <Separator AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                <Button fx:id="btnClose" cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#CloseAction" prefWidth="80.0" text="Sluiten" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-            </children>
+        <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="55.0"
+                    BorderPane.alignment="CENTER">
+            <Separator AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+            <Button fx:id="btnClose" cancelButton="true" defaultButton="true" mnemonicParsing="false"
+                    onAction="#CloseAction" prefWidth="80.0" text="Sluiten" AnchorPane.bottomAnchor="15.0"
+                    AnchorPane.rightAnchor="15.0"/>
         </AnchorPane>
     </bottom>
 </BorderPane>

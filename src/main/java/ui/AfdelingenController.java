@@ -28,6 +28,6 @@ public class AfdelingenController extends AgendaController<Afdeling> {
 				.sorted(Comparator.comparing(Afdeling::getNaam))
 				.collect(Collectors.toList()));
 		agenda.setAppointmentsProperty(FXCollections.observableArrayList(sportfeest.getInschrijvingen()));
-		agenda.createDefaultSkin();
+		agenda.refresh();
 	}
 }

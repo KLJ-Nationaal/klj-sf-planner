@@ -52,7 +52,9 @@ public class SportfeestPlannerGUI extends Application {
 	@FXML
 	private TableView<Inschrijving> tblInschrijvingen;
 	@FXML
-	private TableColumn tblColAfdeling, tblColDiscipline, tblColKorps, tblColRingnaam, tblColRingnummer;
+	private TableColumn<Inschrijving, String> tblColAfdeling, tblColDiscipline, tblColRingnaam, tblColRingnummer;
+	@FXML
+	private TableColumn<Inschrijving, Integer> tblColKorps;
 	@FXML
 	private Label txtStatusLabel;
 	@FXML
@@ -64,7 +66,7 @@ public class SportfeestPlannerGUI extends Application {
 	@FXML
 	private RingenController ringenController;
 	@FXML
-	private Tab tbInschrijvingen, tbLog, tbAfdelingen;
+	private Tab tbInschrijvingen, tbLog, tbAfdelingen, tbRingen;
 
 	private final ObservableList<Inschrijving> ringverdeling = FXCollections.observableArrayList();
 	private SportfeestPlannerService sportfeestPlannerService;
@@ -81,6 +83,7 @@ public class SportfeestPlannerGUI extends Application {
 		SportfeestPlannerGUI.primaryStage = primaryStage;
 		Parent root = FXMLLoader.load(getClass().getResource("/ui/Main.fxml"));
 		Scene scene = new Scene(root);
+		scene.getStylesheets().add(getClass().getResource("Main.css").toExternalForm());
 		primaryStage.setScene(scene);
 		this.setTitle("");
 		primaryStage.show();
@@ -118,14 +121,14 @@ public class SportfeestPlannerGUI extends Application {
 		}
 	}
 
-	private boolean isRingenVerdeeld(Sportfeest sf) {
+	private boolean isRingenVerdeeld() {
 		return ringverdeling.stream()
 				.noneMatch(inschrijving -> inschrijving.getRing() == null);
 	}
 
 	private void setNewSportfeestChecked(Sportfeest sf) {
 		setNewSportfeest(sf);
-		if (!isRingenVerdeeld(sf)) {
+		if (!isRingenVerdeeld()) {
 			// als nodige ringen nog niet verdeeld zijn, vraag of dat moet gebeuren
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 			alert.setTitle("Ringen verdelen");
@@ -161,6 +164,7 @@ public class SportfeestPlannerGUI extends Application {
 				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
+		fileChooser.setInitialFileName(sportfeestPlannerService.getSportfeest().getLocatie());
 		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showSaveDialog(parentWindow);
 		if (selectedFile != null) {
@@ -207,7 +211,7 @@ public class SportfeestPlannerGUI extends Application {
 
 	@FXML
 	public void StartOplossen(ActionEvent actionEvent) {
-		if (isRingenVerdeeld(sportfeestPlannerService.getSportfeest())) {
+		if (isRingenVerdeeld()) {
 			sportfeestPlannerService.start();
 			tbLog.getTabPane().getSelectionModel().select(tbLog);
 		} else {
@@ -233,7 +237,7 @@ public class SportfeestPlannerGUI extends Application {
 				, new FileChooser.ExtensionFilter("Alle bestanden", "*.*")
 		);
 		fileChooser.setInitialDirectory(new File("data/"));
-		fileChooser.setInitialFileName("uurschema");
+		fileChooser.setInitialFileName(sportfeestPlannerService.getSportfeest().getLocatie());
 		Window parentWindow = ((MenuItem) (actionEvent.getTarget())).getParentPopup().getOwnerWindow();
 		File selectedFile = fileChooser.showSaveDialog(parentWindow);
 		if (selectedFile != null) {
@@ -299,9 +303,9 @@ public class SportfeestPlannerGUI extends Application {
 
 	@FXML
 	public void initialize() {
-		tblColAfdeling.setCellValueFactory(inschr -> new SimpleStringProperty(((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getAfdeling().getNaam()));
-		tblColDiscipline.setCellValueFactory(inschr -> new SimpleStringProperty(((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getDiscipline().getNaam()));
-		tblColKorps.setCellValueFactory(inschr -> new SimpleIntegerProperty(((TableColumn.CellDataFeatures<Inschrijving, Integer>) inschr).getValue().getKorps()));
+		tblColAfdeling.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getAfdeling().getNaam()));
+		tblColDiscipline.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getDiscipline().getNaam()));
+		tblColKorps.setCellValueFactory(inschr -> new SimpleIntegerProperty(inschr.getValue().getKorps()).asObject());
 		tblColKorps.setCellFactory(col -> new TableCell<Inschrijving, Integer>() {
 			@Override
 			protected void updateItem(Integer korps, boolean empty) {

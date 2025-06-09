@@ -136,7 +136,7 @@ public class Marshalling {
 				}
 
 				if (reeks.length() > 12) { //reeksen hebben altijd een naam met meer dan 12 karakters
-					if (minuten == 30) logger.error("Kon aantal minuten voor discipline " + reeks + " niet bepalen!");
+					if (minuten == 30) logger.error("Kon aantal minuten voor discipline {} niet bepalen!", reeks);
 
 					Discipline discipline = new Discipline();
 					discipline.setNaam(reeks);
@@ -399,10 +399,10 @@ public class Marshalling {
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
 			printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
-			sheet.setMargin(Sheet.LeftMargin, 1 / 2.54);
-			sheet.setMargin(Sheet.RightMargin, 1 / 2.54);
-			sheet.setMargin(Sheet.TopMargin, 1 / 2.54);
-			sheet.setMargin(Sheet.BottomMargin, 1 / 2.54);
+			sheet.setMargin(PageMargin.LEFT, 1 / 2.54);
+			sheet.setMargin(PageMargin.RIGHT, 1 / 2.54);
+			sheet.setMargin(PageMargin.TOP, 1 / 2.54);
+			sheet.setMargin(PageMargin.BOTTOM, 1 / 2.54);
 
 			List<Ring> sortedRingen = map.getRingen().stream()
 					.filter(rng -> ringGroep.equals(rng.getDisciplines().stream().findFirst().get().getRingNaam()))
@@ -422,7 +422,7 @@ public class Marshalling {
 
 			for (int i = 0; i < sortedRingen.size(); i++) {
 				Ring currentRing = sortedRingen.get(i);
-				int tbRowBase = (int) ((i / 2) * (4 + (TOTALETIJD / ringGroepDuur / 2f)));
+				int tbRowBase = (int) (((float) i / 2) * (4 + ((float) TOTALETIJD / ringGroepDuur / 2)));
 				int tbColBase = (i % 2) * 5;
 
 				//Ringtitel

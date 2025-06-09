@@ -26,23 +26,12 @@
  */
 package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
-import javafx.util.Pair;
+import javafx.scene.layout.Pane;
 
-public interface AgendaSkin<H> {
-	/**
-	 * Complete refresh
-	 */
-	void refresh();
+class DragPane<H> extends Pane {
 
-	/**
-	 * Recreate the appointments
-	 */
-	void setupAppointments();
-
-	/**
-	 * @param x scene coordinate
-	 * @param y scene coordinate
-	 * @return a localDateTime equivalent of the click location, where a drop in the day section has nano seconds == 1, and a drop in a header (wholeday) section has nano seconds == 0
-	 */
-	Pair<H, Integer> convertClickInSceneToDateTime(double x, double y);
+	DragPane(LayoutHelp<H> layoutHelp) {
+		prefWidthProperty().bind(layoutHelp.skinnable.widthProperty()); // the drag pane is the same size as the whole skin
+		prefHeightProperty().bind(layoutHelp.skinnable.heightProperty());
+	}
 }
