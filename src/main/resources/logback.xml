@@ -1,5 +1,5 @@
 <configuration>
-    <conversionRule conversionWord="highlighting" converterClass="logging.Highlighting" />
+    <conversionRule conversionWord="highlighting" converterClass="logging.Highlighting"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
@@ -30,8 +30,9 @@
     </appender>
 
     <appender name="async_guiAppender" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>10</discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
-        <appender-ref ref="guiAppender" />
+        <discardingThreshold>10
+        </discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
+        <appender-ref ref="guiAppender"/>
         <queueSize>500</queueSize> <!-- default 256 -->
         <includeCallerData>false</includeCallerData><!-- default false -->
         <neverBlock>true</neverBlock><!-- default false, set to true to cause the
@@ -42,9 +43,9 @@
     <logger name="org.optaplanner" level="${logback.level.org.optaplanner:-debug}"/>
 
     <root level="info">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="fileAppender" />
-        <appender-ref ref="async_guiAppender" />
-        <appender-ref ref="guiAppender" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="async_guiAppender"/>
+        <appender-ref ref="guiAppender"/>
     </root>
 </configuration>

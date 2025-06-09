@@ -76,10 +76,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 			if (count > 0) {
 				String text = new String(buf, 0, count);
 
-				Platform.runLater(() -> {
-					textArea.appendText(text);
-
-				});
+				Platform.runLater(() -> textArea.appendText(text));
 				count = 0;
 			}
 		}

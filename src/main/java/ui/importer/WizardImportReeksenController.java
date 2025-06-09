@@ -97,7 +97,7 @@ public class WizardImportReeksenController extends WizardImportController {
 	}
 
 	@Validate
-	public boolean validate() throws Exception {
+	public boolean validate() {
 		//ringnamen moeten minstens 6 characters zijn
 		if (!model.getReeksen().stream().allMatch(reeks -> reeks.getRingNaam() != null && reeks.getRingNaam().length() > 5)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -111,7 +111,7 @@ public class WizardImportReeksenController extends WizardImportController {
 	}
 
 	@Submit
-	public void submit() throws Exception {
+	public void submit() {
 
 	}
 }

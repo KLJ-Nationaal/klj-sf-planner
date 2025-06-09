@@ -54,13 +54,11 @@ public class WizardImportSportfeestController extends WizardImportController {
 			txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")).findFirst().orElse(""));
 		}
 
-		txtSportfeest.setOnAction(event -> {
-			txtTitel.setText(txtSportfeest.getValue().replaceAll("(?i)sportfeest", "").trim());
-		});
+		txtSportfeest.setOnAction(event -> txtTitel.setText(txtSportfeest.getValue().replaceAll("(?i)sportfeest", "").trim()));
 	}
 
 	@Validate
-	public boolean validate() throws Exception {
+	public boolean validate() {
 
 		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -75,7 +73,7 @@ public class WizardImportSportfeestController extends WizardImportController {
 	}
 
 	@Submit
-	public void submit() throws Exception {
+	public void submit() {
 
 	}
 }

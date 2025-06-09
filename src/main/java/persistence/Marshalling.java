@@ -22,12 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Marshalling {
-	public static final int MINMINUTEN = 3;
-	public static final int TOTALETIJD = 176;
-	public static final int TOTALETIJDRINGMETFINALE = 150;
-	public static final int TABELMINUTEN = 180;
-	public static final int ROW_HEIGHT = 18;
-	public static final String STARTTIJD = "08:00";
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
 	public static int getActiveSheet(String filename) {
@@ -255,7 +249,7 @@ public class Marshalling {
 		if (fileRingen.exists() && !fileRingen.delete())
 			throw new Exception("Kon bestaand bestand " + fileRingen.getName() + " niet overschrijven. Houd Excel dit bestand misschien open?");
 
-		int rijen = (int) Math.ceil(1.0 * TABELMINUTEN / MINMINUTEN / 2) + 3;
+		int rijen = (int) Math.ceil(1.0 * Instellingen.Opties().TABELMINUTEN / Instellingen.Opties().MINMINUTEN / 2) + 3;
 		fixRingNumbersOrder(map);
 
 		//***************************************
@@ -291,13 +285,13 @@ public class Marshalling {
 			for (int i = 2; i < rijen; i++) {
 				Row row = sheet.createRow(i);
 				SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-				Date d = df.parse(STARTTIJD);
+				Date d = df.parse(Instellingen.Opties().STARTTIJD);
 				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(d);
-				cal1.add(Calendar.MINUTE, MINMINUTEN * (i - 2));
+				cal1.add(Calendar.MINUTE, Instellingen.Opties().MINMINUTEN * (i - 2));
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(d);
-				cal2.add(Calendar.MINUTE, MINMINUTEN * (i - 2) + (TABELMINUTEN / 2 + 3));
+				cal2.add(Calendar.MINUTE, Instellingen.Opties().MINMINUTEN * (i - 2) + (Instellingen.Opties().TABELMINUTEN / 2 + 3));
 				for (int col = 0; col < 9; col++) {
 					Cell cell = row.createCell(col);
 					if (col == 0 || col == 5) cell.setCellValue(df.format(cal1.getTime()));
@@ -309,9 +303,9 @@ public class Marshalling {
 			}
 
 			//gegevens invullen
-			for (int i = 0; i <= TABELMINUTEN; i = i + MINMINUTEN) {
-				int row = 2 + (i % (TABELMINUTEN / 2 + 3)) / 3;
-				int column = (i > (TABELMINUTEN / 2) ? 3 : 1);
+			for (int i = 0; i <= Instellingen.Opties().TABELMINUTEN; i = i + Instellingen.Opties().MINMINUTEN) {
+				int row = 2 + (i % (Instellingen.Opties().TABELMINUTEN / 2 + 3)) / 3;
+				int column = (i > (Instellingen.Opties().TABELMINUTEN / 2) ? 3 : 1);
 				final int time = i;
 				List<Inschrijving> inschrijvingList = afdeling.getInschrijvingen().stream()
 						.filter(inschr -> inschr.getTijdslot() != null)
@@ -413,16 +407,16 @@ public class Marshalling {
 
 			//creeer eerst de rijen
 			int aantalrijen = (int) Math.ceil(
-					(3 + (TOTALETIJD / 2f / ringGroepDuur))
+					(3 + (Instellingen.Opties().TOTALETIJD / 2f / ringGroepDuur))
 							* Math.ceil(sortedRingen.size() / 2f));
 			for (int i = 0; i <= aantalrijen; i++) {
 				Row row = sheet.createRow(i);
-				row.setHeightInPoints(ROW_HEIGHT);
+				row.setHeightInPoints(Instellingen.Opties().ROW_HEIGHT);
 			}
 
 			for (int i = 0; i < sortedRingen.size(); i++) {
 				Ring currentRing = sortedRingen.get(i);
-				int tbRowBase = (int) (((float) i / 2) * (4 + ((float) TOTALETIJD / ringGroepDuur / 2)));
+				int tbRowBase = (int) (((float) i / 2) * (4 + ((float) Instellingen.Opties().TOTALETIJD / ringGroepDuur / 2)));
 				int tbColBase = (i % 2) * 5;
 
 				//Ringtitel
@@ -433,10 +427,10 @@ public class Marshalling {
 
 				//Tijden invullen
 				SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-				Date d = df.parse(STARTTIJD);
+				Date d = df.parse(Instellingen.Opties().STARTTIJD);
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(d);
-				int slots = (TOTALETIJD / ringGroepDuur) + 1;
+				int slots = (Instellingen.Opties().TOTALETIJD / ringGroepDuur) + 1;
 				for (int j = 0; j < slots; j++) {
 					int relRow = j % (int) Math.ceil(slots / 2f); //helft, afronden naar boven
 					Row row = sheet.getRow(tbRowBase + 1 + relRow);
@@ -509,7 +503,7 @@ public class Marshalling {
 					lastBreakIndex = sheet.getRowBreaks()[sheet.getRowBreaks().length - 1];
 				}
 				int lastRowPageIndex = tbRowBase + (int) Math.ceil(slots / 2f) - lastBreakIndex;
-				if (lastRowPageIndex >= 550 / ROW_HEIGHT) {
+				if (lastRowPageIndex >= 550 / Instellingen.Opties().ROW_HEIGHT) {
 					sheet.setRowBreak(tbRowBase - 1);
 				}
 
@@ -568,7 +562,7 @@ public class Marshalling {
 		} else {
 			cell = row.getCell(column - 1);
 			//cell.setCellValue("");
-			if (i != inschrijving.getTijdslot().getEindTijd() - MINMINUTEN) {
+			if (i != inschrijving.getTijdslot().getEindTijd() - Instellingen.Opties().MINMINUTEN) {
 				cell.setCellStyle(styles.get("tijdonderleeg"));
 				cell = row.getCell(column);
 				cell.setCellStyle(styles.get("ringonderleeg"));

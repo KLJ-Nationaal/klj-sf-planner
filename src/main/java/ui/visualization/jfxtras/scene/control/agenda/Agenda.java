@@ -78,7 +78,7 @@ public class Agenda<H> extends Control {
 	private ListProperty<InschrijvingInterface> appointments() { return appointmentsProperty; }
 	public final void setAppointmentsProperty(ObservableList<InschrijvingInterface> value) { appointmentsProperty.set(value); }
 	public final ObservableList<InschrijvingInterface> getAppointmentsProperty() { return appointmentsProperty.get(); }
-	public ListProperty<InschrijvingInterface> appointmentsProperty = new SimpleListProperty<>(this, "itemAppointmentsProperty", FXCollections.observableArrayList());
+	public final ListProperty<InschrijvingInterface> appointmentsProperty = new SimpleListProperty<>(this, "itemAppointmentsProperty", FXCollections.observableArrayList());
 
 	private void constructAppointments() {
 		// when appointments are removed, they can't be selected anymore

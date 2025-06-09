@@ -41,7 +41,7 @@ public class WizardImportRingenController extends WizardImportController {
 	WizardData model;
 
 	private final ObservableList<WizardRing> data = FXCollections.observableArrayList();
-	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(WizardImportRingenController.class);
 
 	@FXML
 	public void initialize() {
@@ -136,7 +136,7 @@ public class WizardImportRingenController extends WizardImportController {
 	}
 
 	@Validate
-	public boolean validate() throws Exception {
+	public boolean validate() {
 		//aantal ringen groter dan 0
 		if (!data.stream().allMatch(ring -> ring.getAantalRingen() > 0)) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -159,7 +159,7 @@ public class WizardImportRingenController extends WizardImportController {
 	}
 
 	@Submit
-	public void submit() throws Exception {
+	public void submit() {
 		Sportfeest sf = new Sportfeest();
 		sf.setLocatie(model.getSfTitel());
 		sf.setDatum(model.getSfDatum());

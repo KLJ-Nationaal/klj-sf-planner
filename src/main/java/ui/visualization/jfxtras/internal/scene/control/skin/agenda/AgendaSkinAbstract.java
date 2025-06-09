@@ -43,7 +43,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 import jfxtras.css.CssMetaDataForSkinProperty;
 import jfxtras.css.converters.DoubleConverter;
-import persistence.Marshalling;
+import persistence.Instellingen;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
@@ -150,7 +150,7 @@ abstract public class AgendaSkinAbstract<H> extends SkinBase<Agenda<H>> {
 	// -------------------------
 
 	private static class StyleableProperties {
-		private static final CssMetaData<Agenda<?>, Double> SNAPTOMINUTES_CSSMETADATA = new CssMetaDataForSkinProperty<Agenda<?>, AgendaSkinAbstract<?>, Double>("-fxx-snap-to-minutes", DoubleConverter.getInstance(), (double) Marshalling.MINMINUTEN) {
+		private static final CssMetaData<Agenda<?>, Double> SNAPTOMINUTES_CSSMETADATA = new CssMetaDataForSkinProperty<Agenda<?>, AgendaSkinAbstract<?>, Double>("-fxx-snap-to-minutes", DoubleConverter.getInstance(), (double) Instellingen.Opties().MINMINUTEN) {
 			@Override
 			protected ObjectProperty<Double> getProperty(AgendaSkinAbstract<?> s) {
 				return s.snapToMinutesProperty;

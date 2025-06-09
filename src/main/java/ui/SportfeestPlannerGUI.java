@@ -18,18 +18,21 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
 import org.slf4j.LoggerFactory;
+import persistence.Instellingen;
 import persistence.Marshalling;
 import ui.importer.WizardImportController;
 import ui.importer.WizardModule;
@@ -80,6 +83,7 @@ public class SportfeestPlannerGUI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
+		Instellingen.load();
 		SportfeestPlannerGUI.primaryStage = primaryStage;
 		Parent root = FXMLLoader.load(getClass().getResource("/ui/Main.fxml"));
 		Scene scene = new Scene(root);
@@ -87,12 +91,10 @@ public class SportfeestPlannerGUI extends Application {
 		primaryStage.setScene(scene);
 		this.setTitle("");
 		primaryStage.show();
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent e) {
-				Platform.exit();
-				System.exit(0);
-			}
+		primaryStage.setOnCloseRequest(e -> {
+			Instellingen.save();
+			Platform.exit();
+			System.exit(0);
 		});
 	}
 
@@ -265,13 +267,13 @@ public class SportfeestPlannerGUI extends Application {
 				.sorted(Comparator.comparing((Function<List<Inschrijving>, Integer>) List::size).reversed())
 				.forEach(inschrijvingen -> {
 					Ring leastUsedRing = inschrijvingen.get(0).getMogelijkeRingen().stream()
-							.map(ring -> new AbstractMap.SimpleEntry<Ring, Long>(ring, ringverdeling.stream()
+							.map(ring -> new AbstractMap.SimpleEntry<>(ring, ringverdeling.stream()
 									.filter(inschr -> inschr.getDiscipline().getRingNaam().equals(inschrijvingen.get(0).getDiscipline().getRingNaam()))
 									.filter(inschr -> inschr.getRing() != null)
 									.collect(groupingBy(Inschrijving::getRing, Collectors.counting()))
 									.getOrDefault(ring, 0L)))
 							.min(Map.Entry.comparingByValue())
-							.orElse(new AbstractMap.SimpleEntry<Ring, Long>(null, 0L))
+							.orElse(new AbstractMap.SimpleEntry<>(null, 0L))
 							.getKey();
 					inschrijvingen.forEach(inschrijving -> {
 						logger.debug("Ring {} toewijzen aan inschrijving {}", leastUsedRing, inschrijving);
@@ -372,6 +374,8 @@ public class SportfeestPlannerGUI extends Application {
 		sportfeestPlannerService.setOnCancelled(event -> {
 			progressUpdater.stop();
 			prgStatusProgress.setProgress(0);
+			setNewSportfeest(sportfeestPlannerService.getSportfeest());
+			AnalyseResultaat(new ActionEvent());
 			txtStatusLabel.setText("Berekening gestopt");
 			sportfeestPlannerService.reset();
 		});

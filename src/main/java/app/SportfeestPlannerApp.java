@@ -27,7 +27,7 @@ public class SportfeestPlannerApp {
 		Sportfeest solvedSportfeest = solver.solve(unsolvedSportfeest);
 
 		logger.info("Einde van de berekening");
-		logger.info("Score: " + solvedSportfeest.getScore().toString());
+		logger.info("Score: {}", solvedSportfeest.getScore().toString());
 		if (!solvedSportfeest.getScore().isFeasible()) logger.warn("DEZE OPLOSSING IS NIET HAALBAAR!");
 
 		ScoreDirector<Sportfeest> scoreDirector = solver.getScoreDirectorFactory().buildScoreDirector();

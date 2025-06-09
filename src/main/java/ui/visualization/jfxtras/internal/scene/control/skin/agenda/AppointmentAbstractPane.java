@@ -220,7 +220,7 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 			}
 
 			// determine start and end DateTime of the drag
-			if (!Objects.equals(appointment.getTijdslot(),appointmentForDrag.getTijdslot())) {
+			if (!Objects.equals(appointment.getTijdslot(), appointmentForDrag.getTijdslot())) {
 				logger.info("Verplaatsing {} van {} naar {}", appointment, appointment.getTijdslot(), appointmentForDrag.getTijdslot());
 				appointment.setTijdslot(appointmentForDrag.getTijdslot());
 				//Pair<H,Integer> dragTime = layoutHelp.skin.convertClickInSceneToDateTime(mouseEvent.getSceneX(), mouseEvent.getSceneY());

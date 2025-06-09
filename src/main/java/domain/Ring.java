@@ -1,6 +1,6 @@
 package domain;
 
-import persistence.Marshalling;
+import persistence.Instellingen;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
@@ -57,8 +57,8 @@ public class Ring {
 		disciplines.add(discipline);
 		//tijdslots voor ring maken als ze nog niet bestaan
 		if (tijdslots.isEmpty()) {
-			int totaletijd = Marshalling.TOTALETIJDRINGMETFINALE;
-			if (Objects.equals(letter, "")) totaletijd = Marshalling.TOTALETIJD;
+			int totaletijd = Instellingen.Opties().TOTALETIJDRINGMETFINALE;
+			if (Objects.equals(letter, "")) totaletijd = Instellingen.Opties().TOTALETIJD;
 			for (int i = 0; i < totaletijd; i = i + discipline.getDuur()) {  //TODO: property van maken
 				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 				tijdslots.add(tijdslot);

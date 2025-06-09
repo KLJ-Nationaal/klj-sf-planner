@@ -32,7 +32,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import jfxtras.util.NodeUtil;
-import persistence.Marshalling;
+import persistence.Instellingen;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ public class DayBodyPane<H> extends Pane {
 		double lAllFlagpolesWidth = layoutHelp.wholedayAppointmentFlagpoleWidthProperty.get() * lWholedayCnt;
 		double lDayWidth = layoutHelp.dayContentWidthProperty.get();
 		double lRemainingWidthForAppointments = lDayWidth - lAllFlagpolesWidth;
-		double lNumberOfPixelsPerMinute = layoutHelp.dayHeightProperty.get() / (Marshalling.TOTALETIJD + 4); //TODO: the 4 is needed because objects don't lineup otherwise
+		double lNumberOfPixelsPerMinute = layoutHelp.dayHeightProperty.get() / (Instellingen.Opties().TOTALETIJD + 4); //TODO: the 4 is needed because objects don't lineup otherwise
 
 		// then add all tracked appointments (regular & task) to the day
 		for (AppointmentAbstractTrackedPane<H> lAppointmentAbstractTrackedPane : trackedAppointmentBodyPanes) {

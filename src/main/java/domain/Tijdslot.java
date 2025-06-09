@@ -1,8 +1,8 @@
 package domain;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import persistence.Instellingen;
 import persistence.IntegerAdapter;
-import persistence.Marshalling;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
@@ -52,7 +52,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	public String getStartTijdFormatted() {
 		try {
 			SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-			Date d = df.parse(Marshalling.STARTTIJD);
+			Date d = df.parse(Instellingen.Opties().STARTTIJD);
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(d);
 			cal.add(Calendar.MINUTE, startTijd);

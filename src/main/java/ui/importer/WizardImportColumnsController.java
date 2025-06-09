@@ -60,9 +60,9 @@ public class WizardImportColumnsController extends WizardImportController {
 	}
 
 	@Validate
-	public boolean validate() throws Exception {
+	public boolean validate() {
 
-		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().equals("")) {
+		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
@@ -71,7 +71,7 @@ public class WizardImportColumnsController extends WizardImportController {
 			return false;
 		}
 
-		if (txtAfdeling.getValue() == null || txtAfdeling.getValue().equals("")) {
+		if (txtAfdeling.getValue() == null || txtAfdeling.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
@@ -80,7 +80,7 @@ public class WizardImportColumnsController extends WizardImportController {
 			return false;
 		}
 
-		if (txtDiscipline.getValue() == null || txtDiscipline.getValue().equals("")) {
+		if (txtDiscipline.getValue() == null || txtDiscipline.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
@@ -89,7 +89,7 @@ public class WizardImportColumnsController extends WizardImportController {
 			return false;
 		}
 
-		if (txtAantal.getValue() == null || txtAantal.getValue().equals("")) {
+		if (txtAantal.getValue() == null || txtAantal.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
@@ -102,7 +102,7 @@ public class WizardImportColumnsController extends WizardImportController {
 	}
 
 	@Submit
-	public void submit() throws Exception {
+	public void submit() {
 		model.setColSportfeest(txtSportfeest.getSelectionModel().getSelectedIndex());
 		model.setColAfdeling(txtAfdeling.getSelectionModel().getSelectedIndex());
 		model.setColDiscipline(txtDiscipline.getSelectionModel().getSelectedIndex());

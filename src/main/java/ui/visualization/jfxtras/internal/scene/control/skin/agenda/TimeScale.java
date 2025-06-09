@@ -33,7 +33,7 @@ import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 import jfxtras.util.NodeUtil;
 import org.slf4j.LoggerFactory;
-import persistence.Marshalling;
+import persistence.Instellingen;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,14 +66,14 @@ class TimeScale<H> extends Pane {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 		Calendar cal = Calendar.getInstance();
 		try {
-			cal.setTime(df.parse(Marshalling.STARTTIJD));
+			cal.setTime(df.parse(Instellingen.Opties().STARTTIJD));
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 		}
 		final int mStart = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
 
 		// draw hours
-		for (int lMinute = mStart; lMinute < (mStart + Marshalling.TOTALETIJD + 16); lMinute++) {
+		for (int lMinute = mStart; lMinute < (mStart + Instellingen.Opties().TOTALETIJD + 16); lMinute++) {
 			int relMinute = lMinute - mStart;
 			// hour
 			if (lMinute % 60 == 0) {
@@ -116,7 +116,7 @@ class TimeScale<H> extends Pane {
 				getChildren().add(t);
 			}
 			//graticule lines
-			if (lMinute % Marshalling.MINMINUTEN == 0) {
+			if (lMinute % Instellingen.Opties().MINMINUTEN == 0) {
 				Line l = new Line(0, 10, 100, 10);
 				l.setId("halfHourLine" + relMinute);
 				l.getStyleClass().add("HalfHourLine");

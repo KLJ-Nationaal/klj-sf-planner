@@ -37,7 +37,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
-import persistence.Marshalling;
+import persistence.Instellingen;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
@@ -68,7 +68,7 @@ public class LayoutHelp<H> {
 		dayContentWidthProperty.bind(dayWidthProperty.subtract(0)); // the 10 is a margin at the right so that there is always room to start a new appointment
 
 		// hour height
-		dayHeightProperty.bind(hourHeightProperty.multiply((Marshalling.TOTALETIJD) / 60.0).add(15));
+		dayHeightProperty.bind(hourHeightProperty.multiply((Instellingen.Opties().TOTALETIJD) / 60.0).add(15));
 		durationInMSPerPixelProperty.bind(msPerDayProperty.divide(dayHeightProperty));
 
 		// generic
@@ -103,12 +103,12 @@ public class LayoutHelp<H> {
 	final DoubleProperty durationInMSPerPixelProperty = new SimpleDoubleProperty(0);
 	final DoubleProperty hourHeightProperty = new SimpleDoubleProperty(0);
 	final StringProperty divergentSelectedProperty = new SimpleStringProperty("");
-	DateTimeFormatter timeDateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+	final DateTimeFormatter timeDateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 	String formatTime(int minutes) {
 		String sTime = "";
 		try {
-			LocalTime d = LocalTime.parse(Marshalling.STARTTIJD, timeDateTimeFormatter);
+			LocalTime d = LocalTime.parse(Instellingen.Opties().STARTTIJD, timeDateTimeFormatter);
 			d = d.plusMinutes(minutes);
 			sTime = d.format(timeDateTimeFormatter);
 		} catch (DateTimeException e) {
@@ -120,7 +120,7 @@ public class LayoutHelp<H> {
 	int parseTime(String time) {
 		try {
 			LocalTime localTime = LocalTime.parse(time);
-			LocalTime startTime = LocalTime.parse(Marshalling.STARTTIJD);
+			LocalTime startTime = LocalTime.parse(Instellingen.Opties().STARTTIJD);
 			localTime = localTime.minusSeconds(startTime.toSecondOfDay());
 			return localTime.toSecondOfDay() / 60;
 		} catch (DateTimeParseException e) {

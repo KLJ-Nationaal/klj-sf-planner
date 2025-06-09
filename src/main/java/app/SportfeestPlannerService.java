@@ -60,7 +60,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 	protected void succeeded() {
 		super.succeeded();
 		logger.info("Einde van de berekening");
-		logger.info("Score: " + sportfeestProperty.get().getScore().toString());
+		logger.info("Score: {}", sportfeestProperty.get().getScore().toString());
 		if (!sportfeestProperty.get().getScore().isFeasible()) logger.warn("DEZE OPLOSSING IS NIET HAALBAAR!");
 
 		ScoreDirector<Sportfeest> scoreDirector = solver.getScoreDirectorFactory().buildScoreDirector();
@@ -90,6 +90,11 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 			@Override
 			public boolean isCancelled() { return solver.isTerminateEarly() && super.isCancelled(); }
 
+			@Override
+			protected void cancelled() {
+				super.cancelled();
+				sportfeestProperty.set(solver.getBestSolution());
+			}
 			protected Sportfeest call() {
 				sportfeestProperty.set(solver.solve(sportfeestProperty.get()));
 				return sportfeestProperty.get();
@@ -99,7 +104,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 
 			public Sportfeest getBestSolution() { return solver.getBestSolution(); }
 
-			public Score getBestScore() { return solver.getBestScore(); }
+			public Score<?> getBestScore() { return solver.getBestScore(); }
 		};
 	}
 }

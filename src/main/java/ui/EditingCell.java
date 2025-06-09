@@ -90,23 +90,6 @@ public class EditingCell<H, I> extends TableCell<H, I> {
 				cancelEdit();
 			}
 		});
-		/*textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent t) {
-				if (t.getCode().isDigitKey()) {
-					if (CellField.isLessOrEqualOneSym()) {
-						CellField.addSymbol(t.getText());
-					} else {
-						CellField.setText(textField.getText());
-					}
-					textField.setText(CellField.getText());
-					textField.deselect();
-					textField.end();
-					textField.positionCaret(textField.getLength() + 2);//works sometimes
-
-				}
-			}
-		});*/
 	}
 
 	protected String getString() {
