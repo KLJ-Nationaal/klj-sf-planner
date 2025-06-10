@@ -332,7 +332,7 @@ public class Marshalling {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String dateString = format.format(new Date());
 
-			String sfInfo = "Sportfeest te " + map.getLocatie() + " op "
+			String sfInfo = "Sportfeest " + map.getLocatie() + " op "
 					+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 			Row infoRow = sheet.createRow(1);
 			infoRow.setHeightInPoints(20);
@@ -416,7 +416,7 @@ public class Marshalling {
 
 			for (int i = 0; i < sortedRingen.size(); i++) {
 				Ring currentRing = sortedRingen.get(i);
-				int tbRowBase = (int) (((float) i / 2) * (4 + ((float) Instellingen.Opties().TOTALETIJD / ringGroepDuur / 2)));
+				int tbRowBase = (int) ((i / 2) * (4 + (Instellingen.Opties().TOTALETIJD / ringGroepDuur / 2f)));
 				int tbColBase = (i % 2) * 5;
 
 				//Ringtitel

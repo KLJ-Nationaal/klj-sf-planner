@@ -55,7 +55,7 @@ public class Ring {
 	public HashSet<Discipline> getDisciplines() { return disciplines; }
 	public void addDiscipline(Discipline discipline) {
 		disciplines.add(discipline);
-		//tijdslots voor ring maken als ze nog niet bestaan
+		// tijdslots voor ring maken als ze nog niet bestaan
 		if (tijdslots.isEmpty()) {
 			int totaletijd = Instellingen.Opties().TOTALETIJDRINGMETFINALE;
 			if (Objects.equals(letter, "")) totaletijd = Instellingen.Opties().TOTALETIJD;
@@ -63,6 +63,8 @@ public class Ring {
 				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 				tijdslots.add(tijdslot);
 			}
+			// laatste tijdslot als ongunstig instellen (liefst niet)
+			tijdslots.get(tijdslots.size() - 1).setOngunstig(true);
 		}
 	}
 

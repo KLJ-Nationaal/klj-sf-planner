@@ -30,10 +30,10 @@
     </Discipline>
     <Discipline>
         <Naam>Bondsreeks jongens</Naam>
-        <Ringnaam>Bondsreeks &amp; vrije ritmiek jongens</Ringnaam>
+        <Ringnaam>Bondsreeks jongens</Ringnaam>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
-        <Toevoeging>bonds</Toevoeging>
+        <Toevoeging/>
     </Discipline>
     <Discipline>
         <Naam>Bondsreeks meisjes</Naam>
@@ -79,17 +79,17 @@
     </Discipline>
     <Discipline>
         <Naam>Keurwimpelen muziekreeks</Naam>
-        <Ringnaam>Keurwimpelen</Ringnaam>
+        <Ringnaam>Keurwimpelen muziekreeks</Ringnaam>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
-        <Toevoeging>muziek</Toevoeging>
+        <Toevoeging/>
     </Discipline>
     <Discipline>
         <Naam>Keurwimpelen vrije reeks</Naam>
-        <Ringnaam>Keurwimpelen</Ringnaam>
+        <Ringnaam>Keurwimpelen vrije reeks</Ringnaam>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
-        <Toevoeging>vrije</Toevoeging>
+        <Toevoeging/>
     </Discipline>
     <Discipline>
         <Naam>Kringdans gemengd</Naam>
@@ -172,10 +172,10 @@
     </Discipline>
     <Discipline>
         <Naam>Vrije ritmiek jongens</Naam>
-        <Ringnaam>Bondsreeks &amp; vrije ritmiek jongens</Ringnaam>
+        <Ringnaam>Vrije ritmiek jongens</Ringnaam>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
-        <Toevoeging>vrije</Toevoeging>
+        <Toevoeging/>
     </Discipline>
     <Discipline>
         <Naam>Vrije ritmiek meisjes</Naam>

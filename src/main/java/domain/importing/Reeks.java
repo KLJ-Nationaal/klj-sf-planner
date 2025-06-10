@@ -23,48 +23,22 @@ public class Reeks {
 		this.aantal = aantal;
 	}
 
-	public String getNaam() {
-		return naam;
-	}
+	public String getNaam() { return naam; }
+	public void setNaam(String naam) { this.naam = naam; }
 
-	public void setNaam(String naam) {
-		this.naam = naam;
-	}
+	public String getRingNaam() { return ringNaam; }
+	public void setRingNaam(String ringNaam) { this.ringNaam = ringNaam; }
 
-	public String getRingNaam() {
-		return ringNaam;
-	}
+	public String getExtensie() { return extensie; }
+	public void setExtensie(String extensie) { this.extensie = extensie; }
 
-	public void setRingNaam(String ringNaam) {
-		this.ringNaam = ringNaam;
-	}
+	public int getDuur() { return duur; }
+	public void setDuur(int duur) { this.duur = duur; }
 
-	public String getExtensie() {
-		return extensie;
-	}
-
-	public void setExtensie(String extensie) {
-		this.extensie = extensie;
-	}
-
-	public int getDuur() {
-		return duur;
-	}
-
-	public void setDuur(int duur) {
-		this.duur = duur;
-	}
-
-	public int getAfdPerRing() {
-		return afdPerRing;
-	}
-
-	public void setAfdPerRing(int afdPerRing) {
-		this.afdPerRing = afdPerRing;
-	}
+	public int getAfdPerRing() { return afdPerRing; }
+	public void setAfdPerRing(int afdPerRing) { this.afdPerRing = afdPerRing; }
 
 	public int getAantal() { return aantal; }
-
 	public void setAantal(int aantal) { this.aantal = aantal; }
 
 	@Override

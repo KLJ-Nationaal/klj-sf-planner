@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Opties>
+    <MinMinuten>3</MinMinuten>
+    <TotaleTijd>176</TotaleTijd>
+    <TotaleTijdMetFinale>160</TotaleTijdMetFinale>
+    <TabelMinuten>180</TabelMinuten>
+    <RijHoogte>18</RijHoogte>
+    <StartTijd>08:00</StartTijd>
+    <OplossingTijdslimiet>120</OplossingTijdslimiet>
+</Opties>

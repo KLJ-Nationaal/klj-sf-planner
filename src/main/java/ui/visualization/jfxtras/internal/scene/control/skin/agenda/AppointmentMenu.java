@@ -170,17 +170,17 @@ class AppointmentMenu<H> extends Rectangle {
 
 		// event handling
 		startTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-			// try get the timeslot with whatever the user entered, if invalid, the current timeslot should be returned
+			// probeer het tijdslot te verkrijgen met wat de gebruiker heeft ingevoerd. Als het ongeldig is, moet het huidige tijdslot worden geretourneerd.
 			Tijdslot tijdslot = new Tijdslot(
 					layoutHelp.parseTime(newValue),
 					appointment.getTijdslot().getDuur(),
 					appointment.getRing());
-			// verify something has actually changed and store
+			// verifiëren of er daadwerkelijk iets is veranderd en opslaan
 			if (!Objects.equals(tijdslot, appointment.getTijdslot())) {
 				logger.info("Aanpassing {} gewenst startuur {} naar {}", appointment, newValue, tijdslot);
 				appointment.setTijdslot(tijdslot);
 			}
-			// refresh is done upon popup close
+			// ververs bij het sluiten van de pop-up
 		});
 		startTextField.setPrefWidth(100);
 
@@ -216,14 +216,14 @@ class AppointmentMenu<H> extends Rectangle {
 		duurTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			try {
 				int duur = Integer.parseUnsignedInt(newValue);
-				// try get the timeslot with whatever the user entered, if invalid, the current timeslot should be returned
+				// probeer het tijdslot te verkrijgen met wat de gebruiker heeft ingevoerd. Als het ongeldig is, moet het huidige tijdslot worden geretourneerd.
 				Tijdslot tijdslot = new Tijdslot(appointment.getStartTijd(), duur, appointment.getRing());
-				// verify something has actually changed and store
+				// verifiëren of er daadwerkelijk iets is veranderd en opslaan
 				if (!Objects.equals(tijdslot, appointment.getTijdslot())) {
 					appointment.setTijdslot(tijdslot);
 					logger.info("Aanpassing {} gewenste duur {}, opgeslagen {}", appointment, duur, appointment.getTijdslot().getDuur());
 				}
-				// refresh is done upon popup close
+				// ververs bij het sluiten van de pop-up
 			} catch (NumberFormatException ignored) {}
 		});
 		duurTextField.setPrefWidth(60);

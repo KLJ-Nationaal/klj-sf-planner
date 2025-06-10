@@ -236,8 +236,8 @@
                                 <jdkPreference>jdkOnly</jdkPreference>
                                 <!--<jdkPreference>preferJre</jdkPreference>-->
                                 <path>./java</path>
-                                <initialHeapSize>256</initialHeapSize>
-                                <maxHeapSize>1024</maxHeapSize>
+                                <initialHeapSize>512</initialHeapSize>
+                                <maxHeapSize>4096</maxHeapSize>
                             </jre>
 
                             <versionInfo>
