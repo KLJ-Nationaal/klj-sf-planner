@@ -38,6 +38,11 @@ public class Tijdslot implements Comparable<Tijdslot> {
 		this.ongunstig = ongunstig;
 	}
 
+	// deze constructie is nog voor XML unmarshalling
+	public Tijdslot() {
+		this(0, 1, new Ring());
+	}
+
 	public Ring getRing() { return ring; }
 	public int getStartTijd() { return startTijd; }
 	public int getDuur() { return duur; }
