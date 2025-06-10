@@ -33,6 +33,8 @@ public class Instellingen {
 		public int ROW_HEIGHT = 18;
 		@XmlElement(name = "StartTijd")
 		public String STARTTIJD = "08:00";
+		@XmlElement(name = "OplossingTijdslimiet")
+		public int SOLVERTIMELIMIT = 20;
 	}
 
 	public static synchronized Opties Opties() {

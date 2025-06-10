@@ -17,6 +17,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	private final int startTijd;
 	private final int eindTijd;
 	private final int duur;
+	private boolean ongunstig;
 	@XmlTransient
 	private Ring ring;
 	@XmlAttribute
@@ -25,29 +26,29 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	private final int id;
 
 	public Tijdslot(int startTijd, int duur, Ring ring) {
+		this(startTijd, duur, ring, false);
+	}
+
+	public Tijdslot(int startTijd, int duur, Ring ring, boolean ongunstig) {
 		this.startTijd = startTijd;
 		this.duur = duur;
 		this.ring = ring;
 		this.eindTijd = startTijd + duur;
 		this.id = ring.getRingIndex() * 10000 + startTijd;
+		this.ongunstig = ongunstig;
 	}
 
+	// deze constructie is nog voor XML unmarshalling
 	public Tijdslot() {
 		this(0, 1, new Ring());
 	}
 
-	public Ring getRing() {
-		return ring;
-	}
-	public int getStartTijd() {
-		return startTijd;
-	}
-	public int getDuur() {
-		return duur;
-	}
-	public int getEindTijd() {
-		return eindTijd;
-	}
+	public Ring getRing() { return ring; }
+	public int getStartTijd() { return startTijd; }
+	public int getDuur() { return duur; }
+	public int getEindTijd() { return eindTijd; }
+	public void setOngunstig(boolean ongunstig) { this.ongunstig = ongunstig; }
+	public boolean isOngunstig() { return ongunstig; }
 
 	public String getStartTijdFormatted() {
 		try {
@@ -104,7 +105,5 @@ public class Tijdslot implements Comparable<Tijdslot> {
 		return Objects.compare(startTijd, o.startTijd, Integer::compareTo);
 	}
 
-	public void afterUnmarshal(Unmarshaller u, Object parent) {
-		ring = (Ring) parent;
-	}
+	public void afterUnmarshal(Unmarshaller u, Object parent) { ring = (Ring) parent; }
 }

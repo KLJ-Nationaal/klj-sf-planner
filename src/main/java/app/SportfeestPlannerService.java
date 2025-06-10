@@ -16,6 +16,7 @@ import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
 import org.optaplanner.core.api.solver.event.SolverEventListener;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.slf4j.LoggerFactory;
+import persistence.Instellingen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,16 @@ import java.util.stream.Collectors;
 
 public class SportfeestPlannerService extends Service<Sportfeest> {
 	private final SolverFactory<Sportfeest> solverFactory = SolverFactory.createFromXmlResource("solverConfig.xml");
-	private final Solver<Sportfeest> solver = solverFactory.buildSolver();
+	private final Solver<Sportfeest> solver;
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerService.class);
 	private final List<SolverEventListener<Sportfeest>> eventListeners = new ArrayList<>();
 	private final ObjectProperty<Sportfeest> sportfeestProperty = new SimpleObjectProperty<>(this, "sportfeest");
 
 	public SportfeestPlannerService() {
+		solverFactory.getSolverConfig().getPhaseConfigList().stream()
+				.filter(pc -> pc.getTerminationConfig() != null)
+				.forEach(pc -> pc.getTerminationConfig().setSecondsSpentLimit((long) Instellingen.Opties().SOLVERTIMELIMIT));
+		solver = solverFactory.buildSolver();
 		solver.addEventListener((BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) -> eventListeners.forEach(
 				solverEventListener -> solverEventListener.bestSolutionChanged(bestSolutionChangedEvent)
 		));

@@ -162,7 +162,7 @@ rule "inschrijvingen in zelfde ring van een afdeling moeten aansluiten"
 			tijdslot.eindTijd <= $tussentijdStop
 		)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -20);
+		scoreHolder.addSoftConstraintMatch(kcontext, -30);
 end
 /*
 rule "minstens enkele minuten tussen twee inschrijvingen van een verschillende afdeling in een ring"
@@ -217,6 +217,7 @@ rule "zo weinig mogelijk vendeluniform wissels"
 	then
 		 scoreHolder.addSoftConstraintMatch(kcontext, -2 );
 end
+
 rule "inschrijvingen die op hetzelfde moment moeten beginnen"
 	when
 		$leftInschrijving : Inschrijving(
@@ -236,5 +237,15 @@ rule "inschrijvingen die op hetzelfde moment moeten beginnen"
 			!tijdslot.isOverlap($tijdslot)
 		)
 	then
-		scoreHolder.addSoftConstraintMatch(kcontext, -50);
+		scoreHolder.addSoftConstraintMatch(kcontext, -70);
+end
+
+rule "te vermijden tijdslots"
+when
+Inschrijving(
+		tijdslot != null,
+		tijdslot.isOngunstig()
+		)
+then
+		scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
