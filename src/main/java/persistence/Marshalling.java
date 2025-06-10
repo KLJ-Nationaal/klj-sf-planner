@@ -332,7 +332,7 @@ public class Marshalling {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String dateString = format.format(new Date());
 
-			String sfInfo = "Sportfeest te " + map.getLocatie() + " op "
+			String sfInfo = "Sportfeest " + map.getLocatie() + " op "
 					+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 			Row infoRow = sheet.createRow(1);
 			infoRow.setHeightInPoints(20);
