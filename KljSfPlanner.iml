@@ -4,6 +4,8 @@
     <content url="file://$MODULE_DIR$" dumb="true">
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/javafx-sdk-11.0.2" />
+      <excludeFolder url="file://$MODULE_DIR$/jdk-11.0.27+6-jre" />
+      <excludeFolder url="file://$MODULE_DIR$/jdk-21.0.7+6-jre" />
     </content>
   </component>
 </module>

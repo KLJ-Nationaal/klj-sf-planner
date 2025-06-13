@@ -145,3 +145,4 @@ replay_pid*
 /target/*
 log.txt
 /.idea/*
+/jdk-21.0.7+6-jre/*

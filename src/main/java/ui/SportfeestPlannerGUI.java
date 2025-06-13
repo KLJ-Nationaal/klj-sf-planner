@@ -30,7 +30,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
 import persistence.Marshalling;
@@ -291,7 +290,7 @@ public class SportfeestPlannerGUI extends Application {
 			Parent root = loader.load();
 
 			AnalyseResultaatController analyseResultaatController = loader.getController();
-			analyseResultaatController.setSportfeest(sportfeestPlannerService.getSportfeest(), sportfeestPlannerService.getScoreDirector());
+			analyseResultaatController.setSportfeest(sportfeestPlannerService.getSportfeest(), sportfeestPlannerService.getSolutionManager());
 			Stage stage = new Stage();
 			stage.setTitle("Score en analyse resultaat");
 			stage.setScene(new Scene(root));
@@ -357,10 +356,14 @@ public class SportfeestPlannerGUI extends Application {
 		tblInschrijvingen.setItems(ringverdeling);
 
 		sportfeestPlannerService = new SportfeestPlannerService();
-		sportfeestPlannerService.addSolverEventListener(bestSolutionChangedEvent -> {
+		sportfeestPlannerService.getScoreProperty().addListener((listener, oldScore, newScore) -> {
 			if (limiter.get() == -1) {
 				limiter.set(0);
-				bestSolutionChanged(bestSolutionChangedEvent);
+				Platform.runLater(() -> {
+					txtStatusLabel.setText("Score " + newScore.toString());
+					progressUpdate();
+					limiter.set(-1);
+				});
 			}
 		});
 		sportfeestPlannerService.setOnSucceeded(event -> {
@@ -407,24 +410,13 @@ public class SportfeestPlannerGUI extends Application {
 		return null;
 	}
 
-	private void bestSolutionChanged(BestSolutionChangedEvent<Sportfeest> bestSolutionChangedEvent) {
-		if (bestSolutionChangedEvent.isEveryProblemFactChangeProcessed()) {
-			//TODO: optie om te updaten
-			//final Sportfeest nSportfeest = (Sportfeest) bestSolutionChangedEvent.getNewBestSolution();
-			Platform.runLater(() -> {
-				txtStatusLabel.setText("Score " + bestSolutionChangedEvent.getNewBestScore().toString());
-				progressUpdate();
-				limiter.set(-1);
-			});
-		}
-	}
-
 	private void progressUpdate() {
 		if (sportfeestPlannerService.isRunning()) {
-			if (sportfeestPlannerService.getTimeScheduled() == Long.MAX_VALUE) {
+			Pair<Long, Long> progress = sportfeestPlannerService.getTimeScheduled();
+			if (progress.getValue() == 0L) {
 				prgStatusProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 			} else {
-				prgStatusProgress.setProgress(sportfeestPlannerService.getTimeScheduled());
+				prgStatusProgress.setProgress((double) progress.getKey() / progress.getValue());
 			}
 		}
 	}

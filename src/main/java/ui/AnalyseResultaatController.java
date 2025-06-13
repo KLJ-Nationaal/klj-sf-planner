@@ -14,10 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.optaplanner.core.api.score.ScoreExplanation;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.constraint.ConstraintMatch;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
+import org.optaplanner.core.api.solver.SolutionManager;
 
 import java.util.stream.Collectors;
 
@@ -37,22 +38,22 @@ public class AnalyseResultaatController {
 	public void initialize() {
 	}
 
-	public void setSportfeest(Sportfeest sportfeest, ScoreDirector<Sportfeest> scoreDirector) {
-		scoreDirector.setWorkingSolution(sportfeest);
-		sportfeest.setScore((HardSoftScore) scoreDirector.calculateScore());
+	public void setSportfeest(Sportfeest sportfeest, SolutionManager<Sportfeest, HardSoftScore> solutionManager) {
+		ScoreExplanation<Sportfeest, HardSoftScore> explanation = solutionManager.explain(sportfeest);
+		sportfeest.setScore(explanation.getScore());
 		TreeItem<String> root = new TreeItem<>("Score: " + sportfeest.getScore().toString());
 		if (!sportfeest.getScore().isFeasible()) {
 			root.getChildren().add(new TreeItem<>("DEZE OPLOSSING IS NIET HAALBAAR!", getIcon(IconType.EXCLAMATION)));
 		}
 
-		for (ConstraintMatchTotal cmt : scoreDirector.getConstraintMatchTotals()) {
+		for (ConstraintMatchTotal<HardSoftScore> cmt : explanation.getConstraintMatchTotalMap().values()) {
 			ImageView icon = getIcon(IconType.WARNING);
-			if (((HardSoftScore) cmt.getScore()).getHardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
+			if (((HardSoftScore) cmt.getScore()).hardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
 			TreeItem<String> constr = new TreeItem<>(
 					"Voorwaarde: " + cmt.getConstraintName() + "\nGewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount(),
 					icon);
-			for (ConstraintMatch cm : cmt.getConstraintMatchSet()) {
-				constr.getChildren().add(new TreeItem<>(cm.getJustificationList().stream()
+			for (ConstraintMatch<HardSoftScore> cm : cmt.getConstraintMatchSet()) {
+				constr.getChildren().add(new TreeItem<>(cm.getIndictedObjectList().stream()
 						.map(Object::toString)
 						.collect(Collectors.joining(", "))));
 			}
