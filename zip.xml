@@ -10,7 +10,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
             <excludes>
                 <exclude>generated*/**</exclude>
                 <exclude>test*/**</exclude>

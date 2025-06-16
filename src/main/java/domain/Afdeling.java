@@ -11,7 +11,6 @@ import java.util.Objects;
 public class Afdeling {
 	private String naam;
 	private List<Inschrijving> inschrijvingen;
-	private boolean meisjesDansenVendelen;
 
 	public Afdeling(String afdelingsNaam) {
 		naam = afdelingsNaam;
@@ -39,8 +38,6 @@ public class Afdeling {
 	public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
 		this.inschrijvingen = inschrijvingen;
 	}
-
-	public boolean isMeisjesDansenVendelen() { return meisjesDansenVendelen; }
 
 	@Override
 	public String toString() {

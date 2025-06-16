@@ -9,7 +9,8 @@
     <entityClass>domain.Inschrijving</entityClass>
 
     <scoreDirectorFactory>
-        <scoreDrl>rules.drl</scoreDrl>
+        <constraintProviderClass>solver.SportfeestConstraintProvider</constraintProviderClass>
+        <!--<scoreDrl>rules.drl</scoreDrl>-->
     </scoreDirectorFactory>
 
     <termination>
