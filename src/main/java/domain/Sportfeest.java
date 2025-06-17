@@ -1,15 +1,15 @@
 package domain;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 
 @XmlRootElement(name = "Sportfeest")

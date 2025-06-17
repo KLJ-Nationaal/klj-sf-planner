@@ -1,9 +1,9 @@
 package domain;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

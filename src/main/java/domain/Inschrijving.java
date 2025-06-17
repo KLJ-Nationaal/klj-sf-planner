@@ -2,17 +2,17 @@ package domain;
 
 import difficulty.InschrijvingDifficultyComparator;
 import difficulty.TijdslotStrengthComparator;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,6 +78,9 @@ public class Inschrijving implements InschrijvingInterface {
 		return tijdslot.getEindTijd();
 	}
 
+	public boolean isJongens() {
+		return discipline.isJongens();
+	}
 	@XmlIDREF
 	public void setMogelijkeRingen(List<Ring> ringen) { this.mogelijkeRingen = ringen; }
 	public List<Ring> getMogelijkeRingen() { return this.mogelijkeRingen; }

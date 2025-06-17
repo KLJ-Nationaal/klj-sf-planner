@@ -2,13 +2,9 @@ package solver;
 
 import domain.Inschrijving;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.stream.Constraint;
-import org.optaplanner.core.api.score.stream.ConstraintCollectors;
-import org.optaplanner.core.api.score.stream.ConstraintFactory;
-import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.*;
 
 import java.util.Comparator;
-import java.util.SortedSet;
 
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
 import static org.optaplanner.core.api.score.stream.Joiners.overlapping;
@@ -25,7 +21,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				// SOFT CONSTRAINTS
 				tijdTussenInschrijvingenVerschillendeRing(factory),
 				inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(factory),
-				//TODO: minimaliseerUniformWissels(factory),
+				//TODO:
+				minimaliseerUniformWissels(factory),
 				inschrijvingenDieMoetenSamenvallen(factory),
 				vermijdOngunstigeTijdslots(factory)
 		};
@@ -98,25 +95,24 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 
 	private Constraint minimaliseerUniformWissels(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
-				.filter(inschrijving -> inschrijving.getDiscipline().isJongens())
-				.groupBy(Inschrijving::getAfdeling, ConstraintCollectors.toSortedSet(Comparator.comparingInt(Inschrijving::getStartTijd)))
-				.filter((afdeling, inschrijvingen) -> calcWissels(inschrijvingen) > 2)
-				.penalize(HardSoftScore.ofSoft(2), (afdeling, inschrijvingen) -> calcWissels(inschrijvingen))
+				.filter(Inschrijving::isJongens)
+				.join(factory.forEach(Inschrijving.class)
+								.filter(Inschrijving::isJongens),
+						Joiners.equal(Inschrijving::getAfdeling))
+				.filter((i1, i2) -> i1.getStartTijd() < i2.getStartTijd())
+				.ifNotExists(Inschrijving.class,
+						Joiners.equal((i1, i2) -> i1.getAfdeling(), Inschrijving::getAfdeling),
+						Joiners.equal((i1, i2) -> i1.isJongens(), Inschrijving::isJongens),
+						Joiners.filtering((i1, i2, i3) ->
+								i3 != i1 && i3 != i2 &&
+										i3.getStartTijd() > i1.getStartTijd() &&
+										i3.getStartTijd() < i2.getStartTijd())
+				)
+				.filter((i1, i2) -> i1.getDiscipline().isVendeluniform() != i2.getDiscipline().isVendeluniform())
+				.groupBy((i1, i2) -> i1.getAfdeling(), ConstraintCollectors.countBi())
+				.filter((afdeling, wissels) -> wissels > 1)
+				.penalize(HardSoftScore.ofSoft(1), (afdeling, wissels) -> (int) Math.pow(wissels, 1.8))
 				.asConstraint("Minimaliseer uniformwissels");
-	}
-
-	// helper voor uniformwissels
-	private int calcWissels(SortedSet<Inschrijving> sortedInschrijvingen) {
-		Boolean vorige = null;
-		int wissels = 0;
-		for (Inschrijving i : sortedInschrijvingen) {
-			boolean huidig = i.getDiscipline().isVendeluniform();
-			if (vorige != null && huidig != vorige) {
-				wissels++;
-			}
-			vorige = huidig;
-		}
-		return wissels;
 	}
 
 	private Constraint inschrijvingenDieMoetenSamenvallen(ConstraintFactory factory) {

@@ -16,6 +16,7 @@ public class ReeksDefinitie {
 	public static ArrayList<Reeks> unMarshall() {
 		XStream xstream = new XStream();
 		xstream.processAnnotations(Reeks.class);
+		xstream.allowTypes(new Class[]{Reeks.class});
 		File xmlFile = new File("data/reeksdefinitie.xml");
 
 		ArrayList<Reeks> reeksdefinitie = new ArrayList<>();

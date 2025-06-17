@@ -1,6 +1,7 @@
 package domain;
 
-import javax.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlID;
+
 import java.util.Objects;
 
 public class Discipline {

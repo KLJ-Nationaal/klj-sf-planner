@@ -1,12 +1,12 @@
 package domain;
 
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import persistence.Instellingen;
 import persistence.IntegerAdapter;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

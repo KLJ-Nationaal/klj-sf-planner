@@ -1,8 +1,8 @@
 package domain;
 
+import jakarta.xml.bind.annotation.*;
 import persistence.Instellingen;
 
-import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

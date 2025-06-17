@@ -5,14 +5,14 @@ import domain.Afdeling;
 import domain.Discipline;
 import domain.Ring;
 import domain.Tijdslot;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.Comparator;
 import java.util.List;
 
