@@ -31,9 +31,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
-import jfxtras.util.NodeUtil;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
+import ui.visualization.jfxtras.util.NodeUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

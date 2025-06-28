@@ -9,7 +9,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}</directory>
+            <directory>${project.build.directory}/build/${package.filename}</directory>
             <outputDirectory/>
             <excludes>
                 <exclude>generated*/**</exclude>

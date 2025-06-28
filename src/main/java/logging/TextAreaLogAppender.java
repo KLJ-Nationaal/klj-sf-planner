@@ -2,6 +2,7 @@ package logging;
 
 import ch.qos.logback.core.OutputStreamAppender;
 import javafx.application.Platform;
+import javafx.util.Pair;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.OutputStream;
@@ -75,9 +76,14 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 			if (textArea == null) return;
 			if (count > 0) {
 				String text = new String(buf, 0, count);
-
-				Platform.runLater(() -> textArea.appendText(text));
 				count = 0;
+
+				Platform.runLater(() -> {
+					for (Pair<String, String> segment : AnsiParser.parse(text)) {
+						textArea.append(segment.getKey(), segment.getValue());
+					}
+				});
+				//Platform.runLater(() -> textArea.appendText(text));
 			}
 		}
 

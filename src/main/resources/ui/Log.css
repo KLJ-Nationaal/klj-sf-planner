@@ -1,0 +1,9 @@
+.red     { -fx-fill: red; -fx-font-weight: bold; }
+.green   { -fx-fill: green; -fx-font-weight: bold; }
+.yellow  { -fx-fill: goldenrod; -fx-font-weight: bold; }
+.blue    { -fx-fill: blue; -fx-font-weight: bold; }
+.magenta { -fx-fill: magenta; -fx-font-weight: bold; }
+.cyan    { -fx-fill: seagreen; -fx-font-weight: bold; }
+.white   { -fx-fill: white; }
+.black   { -fx-fill: black; }
+.plain   { -fx-fill: black; }

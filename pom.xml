@@ -10,12 +10,13 @@
 
     <properties>
         <package.filename>sf-planner</package.filename>
+        <package.modulename>kljsfplanner</package.modulename>
         <package.mainclass>ui.SportfeestPlannerGUI</package.mainclass>
         <package.year>2025</package.year>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
-        <javafx.version>11</javafx.version>
-        <java.version>11</java.version>
+        <javafx.version>21.0.7</javafx.version>
+        <java.version>21</java.version>
     </properties>
 
     <dependencies>
@@ -24,18 +25,22 @@
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-core</artifactId>
             <version>9.44.0.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.optaplanner</groupId>
+                    <artifactId>optaplanner-constraint-drl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.optaplanner</groupId>
+                    <artifactId>optaplanner-constraint-streams-drools</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.5.18</version>
-        </dependency>
-        <!-- console logging -->
-        <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>2.4.2</version>
         </dependency>
         <!-- Excel marshalling -->
         <dependency>
@@ -50,11 +55,6 @@
             <version>7.0.0</version>
         </dependency>
         <!-- JavaFX -->
-        <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>jfxtras-controls</artifactId>
-            <version>11-r2</version>
-        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
@@ -83,11 +83,6 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>4.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.21</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -102,22 +97,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <compress>2</compress>
-                    <noHeaderFiles>true</noHeaderFiles>
-                    <stripDebug>true</stripDebug>
-                    <noManPages>true</noManPages>
-                    <launcher>klj-sf-planner</launcher>
-                    <mainClass>ui.SportfeestPlannerGUI</mainClass>
-                    <jlinkImageName>klj-sf-planner</jlinkImageName>
-                    <jlinkZipName>klj-sf-planner</jlinkZipName>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -142,23 +121,25 @@
                         </goals>
                         <configuration>
                             <includeScope>compile</includeScope>
-                            <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.4.2</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <mainClass>${package.mainclass}</mainClass>
+                            <packageName>${package.modulename}</packageName>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
-                    <finalName>${package.filename}-${project.version}</finalName>
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
                     <excludes>
                         <exclude>**/data/*</exclude>
                     </excludes>
@@ -175,26 +156,11 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/data</outputDirectory>
+                            <outputDirectory>${project.build.directory}/build/${package.filename}/data</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/data</directory>
                                     <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-java</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/java</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${java.home}</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -222,77 +188,117 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- TODO: vervangen door jpackage en Java naar 14+ -->
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.25</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
-                        <id>l4j-clui</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>launch4j</goal>
+                            <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <headerType>console</headerType>
-                            <jar>${package.filename}-${project.version}.jar</jar>
-                            <dontWrapJar>true</dontWrapJar>
-                            <outfile>${project.build.directory}/${package.filename}.exe</outfile>
-                            <downloadUrl>https://github.com/KLJ-Nationaal/klj-sf-planner</downloadUrl>
-                            <classPath>
-                                <mainClass>${package.mainclass}</mainClass>
-                                <addDependencies>false</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
-                            <icon>src/main/resources/icon.ico</icon>
-                            <jre>
-                                <path>./java</path>
-                                <!--<bundledJreAsFallback>true</bundledJreAsFallback>-->
-                                <minVersion>${java.version}</minVersion>
-                                <jdkPreference>jdkOnly</jdkPreference>
-                                <!--<jdkPreference>preferJre</jdkPreference>-->
-                                <initialHeapSize>512</initialHeapSize>
-                                <maxHeapSize>4096</maxHeapSize>
-                                <opts>
-                                    <opt>--module-path=lib</opt>
-                                    <opt>--add-modules=javafx.controls,javafx.fxml</opt>
-                                </opts>
-                            </jre>
-
-                            <versionInfo>
-                                <fileVersion>${project.version}.0.${maven.build.timestamp}</fileVersion>
-                                <txtFileVersion>${project.version}.0.${maven.build.timestamp}</txtFileVersion>
-                                <fileDescription>${project.name}</fileDescription>
-                                <copyright>${package.year} KLJ</copyright>
-                                <productVersion>${project.version}.0.0</productVersion>
-                                <txtProductVersion>${project.version}.0.0</txtProductVersion>
-                                <productName>${project.name}</productName>
-                                <companyName>KLJ</companyName>
-                                <internalName>${project.artifactId}</internalName>
-                                <originalFilename>${package.filename}.exe</originalFilename>
-                                <language>DUTCH_BELGIAN</language>
-                            </versionInfo>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <outputFile>${project.build.directory}/shaded/${package.filename}-${project.version}.jar
+                            </outputFile>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${package.mainclass}</mainClass>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>net.jsign</groupId>
-                <artifactId>jsign-maven-plugin</artifactId>
-                <version>2.1</version>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>mvn-jlink-wrapper</artifactId>
+                <version>1.2.4</version>
                 <executions>
                     <execution>
+                        <id>call-jdeps</id>
                         <goals>
-                            <goal>sign</goal>
+                            <goal>jdeps</goal>
                         </goals>
-                        <phase>package</phase>
                         <configuration>
-                            <name>${project.name}</name>
-                            <url>https://github.com/KLJ-Nationaal/klj-sf-planner</url>
-                            <alias>code</alias>
-                            <file>${project.build.directory}/${package.filename}.exe</file>
-                            <keystore>C:/Users/Sam Verstraete/Documents/java_keystore.jks</keystore>
-                            <storepass>password</storepass>
+                            <output>target${file.separator}jdeps.out</output>
+                            <options>
+                                <option>--multi-release</option>
+                                <option>${java.version}</option>
+                                <option>--ignore-missing-deps</option>
+                                <option>--recursive</option>
+                                <option>
+                                    ${project.build.directory}${file.separator}shaded${file.separator}${package.filename}-${project.version}.jar
+                                </option>
+                            </options>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>call-jlink</id>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
+                        <configuration>
+                            <modulePaths>
+                                <path>${project.build.directory}/lib</path>
+                                <path>${project.basedir}/javafx-jmods-21.0.7</path>
+                            </modulePaths>
+                            <jdepsReportPath>${project.build.directory}${file.separator}jdeps.out</jdepsReportPath>
+                            <output>${project.build.directory}${file.separator}java</output>
+                            <options>
+                                <option>--no-header-files</option>
+                                <option>--no-man-pages</option>
+                                <option>--strip-debug</option>
+                                <option>--add-modules</option>
+                                <option>javafx.fxml,javafx.controls,javafx.graphics,javafx.base</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>package-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/jpackage</executable>
+                            <arguments>
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}/build</argument>
+                                <argument>--input</argument>
+                                <argument>${project.build.directory}/shaded</argument>
+                                <argument>--name</argument>
+                                <argument>${package.filename}</argument>
+                                <argument>--main-jar</argument>
+                                <argument>${package.filename}-${project.version}.jar</argument>
+                                <argument>--main-class</argument>
+                                <argument>${package.mainclass}</argument>
+                                <argument>--type</argument>
+                                <argument>app-image</argument>
+                                <argument>--icon</argument>
+                                <argument>${project.basedir}/src/main/resources/icon.ico</argument>
+                                <argument>--runtime-image</argument>
+                                <argument>${project.build.directory}/java</argument>
+                                <argument>--vendor</argument>
+                                <argument>KLJ</argument>
+                                <argument>--copyright</argument>
+                                <argument>Copyright ${package.year} KLJ</argument>
+                                <argument>--app-version</argument>
+                                <argument>${project.version}</argument>
+                                <argument>--description</argument>
+                                <argument>${project.name}</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

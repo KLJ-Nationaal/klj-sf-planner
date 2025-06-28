@@ -39,9 +39,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
-import jfxtras.util.NodeUtil;
 import org.slf4j.LoggerFactory;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
+import ui.visualization.jfxtras.util.NodeUtil;
 
 import java.util.Comparator;
 import java.util.Objects;

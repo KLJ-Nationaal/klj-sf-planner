@@ -39,6 +39,8 @@ import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -76,12 +78,11 @@ public class SportfeestPlannerGUI extends Application {
 	private final AtomicLong limiter = new AtomicLong(-1);
 	private final Timeline progressUpdater = new Timeline(new KeyFrame(Duration.millis(500), e -> progressUpdate()));
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+	public static void main(String[] args) { launch(args); }
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
+		logStartupInfo();
 		Instellingen.load();
 		SportfeestPlannerGUI.primaryStage = primaryStage;
 		Parent root = FXMLLoader.load(getClass().getResource("/ui/Main.fxml"));
@@ -418,6 +419,47 @@ public class SportfeestPlannerGUI extends Application {
 			} else {
 				prgStatusProgress.setProgress((double) progress.getKey() / progress.getValue());
 			}
+		}
+	}
+
+	public static void logStartupInfo() {
+		try {
+			// Java info
+			logger.info("Java {} {} in {}", System.getProperty("java.version"),
+					System.getProperty("java.vendor"), System.getProperty("java.home"));
+			// JavaFX versie
+			try {
+				String javafxVersion = System.getProperty("javafx.version");
+				if (javafxVersion != null) {
+					logger.info("JavaFX version: {}", javafxVersion);
+				} else {
+					logger.info("JavaFX not found or not in use.");
+				}
+			} catch (Exception e) {
+				logger.warn("Could not determine JavaFX version: {}", e.getMessage());
+			}
+
+			// OS info
+			logger.info("Operating System: {} {} ({})",
+					System.getProperty("os.name"),
+					System.getProperty("os.version"),
+					System.getProperty("os.arch"));
+
+			// RAM & CPU
+			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+			Runtime runtime = Runtime.getRuntime();
+			long totalMemory = runtime.totalMemory();
+			long maxMemory = runtime.maxMemory();
+			long freeMemory = runtime.freeMemory();
+
+			logger.info("Available processors: {}", osBean.getAvailableProcessors());
+			logger.info("JVM memory (used/total/max): {}/{}MB/{}MB",
+					(totalMemory - freeMemory) / 1024 / 1024,
+					totalMemory / 1024 / 1024,
+					maxMemory / 1024 / 1024);
+
+		} catch (Exception e) {
+			logger.error("Failed to log system information", e);
 		}
 	}
 

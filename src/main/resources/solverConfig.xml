@@ -11,6 +11,7 @@
     <scoreDirectorFactory>
         <constraintProviderClass>solver.SportfeestConstraintProvider</constraintProviderClass>
         <!--<scoreDrl>rules.drl</scoreDrl>-->
+        <constraintStreamImplType>BAVET</constraintStreamImplType>
     </scoreDirectorFactory>
 
     <termination>

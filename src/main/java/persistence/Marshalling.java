@@ -218,7 +218,7 @@ public class Marshalling {
 			try (Reader r = new FileReader(filename)) {
 				sf = (Sportfeest) m.unmarshal(r);
 			}
-
+			logger.info("Bestand {} ingelezen", filename);
 		} catch (Exception e) {
 			logger.error("Error while unmarshalling XML", e);
 		}
@@ -234,7 +234,7 @@ public class Marshalling {
 			try (Writer w = new FileWriter(filename)) {
 				m.marshal(map, w);
 			}
-
+			logger.info("Bestand {} opgeslagen", filename);
 		} catch (Exception e) {
 			logger.error("Error while marshalling XML", e);
 		}

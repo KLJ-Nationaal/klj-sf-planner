@@ -31,9 +31,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import jfxtras.util.NodeUtil;
 import persistence.Instellingen;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
+import ui.visualization.jfxtras.util.NodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;

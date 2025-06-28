@@ -27,13 +27,8 @@
 package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.css.CssMetaData;
-import javafx.css.SimpleStyleableObjectProperty;
-import javafx.css.Styleable;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -41,13 +36,13 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
-import jfxtras.css.CssMetaDataForSkinProperty;
-import jfxtras.css.converters.DoubleConverter;
-import persistence.Instellingen;
 import ui.visualization.jfxtras.scene.control.agenda.Agenda;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tom Eugelink
@@ -133,58 +128,6 @@ abstract public class AgendaSkinAbstract<H> extends SkinBase<Agenda<H>> {
 
 	final private Map<Integer, Pane> appointmentNodeMap = new HashMap<>();
 	Map<Integer, Pane> appointmentNodeMap() { return appointmentNodeMap; }
-
-	// ==================================================================================================================
-	// StyleableProperties
-
-	/**
-	 * snapToMinutes
-	 * I am clueless why the Integer version of this property gets a double pushed in (which results in a ClassCastException)
-	 */
-	// TBEERNOT: reattempt converting this to Integer
-	public final ObjectProperty<Double> snapToMinutesProperty() { return snapToMinutesProperty; }
-	private final ObjectProperty<Double> snapToMinutesProperty = new SimpleStyleableObjectProperty<>(StyleableProperties.SNAPTOMINUTES_CSSMETADATA, StyleableProperties.SNAPTOMINUTES_CSSMETADATA.getInitialValue(null));
-	public final void setSnapToMinutes(double value) { snapToMinutesProperty().set(value); }
-	public final double getSnapToMinutes() { return snapToMinutesProperty.get().intValue(); }
-
-	// -------------------------
-
-	private static class StyleableProperties {
-		private static final CssMetaData<Agenda<?>, Double> SNAPTOMINUTES_CSSMETADATA = new CssMetaDataForSkinProperty<Agenda<?>, AgendaSkinAbstract<?>, Double>("-fxx-snap-to-minutes", DoubleConverter.getInstance(), (double) Instellingen.Opties().MINMINUTEN) {
-			@Override
-			protected ObjectProperty<Double> getProperty(AgendaSkinAbstract<?> s) {
-				return s.snapToMinutesProperty;
-			}
-		};
-
-		private static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
-
-		static {
-			final List<CssMetaData<? extends Styleable, ?>> styleables = new ArrayList<>(SkinBase.getClassCssMetaData());
-			styleables.add(SNAPTOMINUTES_CSSMETADATA);
-			STYLEABLES = Collections.unmodifiableList(styleables);
-		}
-	}
-
-	/**
-	 * @return The CssMetaData associated with this class, which may include the
-	 * CssMetaData of its super classes.
-	 */
-	public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {
-		return StyleableProperties.STYLEABLES;
-	}
-
-	/**
-	 * This method should delegate to {@link Node#getClassCssMetaData()} so that
-	 * a Node's CssMetaData can be accessed without the need for reflection.
-	 *
-	 * @return The CssMetaData associated with this node, which may include the
-	 * CssMetaData of its super classes.
-	 */
-	public List<CssMetaData<? extends Styleable, ?>> getCssMetaData() {
-		return getClassCssMetaData();
-	}
-
 
 	// ==================================================================================================================
 	// DRAW

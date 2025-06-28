@@ -2,7 +2,6 @@
     <conversionRule conversionWord="highlighting" converterClass="logging.Highlighting"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <withJansi>true</withJansi>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %highlighting(%-5p) [%logger{0}] %highlighting(%m%n)</pattern>
         </encoder>
@@ -25,7 +24,8 @@
 
     <appender name="guiAppender" class="logging.TextAreaLogAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5p [%logger{0}] %m%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %highlighting(%-5p) [%logger{0}] %highlighting(%m%n)</pattern>
+
         </encoder>
     </appender>
 
