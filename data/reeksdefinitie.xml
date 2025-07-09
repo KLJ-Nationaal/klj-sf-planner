@@ -3,6 +3,7 @@
     <Discipline>
         <Naam>Basiswimpelen basisreeks</Naam>
         <Ringnaam>Basiswimpelen basis</Ringnaam>
+        <Sport>WIMPELEN</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>18</AfdelingenPerRing>
         <Toevoeging/>
@@ -10,6 +11,7 @@
     <Discipline>
         <Naam>Basiswimpelen muziekreeks</Naam>
         <Ringnaam>Basiswimpelen muziek</Ringnaam>
+        <Sport>WIMPELEN</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>18</AfdelingenPerRing>
         <Toevoeging/>
@@ -17,6 +19,7 @@
     <Discipline>
         <Naam>Basiswimpelen vrije reeks</Naam>
         <Ringnaam>Basiswimpelen vrije</Ringnaam>
+        <Sport>WIMPELEN</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -24,6 +27,7 @@
     <Discipline>
         <Naam>Bondsreeks gemengd</Naam>
         <Ringnaam>Bondsreeks meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging>gemengd</Toevoeging>
@@ -31,6 +35,7 @@
     <Discipline>
         <Naam>Bondsreeks jongens</Naam>
         <Ringnaam>Bondsreeks jongens</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -38,6 +43,7 @@
     <Discipline>
         <Naam>Bondsreeks meisjes</Naam>
         <Ringnaam>Bondsreeks meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -45,6 +51,7 @@
     <Discipline>
         <Naam>Brechts korpsvendelen</Naam>
         <Ringnaam>Brechts korpsvendelen</Ringnaam>
+        <Sport>VENDELEN</Sport>
         <Schema>15</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging/>
@@ -52,6 +59,7 @@
     <Discipline>
         <Naam>Gilden muziekreeks</Naam>
         <Ringnaam>Gilden muziekreeks</Ringnaam>
+        <Sport>VENDELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging/>
@@ -59,6 +67,7 @@
     <Discipline>
         <Naam>Gilden vrije reeks</Naam>
         <Ringnaam>Gilden vrije reeks</Ringnaam>
+        <Sport>VENDELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging/>
@@ -66,6 +75,7 @@
     <Discipline>
         <Naam>Hoofdgilden muziekreeks</Naam>
         <Ringnaam>Hoofdgilden</Ringnaam>
+        <Sport>VENDELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging>muziek</Toevoeging>
@@ -73,6 +83,7 @@
     <Discipline>
         <Naam>Hoofdgilden vrije reeks</Naam>
         <Ringnaam>Hoofdgilden</Ringnaam>
+        <Sport>VENDELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging>vrije</Toevoeging>
@@ -80,6 +91,7 @@
     <Discipline>
         <Naam>Keurwimpelen muziekreeks</Naam>
         <Ringnaam>Keurwimpelen muziekreeks</Ringnaam>
+        <Sport>WIMPELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging/>
@@ -87,6 +99,7 @@
     <Discipline>
         <Naam>Keurwimpelen vrije reeks</Naam>
         <Ringnaam>Keurwimpelen vrije reeks</Ringnaam>
+        <Sport>WIMPELEN</Sport>
         <Schema>9</Schema>
         <AfdelingenPerRing>13</AfdelingenPerRing>
         <Toevoeging/>
@@ -94,6 +107,7 @@
     <Discipline>
         <Naam>Kringdans gemengd</Naam>
         <Ringnaam>Kringdans meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging>gemengd</Toevoeging>
@@ -101,6 +115,7 @@
     <Discipline>
         <Naam>Kringdans jongens</Naam>
         <Ringnaam>Kringdans jongens</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -108,6 +123,7 @@
     <Discipline>
         <Naam>Kringdans meisjes</Naam>
         <Ringnaam>Kringdans meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -115,6 +131,7 @@
     <Discipline>
         <Naam>Parendans gemengd</Naam>
         <Ringnaam>Parendans</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -122,6 +139,7 @@
     <Discipline>
         <Naam>Parendans meisjes</Naam>
         <Ringnaam>Parendans</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging>meisjes</Toevoeging>
@@ -129,6 +147,7 @@
     <Discipline>
         <Naam>Piramide hoog</Naam>
         <Ringnaam>Piramide hoog</Ringnaam>
+        <Sport>PIRAMIDE</Sport>
         <Schema>12</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging/>
@@ -136,6 +155,7 @@
     <Discipline>
         <Naam>Piramide laag</Naam>
         <Ringnaam>Piramide laag</Ringnaam>
+        <Sport>PIRAMIDE</Sport>
         <Schema>12</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging/>
@@ -144,6 +164,7 @@
     <Discipline>
         <Naam>Piramide gemengd</Naam>
         <Ringnaam>Piramide gemengd</Ringnaam>
+        <Sport>PIRAMIDE</Sport>
         <Schema>12</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging/>
@@ -151,6 +172,7 @@
     <Discipline>
         <Naam>Piramide jongens</Naam>
         <Ringnaam>Piramide meisjes &amp; jongens</Ringnaam>
+        <Sport>PIRAMIDE</Sport>
         <Schema>12</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging>jongens</Toevoeging>
@@ -158,6 +180,7 @@
     <Discipline>
         <Naam>Piramide meisjes</Naam>
         <Ringnaam>Piramide meisjes &amp; jongens</Ringnaam>
+        <Sport>PIRAMIDE</Sport>
         <Schema>12</Schema>
         <AfdelingenPerRing>11</AfdelingenPerRing>
         <Toevoeging>meisjes</Toevoeging>
@@ -166,6 +189,7 @@
     <Discipline>
         <Naam>Vrije ritmiek gemengd</Naam>
         <Ringnaam>Vrije ritmiek meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging>gemengd</Toevoeging>
@@ -173,6 +197,7 @@
     <Discipline>
         <Naam>Vrije ritmiek jongens</Naam>
         <Ringnaam>Vrije ritmiek jongens</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -180,6 +205,7 @@
     <Discipline>
         <Naam>Vrije ritmiek meisjes</Naam>
         <Ringnaam>Vrije ritmiek meisjes &amp; gemengd</Ringnaam>
+        <Sport>DANS</Sport>
         <Schema>6</Schema>
         <AfdelingenPerRing>20</AfdelingenPerRing>
         <Toevoeging/>
@@ -187,6 +213,7 @@
     <Discipline>
         <Naam>Touwtrekken -16 jongens &amp; gemengd</Naam>
         <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
         <Schema>60</Schema>
         <AfdelingenPerRing>1000</AfdelingenPerRing>
         <Toevoeging>-16</Toevoeging>
@@ -194,6 +221,7 @@
     <Discipline>
         <Naam>Touwtrekken +16 jongens &amp; gemengd</Naam>
         <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
         <Schema>60</Schema>
         <AfdelingenPerRing>1000</AfdelingenPerRing>
         <Toevoeging>+16</Toevoeging>
@@ -201,6 +229,7 @@
     <Discipline>
         <Naam>Touwtrekken -16 meisjes</Naam>
         <Ringnaam>Touwtrekken meisjes</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
         <Schema>60</Schema>
         <AfdelingenPerRing>1000</AfdelingenPerRing>
         <Toevoeging>-16</Toevoeging>
@@ -208,6 +237,7 @@
     <Discipline>
         <Naam>Touwtrekken +16 meisjes</Naam>
         <Ringnaam>Touwtrekken meisjes</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
         <Schema>60</Schema>
         <AfdelingenPerRing>1000</AfdelingenPerRing>
         <Toevoeging>+16</Toevoeging>

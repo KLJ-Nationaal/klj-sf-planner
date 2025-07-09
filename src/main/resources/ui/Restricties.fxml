@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ui.RestrictiesController">
+    <top>
+        <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="80.0"
+                    prefWidth="600.0" BorderPane.alignment="CENTER">
+            <Label fx:id="title" layoutX="14.0" layoutY="13.0" style="-fx-font-weight: bold;"
+                   text="Restricties instellen">
+                <padding>
+                    <Insets bottom="4.0" right="4.0" top="4.0"/>
+                </padding>
+            </Label>
+            <Label fx:id="subtitle" alignment="TOP_LEFT" layoutX="14.0" layoutY="38.0" prefHeight="42.0"
+                   prefWidth="572.0"
+                   text="Aangevraagde uitzonderingen voor sporten of disciplines die voor een bepaalde afdeling liever niet samenvallen, waar dit normaal wel kan."
+                   wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                <padding>
+                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+                </padding>
+            </Label>
+            <Separator layoutY="79.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                       AnchorPane.topAnchor="80.0"/>
+        </AnchorPane>
+    </top>
+    <center>
+        <GridPane fx:id="contentPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                  minHeight="320.0" minWidth="568.0">
+            <rowConstraints>
+                <RowConstraints percentHeight="100.0"/>
+            </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints maxWidth="1.7976931348623157E308" percentWidth="100.0"/>
+            </columnConstraints>
+            <BorderPane>
+                <center>
+                    <TableView fx:id="tblRestricties" editable="true" maxHeight="1.7976931348623157E308">
+                        <columns>
+                            <TableColumn fx:id="tblColAfdeling" prefWidth="220.0" styleClass="editable-cells"
+                                         text="Afdeling"/>
+                            <TableColumn text="A">
+                                <columns>
+                                    <TableColumn fx:id="tblColTypeA" prefWidth="70.0" styleClass="editable-cells"
+                                                 text="Type"/>
+                                    <TableColumn fx:id="tblColValueA" prefWidth="220.0" styleClass="editable-cells"
+                                                 text="Waarde"/>
+                                    <TableColumn fx:id="tblColLevelA" prefWidth="100.0" styleClass="editable-cells"
+                                                 text="Alle ringen"/>
+                                </columns>
+                            </TableColumn>
+                            <TableColumn text="B">
+                                <columns>
+                                    <TableColumn fx:id="tblColTypeB" prefWidth="70.0" styleClass="editable-cells"
+                                                 text="Type"/>
+                                    <TableColumn fx:id="tblColValueB" prefWidth="220.0" styleClass="editable-cells"
+                                                 text="Waarde"/>
+                                    <TableColumn fx:id="tblColLevelB" prefWidth="100.0" styleClass="editable-cells"
+                                                 text="Alle ringen"/>
+                                </columns>
+                            </TableColumn>
+                        </columns>
+                        <BorderPane.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </BorderPane.margin>
+                    </TableView>
+                </center>
+                <bottom>
+                    <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0"
+                                BorderPane.alignment="CENTER">
+                        <Button fx:id="btnAdd" defaultButton="true" mnemonicParsing="false" onAction="#AddAction" prefWidth="80.0"
+                                text="Toevoegen" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0"/>
+                        <Button fx:id="btnDelete" cancelButton="true" mnemonicParsing="false" onAction="#DeleteAction"
+                                prefWidth="80.0" text="Verwijderen" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="113.0"/>
+                    </AnchorPane>
+                </bottom>
+            </BorderPane>
+        </GridPane>
+    </center>
+    <bottom>
+        <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="55.0"
+                    BorderPane.alignment="CENTER">
+            <Separator AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+            <Button fx:id="btnOK" defaultButton="true" mnemonicParsing="false" onAction="#OkAction" prefWidth="80.0"
+                    text="OK" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="113.0"/>
+            <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" onAction="#CancelAction"
+                    prefWidth="80.0" text="Annuleren" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"/>
+        </AnchorPane>
+    </bottom>
+</BorderPane>

@@ -4,10 +4,8 @@ import app.SportfeestPlannerService;
 import ch.qos.logback.classic.Logger;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import domain.Afdeling;
-import domain.Inschrijving;
-import domain.Ring;
-import domain.Sportfeest;
+import domain.*;
+import domain.importing.RestrictieOptie;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -33,6 +31,7 @@ import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
 import persistence.Marshalling;
+import persistence.Restricties;
 import ui.importer.WizardImportController;
 import ui.importer.WizardModule;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
@@ -64,7 +63,7 @@ public class SportfeestPlannerGUI extends Application {
 	@FXML
 	private ProgressBar prgStatusProgress;
 	@FXML
-	private MenuItem mnuStart, mnuStop, mnuExport, mnuSFSave, mnuScore;
+	private MenuItem mnuStart, mnuStop, mnuExport, mnuSFSave, mnuScore, mnuRestricties;
 	@FXML
 	private AfdelingenController afdelingenController;
 	@FXML
@@ -130,6 +129,11 @@ public class SportfeestPlannerGUI extends Application {
 
 	private void setNewSportfeestChecked(Sportfeest sf) {
 		setNewSportfeest(sf);
+		try {
+			overwriteRestricties(Restricties.unMarshall());
+		} catch (Exception e) {
+			logger.error("Fout bij het toevoegen van de uitzonderingen: {}", e.getLocalizedMessage());
+		}
 		if (!isRingenVerdeeld()) {
 			// als nodige ringen nog niet verdeeld zijn, vraag of dat moet gebeuren
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -144,6 +148,64 @@ public class SportfeestPlannerGUI extends Application {
 			if (result.isPresent() && result.get() == buttonTypeYes) {
 				RingenInvullen(new ActionEvent());
 			}
+		}
+	}
+	private void overwriteRestricties(List<RestrictieOptie> restrictieOpties) {
+		//TODO converteer reeks naar discipline !!!!!!!!!!!!!!!!
+
+		// eerst alles leegmaken
+		sportfeestPlannerService.getSportfeest().getAfdelingen().forEach(afd -> afd.getRestricties().clear());
+		// nieuwe toevoegen
+		restrictieOpties.stream()
+				.collect(Collectors.groupingBy(RestrictieOptie::getAfdeling))
+				.forEach((afdeling, restricties) -> {
+					sportfeestPlannerService.getSportfeest().getAfdelingen().stream()
+							.filter(afd -> afd.getNaam().equals(afdeling))
+							.findFirst()
+							.ifPresentOrElse(afd -> afd.addRestricties(restricties),
+									() -> logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", afdeling));
+				});
+	}
+
+	private void compareRestricties(List<RestrictieOptie> restrictieOpties) {
+		// controleer dat alle restricties in onze map overeenkomen met de algemene
+		sportfeestPlannerService.getSportfeest().getAfdelingen().forEach(afdeling -> {
+			for (Restrictie<?, ?> restrictie : afdeling.getRestricties()) {
+				boolean found = restrictieOpties.stream().anyMatch(restrictieOptie -> {
+					// afdelingen moeten gelijk zijn
+					if (!restrictieOptie.getAfdeling().equals(afdeling.getNaam())) return false;
+					// zijn de restricties volledig gelijk?
+					if (restrictieOptie.getA().getObject().getNaam().equals(restrictie.a().getNaam())) {
+						if (restrictieOptie.getA().isAlleRingen() == restrictie.alleRingenA() &&
+								restrictieOptie.getB().isAlleRingen() == restrictie.alleRingenB() &&
+								restrictieOptie.getB().getObject().getNaam().equals(restrictie.b().getNaam())) {
+							// deze moet niet meer gechecked worden
+							restrictieOpties.remove(restrictieOptie);
+							return true;
+						}
+					}
+					// restricties zijn mogelijks gewoon omgewisseld
+					if (restrictieOptie.getB().getObject().getNaam().equals(restrictie.a().getNaam())) {
+						if (restrictieOptie.getB().isAlleRingen() == restrictie.alleRingenA() &&
+								restrictieOptie.getA().isAlleRingen() == restrictie.alleRingenB() &&
+								restrictieOptie.getA().getObject().getNaam().equals(restrictie.b().getNaam())) {
+							// deze moet niet meer gechecked worden
+							restrictieOpties.remove(restrictieOptie);
+							return true;
+						}
+					}
+					return false;
+				});
+				if (found) {
+					logger.debug("Restrictie {} voor {} gevonden als algemene restrictie", restrictie, afdeling);
+				} else {
+					logger.warn("Restrictie {} voor {} niet gevonden  als algemene restrictiep", restrictie, afdeling);
+				}
+			}
+		});
+		// overschot zijn algemene restricties die niet in onze map zitten
+		for (RestrictieOptie restrictieOptie : restrictieOpties) {
+			logger.warn("Algemene restrictie {} niet gevonden in sportfeestmap", restrictieOptie);
 		}
 	}
 
@@ -304,6 +366,25 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	@FXML
+	public void Restricties(ActionEvent actionEvent) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/Restricties.fxml"));
+			Parent root = loader.load();
+
+			RestrictiesController restrictiesController = loader.getController();
+			restrictiesController.setCallback(this::overwriteRestricties);
+			Stage stage = new Stage();
+			stage.setTitle("Restricties");
+			stage.setScene(new Scene(root));
+			stage.initModality(Modality.NONE);
+			stage.initOwner(primaryStage);
+			stage.show();
+		} catch (IOException e) {
+			logger.debug(e.getLocalizedMessage(), e);
+		}
+	}
+
+	@FXML
 	public void initialize() {
 		tblColAfdeling.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getAfdeling().getNaam()));
 		tblColDiscipline.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getDiscipline().getNaam()));
@@ -439,20 +520,16 @@ public class SportfeestPlannerGUI extends Application {
 				logger.warn("Could not determine JavaFX version: {}", e.getMessage());
 			}
 
-			// OS info
-			logger.info("Operating System: {} {} ({})",
-					System.getProperty("os.name"),
-					System.getProperty("os.version"),
-					System.getProperty("os.arch"));
-
-			// RAM & CPU
 			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
 			Runtime runtime = Runtime.getRuntime();
 			long totalMemory = runtime.totalMemory();
 			long maxMemory = runtime.maxMemory();
 			long freeMemory = runtime.freeMemory();
 
-			logger.info("Available processors: {}", osBean.getAvailableProcessors());
+			logger.info("OS {} ({}) {} cpu",
+					System.getProperty("os.name"),
+					System.getProperty("os.arch"),
+					osBean.getAvailableProcessors());
 			logger.info("JVM memory (used/total/max): {}/{}MB/{}MB",
 					(totalMemory - freeMemory) / 1024 / 1024,
 					totalMemory / 1024 / 1024,

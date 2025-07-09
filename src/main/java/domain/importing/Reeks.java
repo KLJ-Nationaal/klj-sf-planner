@@ -1,17 +1,21 @@
 package domain.importing;
 
+import domain.RestrictieInterface;
+import domain.Sport;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "Discipline")
-public class Reeks {
+public final class Reeks implements RestrictieInterface {
 	private String naam;
 	private String ringNaam;
 	private String extensie;
 	private int duur;
 	private int afdPerRing;
 	private int aantal;
+	private Sport sport;
 
 	public Reeks() {} // nodig voor JAXB unmarshalling
 
@@ -20,6 +24,7 @@ public class Reeks {
 		this.aantal = aantal;
 	}
 
+	@XmlID
 	@XmlElement(name = "Naam")
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) { this.naam = naam; }
@@ -44,6 +49,10 @@ public class Reeks {
 	public int getAantal() { return aantal; }
 	public void setAantal(int aantal) { this.aantal = aantal; }
 
+	@XmlElement(name = "Sport")
+	public Sport getSport() { return sport; }
+	public void setSport(Sport sport) { this.sport = sport; }
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -61,11 +70,6 @@ public class Reeks {
 
 	@Override
 	public String toString() {
-		return "ReeksDefinitie{" +
-				"naam='" + naam + '\'' +
-				", ringNaam='" + ringNaam + '\'' +
-				", extensie='" + extensie + '\'' +
-				", duur=" + duur +
-				'}';
+		return naam;
 	}
 }

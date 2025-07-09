@@ -209,7 +209,6 @@ public class Marshalling {
 	}
 
 	public static Sportfeest unmarshallXml(String filename) {
-		//TODO diagnostische XML uitvoer van score
 		Sportfeest sf = new Sportfeest();
 		try {
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
@@ -227,6 +226,7 @@ public class Marshalling {
 
 	public static void marshallXml(Sportfeest map, String filename) {
 		try {
+			//TODO programmaversie uitschrijven
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

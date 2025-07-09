@@ -42,6 +42,12 @@
             <artifactId>logback-classic</artifactId>
             <version>1.5.18</version>
         </dependency>
+        <!-- Brug van Log4j naar SLF4J -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>2.20.0</version>
+        </dependency>
         <!-- Excel marshalling -->
         <dependency>
             <groupId>org.apache.poi</groupId>

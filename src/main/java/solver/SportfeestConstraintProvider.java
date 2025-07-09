@@ -28,7 +28,9 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 		};
 	}
 
-	// HARD CONSTRAINTS
+	// ************************
+	// *** HARD CONSTRAINTS ***
+	// ************************
 
 	private Constraint inschrijvingMoetTijdslotHebben(ConstraintFactory factory) {
 		return factory.forEachIncludingNullVars(Inschrijving.class)
@@ -60,7 +62,9 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.asConstraint("Geen twee afdelingen tegelijk in een RING");
 	}
 
-	// SOFT CONSTRAINTS
+	// ************************
+	// *** SOFT CONSTRAINTS ***
+	// ************************
 
 	private Constraint tijdTussenInschrijvingenVerschillendeRing(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
@@ -128,5 +132,17 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.filter(i -> i.getTijdslot().isOngunstig())
 				.penalize(HardSoftScore.ofSoft(1))
 				.asConstraint("Ongunstig tijdslot");
+	}
+
+	private Constraint restricties(ConstraintFactory factory) {
+		return factory.forEachUniquePair(Inschrijving.class,
+						equal(Inschrijving::getAfdeling),
+						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
+				.filter((a, b) -> {
+					//TODO !!!!!
+					return !b.isVerbonden(a) && ((aj && bj) || (am && bm));
+				})
+				.penalize(HardSoftScore.ofSoft(5))
+				.asConstraint("Uitzondering");
 	}
 }

@@ -108,7 +108,7 @@ public class Inschrijving implements InschrijvingInterface {
 	@Override
 	public String toString() {
 		return "[" + id + "] " + afdeling.getNaam() + (korps > 0 ? " " + korps : "")
-				+ " in " + (ring == null ? "" : ring.getVerkorteNotatie());
+				+ (ring == null ? "" : " in " + ring.getVerkorteNotatie());
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {

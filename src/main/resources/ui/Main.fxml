@@ -34,6 +34,10 @@
                     <MenuItem fx:id="mnuScore" mnemonicParsing="false" onAction="#AnalyseResultaat"
                               text="Score"/>
                 </Menu>
+                <Menu mnemonicParsing="false" text="Opties">
+                    <MenuItem fx:id="mnuRestricties" mnemonicParsing="false" onAction="#Restricties"
+                              text="Restricties"/>
+                </Menu>
             </MenuBar>
         </top>
         <bottom>

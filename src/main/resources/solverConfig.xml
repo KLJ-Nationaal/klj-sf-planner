@@ -10,7 +10,6 @@
 
     <scoreDirectorFactory>
         <constraintProviderClass>solver.SportfeestConstraintProvider</constraintProviderClass>
-        <!--<scoreDrl>rules.drl</scoreDrl>-->
         <constraintStreamImplType>BAVET</constraintStreamImplType>
     </scoreDirectorFactory>
 
@@ -21,15 +20,6 @@
       <constructionHeuristic>
         <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
       </constructionHeuristic>
-
-      <localSearch>
-        <changeMoveSelector>
-          <selectionOrder>ORIGINAL</selectionOrder>
-        </changeMoveSelector>
-        <forager>
-          <acceptedCountLimit>30</acceptedCountLimit>
-        </forager>
-      </localSearch>
     -->
     <constructionHeuristic/>
     <localSearch>
@@ -43,17 +33,13 @@
             <secondsSpentLimit>120</secondsSpentLimit>
         </termination>
         <localSearchType>TABU_SEARCH</localSearchType>
-        <!--    <acceptor>-->
-        <!--      <entityTabuSize>7</entityTabuSize>-->
-        <!--    </acceptor>-->
-        <!--    <forager>-->
-        <!--      <acceptedCountLimit>1000</acceptedCountLimit>-->
-        <!--    </forager>-->
     </localSearch>
     <!--
   <localSearch>
     <unionMoveSelector>
-      <changeMoveSelector/>
+      <changeMoveSelector>
+        <selectionOrder>ORIGINAL</selectionOrder>
+      </changeMoveSelector>
       <swapMoveSelector/>
       <pillarSwapMoveSelector/>
       <moveListFactory>

@@ -1,6 +1,6 @@
 <configuration>
 
-    <property name="LOG_LEVEL" value="${log.level:-INFO}"/>
+    <property name="LOG_LEVEL" value="${log.level:-DEBUG}"/>
 
     <conversionRule conversionWord="highlighting" converterClass="logging.Highlighting"/>
 
@@ -49,13 +49,6 @@
         <appender-ref ref="fileAppender"/>
         <appender-ref ref="async_guiAppender"/>
         <appender-ref ref="guiAppender"/>
+        <appender-ref ref="STDOUT"/>
     </root>
-    <!-- Only attach STDOUT if debugLogging is true -->
-    <if condition='property("debugLogging").equals("true")'>
-        <then>
-            <root>
-                <appender-ref ref="STDOUT"/>
-            </root>
-        </then>
-    </if>
 </configuration>

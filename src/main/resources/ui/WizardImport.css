@@ -3,7 +3,7 @@
 }
 
 .table-view:row-selection .table-row-cell:selected .table-cell {
-    -fx-background-color: null;
+    -fx-background-color: rgba(40, 120, 200, .2);
 }
 
 .table-view:cell-selection .table-cell:selected {

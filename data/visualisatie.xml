@@ -1,114 +1,117 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <afdelingsopties>
-    <Afdelingsoptie naam="Basiswimpelen basis">
+    <Afdelingsoptie naam="Bondsreeks jongens">
         <kleur>#ff0000</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Basiswimpelen muziek">
+    <Afdelingsoptie naam="Kringdans jongens">
         <kleur>#ff4d00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Basiswimpelen vrije">
+    <Afdelingsoptie naam="Parendans">
         <kleur>#ff8400</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Bondsreeks &amp; vrije ritmiek jongens">
+    <Afdelingsoptie naam="Piramide hoog">
         <kleur>#ffb700</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Bondsreeks meisjes &amp; gemengd">
+    <Afdelingsoptie naam="Vrije ritmiek jongens">
         <kleur>#ffd000</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Brechts korpsvendelen">
+    <Afdelingsoptie naam="Piramide laag">
         <kleur>#ffea00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Gilden muziekreeks">
+    <Afdelingsoptie naam="Vrije ritmiek meisjes &amp; gemengd">
         <kleur>#fbff00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Kringdans jongens">
+    <Afdelingsoptie naam="Hoofdgilden">
         <kleur>#e1ff00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Kringdans meisjes &amp; gemengd">
+    <Afdelingsoptie naam="Keurwimpelen muziekreeks">
         <kleur>#aaff00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Parendans">
+    <Afdelingsoptie naam="Keurwimpelen vrije reeks">
         <kleur>#77ff00</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Piramide hoog">
+    <Afdelingsoptie naam="Ertvelde">
         <kleur>#00ff40</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Piramide laag">
+    <Afdelingsoptie naam="Bassevelde">
         <kleur>#00ffa6</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Vrije ritmiek meisjes &amp; gemengd">
+    <Afdelingsoptie naam="Nieuwkerken Waas">
         <kleur>#00ffd9</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Gilden vrije reeks">
+    <Afdelingsoptie naam="Assenede">
         <kleur>#00eeff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Hoofdgilden">
+    <Afdelingsoptie naam="Moerbeke Waas">
         <kleur>#00d5ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Keurwimpelen">
+    <Afdelingsoptie naam="Sleidinge">
         <kleur>#00a2ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Assenede">
+    <Afdelingsoptie naam="Waarschoot">
         <kleur>#006fff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Opwijk">
+    <Afdelingsoptie naam="Zomergem">
         <kleur>#9900ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Sint-Gillis-Waas">
+    <Afdelingsoptie naam="Adegem">
         <kleur>#b300ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Wetteren">
+    <Afdelingsoptie naam="Lokeren Heiende">
         <kleur>#cc00ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Lokeren Heiende">
+    <Afdelingsoptie naam="Zele-Heikant">
         <kleur>#e600ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Moerbeke Waas">
+    <Afdelingsoptie naam="Belsele">
         <kleur>#ff00ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Zaffelare">
+    <Afdelingsoptie naam="Temse-Velle">
         <kleur>#ffbaba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Kluizen">
+    <Afdelingsoptie naam="Nazareth">
         <kleur>#ffc8ba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Sente">
+    <Afdelingsoptie naam="Lochristi Hijfte Meisjes">
         <kleur>#ffdeba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Bazel">
+    <Afdelingsoptie naam="Beervelde">
         <kleur>#fff9ba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Lovendegem">
+    <Afdelingsoptie naam="Stekene">
         <kleur>#feffba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Bassevelde">
+    <Afdelingsoptie naam="Sinaai">
         <kleur>#e8ffba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Temse-Velle">
+    <Afdelingsoptie naam="Lokeren Heirbrug">
         <kleur>#daffba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Nazareth">
+    <Afdelingsoptie naam="Melsele">
         <kleur>#c6ffba</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Adegem">
+    <Afdelingsoptie naam="Haasdonk">
         <kleur>#baffe0</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Doorslaar">
+    <Afdelingsoptie naam="Sint-Gillis-Waas">
         <kleur>#baf4ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Lokeren Heirbrug">
+    <Afdelingsoptie naam="Kruibeke">
         <kleur>#badfff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Lochristi Hijfte Jongens">
+    <Afdelingsoptie naam="Bazel">
         <kleur>#bac9ff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Kruibeke">
+    <Afdelingsoptie naam="Zaffelare">
         <kleur>#c7baff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Meetjesland">
+    <Afdelingsoptie naam="Keurwimpelgroep Bazelle Waas">
         <kleur>#d4baff</kleur>
     </Afdelingsoptie>
-    <Afdelingsoptie naam="Bazelle-Waas">
+    <Afdelingsoptie naam="Keurwimpelgroep Meetjesland">
         <kleur>#e3baff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Hamme">
+        <kleur>#ffbaff</kleur>
     </Afdelingsoptie>
 </afdelingsopties>

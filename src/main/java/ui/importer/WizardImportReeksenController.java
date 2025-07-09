@@ -75,7 +75,7 @@ public class WizardImportReeksenController extends WizardImportController {
 
 		if (fromPrevious) {
 			model.getReeksen().clear();
-			//TODO: errors in Marshalling controlleren
+			// TODO: errors in Marshalling controleren
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
 					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());

@@ -164,7 +164,7 @@ public class WizardImportRingenController extends WizardImportController {
 		sf.setLocatie(model.getSfTitel());
 		sf.setDatum(model.getSfDatum());
 
-		//Disciplines toevoegen
+		// Disciplines toevoegen
 		model.getReeksen().forEach(reeks -> {
 			Discipline discipline = new Discipline();
 			discipline.setNaam(reeks.getNaam());
@@ -174,7 +174,7 @@ public class WizardImportRingenController extends WizardImportController {
 			sf.getDisciplines().put(reeks.getNaam(), discipline);
 		});
 
-		//Ringen maken
+		// Ringen maken
 		final AtomicInteger ringId = new AtomicInteger(0);
 		data.forEach(wizardRing -> {
 			for (int i = 0; i < wizardRing.getAantalRingen(); i++) {
@@ -188,9 +188,9 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 		});
 
-		//inschrijvingen verwerken
+		// inschrijvingen verwerken
 		final AtomicInteger aantal = new AtomicInteger(0);
-		//TODO: errors in Marshalling controlleren
+		// TODO: errors in Marshalling controleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
 				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
