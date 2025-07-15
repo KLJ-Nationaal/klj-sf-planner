@@ -57,6 +57,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getRing),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
+				.filter((a, b) -> !a.isGereserveerdBlok() && !b.isGereserveerdBlok())
 				.penalize(HardSoftScore.ofHard(8))
 				.asConstraint("Geen twee afdelingen tegelijk in een RING");
 	}
@@ -75,6 +76,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 					boolean bm = b.getDiscipline().isMeisjes();
 					return !a.getDiscipline().equals(b.getDiscipline()) && !b.isVerbonden(a) && ((aj && bj) || (am && bm));
 				})
+				.filter((a, b) -> !a.isGereserveerdBlok() && !b.isGereserveerdBlok())
 				.filter((a, b) -> Math.abs(b.getTijdslot().timeBetween(a.getTijdslot())) < 6)
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Te weinig tijd tussen inschrijvingen");
@@ -82,6 +84,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 
 	private Constraint inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
+				.filter(i -> !i.isGereserveerdBlok())
 				.groupBy(
 						Inschrijving::getAfdeling,
 						Inschrijving::getRing,
@@ -99,6 +102,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	private Constraint minimaliseerUniformWissels(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(Inschrijving::isJongens)
+				.filter(inschrijving -> !inschrijving.isGereserveerdBlok())
 				.join(factory.forEach(Inschrijving.class)
 								.filter(Inschrijving::isJongens),
 						Joiners.equal(Inschrijving::getAfdeling))

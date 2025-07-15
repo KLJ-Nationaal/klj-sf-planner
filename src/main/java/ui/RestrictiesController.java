@@ -83,7 +83,7 @@ public class RestrictiesController {
 			}
 		});
 		tblColValueA.setCellValueFactory(x -> x.getValue().aProperty());
-		tblColValueA.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<>() {
+		tblColValueA.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<RestrictieInterface>() {
 			@Override
 			public String toString(RestrictieInterface object) {
 				if (object == null) return null;
@@ -122,7 +122,7 @@ public class RestrictiesController {
 			}
 		});
 		tblColValueB.setCellValueFactory(x -> x.getValue().bProperty());
-		tblColValueB.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<>() {
+		tblColValueB.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<RestrictieInterface>() {
 			@Override
 			public String toString(RestrictieInterface object) {
 				if (object == null) return null;

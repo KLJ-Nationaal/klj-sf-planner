@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.LoggerFactory;
+import persistence.Instellingen;
 import persistence.Marshalling;
 import persistence.ReeksDefinitie;
 import ui.EditingCell;
@@ -27,14 +28,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toCollection;
+
 public class WizardImportRingenController extends WizardImportController {
 	@FXML
 	private TableView<WizardRing> tblRingen;
 
 	@FXML
-	private TableColumn<WizardRing, String> tblColRing;
+	private TableColumn<WizardRing, String> tblColRing, tblColEinduur;
 	@FXML
-	private TableColumn<WizardRing, Integer> tblColDuur, tblColAantalAfdelingen, tblColAantalRingen, tblColMaxPerRing, tblColEinduur;
+	private TableColumn<WizardRing, Integer> tblColDuur, tblColAantalAfdelingen, tblColAantalRingen, tblColMaxPerRing;
 	@FXML
 	private TableColumn<WizardRing, Void> tblColAfdPerRing;
 
@@ -103,7 +106,7 @@ public class WizardImportRingenController extends WizardImportController {
 		});
 		tblColAantalRingen.setCellValueFactory(new PropertyValueFactory<>("aantalRingen"));
 
-		tblColEinduur.setCellFactory(col -> new EditingCell<WizardRing, String>() {
+		tblColEinduur.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);
@@ -112,21 +115,20 @@ public class WizardImportRingenController extends WizardImportController {
 				}
 			}
 			@Override
-			public void commitEditHandler(String newValue){
+			public void commitEditHandler(String newValue) {
 				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
 				final Pattern pattern = Pattern.compile("(\\d{1,2})\\D*?(\\d{2})");
 				final Matcher matcher = pattern.matcher(newValue);
-				if(matcher.find())
-				{
+				if (matcher.find()) {
 					SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 					try {
-						Date d1 = df.parse(Marshalling.STARTTIJD);
+						Date d1 = df.parse(Instellingen.Opties().STARTTIJD);
 						Date d2 = df.parse(matcher.group(1) + ":" + matcher.group(2));
 						TimeUnit timeUnit = TimeUnit.MINUTES;
 						long diff = timeUnit.convert(d2.getTime() - d1.getTime(), TimeUnit.MILLISECONDS);
 						wizardRing.setEinduur((int) diff);
 					} catch (ParseException e) {
-						logger.error("Kan nieuw einduur (" + newValue + ") niet instellen", e);
+						logger.error("Kan nieuw einduur ({}) niet instellen", newValue, e);
 					}
 				}
 			}
@@ -135,14 +137,14 @@ public class WizardImportRingenController extends WizardImportController {
 			SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 			Calendar cal = Calendar.getInstance();
 			SimpleStringProperty formattedTime = new SimpleStringProperty("---");
-			int einduur = ((TableColumn.CellDataFeatures<WizardRing, String>) cellValue).getValue().getEinduur();
+			int einduur = cellValue.getValue().getEinduur();
 			try {
-				Date d = df.parse(Marshalling.STARTTIJD);
+				Date d = df.parse(Instellingen.Opties().STARTTIJD);
 				cal.setTime(d);
 				cal.add(Calendar.MINUTE, einduur);
 				formattedTime.set(df.format(cal.getTime()));
 			} catch (ParseException e) {
-				logger.error("Kan einduur (" + einduur + ") niet tonen", e);
+				logger.error("Kan einduur ({}) niet tonen", einduur, e);
 			}
 			return formattedTime;
 		});
@@ -219,6 +221,7 @@ public class WizardImportRingenController extends WizardImportController {
 			discipline.setRingNaam(reeks.getRingNaam());
 			discipline.setExtensie(reeks.getExtensie());
 			discipline.setDuur(reeks.getDuur());
+			discipline.setSport(reeks.getSport());
 			sf.getDisciplines().put(reeks.getNaam(), discipline);
 		});
 
@@ -247,8 +250,8 @@ public class WizardImportRingenController extends WizardImportController {
 				// voor touwtrekken houden we geen rekening met leeftijd, dus verwijder dubbele (-16 & +16)
 				.collect(Collectors.collectingAndThen(
 						toCollection(() -> new TreeSet<>(
-									Comparator.comparing(Groepsinschrijving::getAfdeling)
-											.thenComparing(s -> s.getSport().replace(" -16", "").replace(" +16", "")))),
+								Comparator.comparing(Groepsinschrijving::getAfdeling)
+										.thenComparing(s -> s.getSport().replace(" -16", "").replace(" +16", "")))),
 						ArrayList::new))
 				.forEach(inschr -> {
 					Afdeling afdeling = sf.getAfdelingen().stream()
@@ -293,7 +296,7 @@ public class WizardImportRingenController extends WizardImportController {
 			// extra fix voor touwtrekken: verwijder meisjes/jongens indien gemengd aanwezig bij touwtrekken (of voeg gemengd toe)
 			inschr = afdeling.getInschrijvingen().stream()
 					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("touwtrekken"))
-					.collect(Collectors.toList());
+					.toList();
 			if (inschr.stream().anyMatch(inschrijving -> inschrijving.getDiscipline().isJongens())
 					&& inschr.stream().anyMatch(inschrijving -> inschrijving.getDiscipline().isMeisjes())) {
 				// er zijn jongens én meisjes ingeschreven: vervangen door één gemengd blok
@@ -318,12 +321,12 @@ public class WizardImportRingenController extends WizardImportController {
 				List<Inschrijving> meisjesweg = inschr.stream()
 						.filter(inschrijving -> inschrijving.getDiscipline().isMeisjes())
 						.filter(inschrijving -> !inschrijving.getDiscipline().isJongens())
-						.collect(Collectors.toList());
+						.toList();
 				afdeling.getInschrijvingen().removeAll(meisjesweg);
 				List<Inschrijving> jongensweg = inschr.stream()
 						.filter(inschrijving -> inschrijving.getDiscipline().isJongens())
 						.filter(inschrijving -> !inschrijving.getDiscipline().isMeisjes())
-						.collect(Collectors.toList());
+						.toList();
 				afdeling.getInschrijvingen().removeAll(jongensweg);
 			}
 		});

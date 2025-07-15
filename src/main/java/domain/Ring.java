@@ -30,12 +30,8 @@ public class Ring {
 		disciplines = new HashSet<>();
 	}
 
-	public Ring(String ringNaam, String ringLetter, int ringIndex) {
-		this(ringNaam, ringLetter, ringIndex, 0);
-	}
-	public Ring(){
-		this("Ring zonder naam " + Math.random(), "", 0);
-	}
+	public Ring(String ringNaam, String ringLetter, int ringIndex) { this(ringNaam, ringLetter, ringIndex, 0); }
+	public Ring() { this("Ring zonder naam " + Math.random(), "", 0); }
 
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) { this.naam = naam; }
@@ -53,8 +49,8 @@ public class Ring {
 
 	public int getEinduur() {
 		if (einduur != 0) return einduur;
-		else if (Objects.equals(letter, "")) return Marshalling.TOTALETIJDRINGMETFINALE;
-		else return Marshalling.TOTALETIJD;
+		else if (Objects.equals(letter, "")) return Instellingen.Opties().TOTALETIJDRINGMETFINALE;
+		else return Instellingen.Opties().TOTALETIJD;
 	}
 	public void setEinduur(int einduur) { this.einduur = einduur; }
 
@@ -69,13 +65,6 @@ public class Ring {
 		disciplines.add(discipline);
 		// tijdslots voor ring maken als ze nog niet bestaan
 		if (tijdslots.isEmpty()) {
-			int totaletijd = Instellingen.Opties().TOTALETIJDRINGMETFINALE;
-			if (Objects.equals(letter, "")) totaletijd = Instellingen.Opties().TOTALETIJD;
-			for (int i = 0; i < totaletijd; i = i + discipline.getDuur()) {  //TODO: property van maken
-				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
-				tijdslots.add(tijdslot);
-		// tijdslots voor ring maken als ze nog niet bestaan
-		if(tijdslots.isEmpty()) {
 			// als de discipline met gereserveerde blokken werkt, de tijdsslots anders genereren
 			if (discipline.isGereserveerdBlok()) {
 				// touwtrekken op IRSF: eerst vroegste, dan laatste, rest opvullen om dynamisch te zijn

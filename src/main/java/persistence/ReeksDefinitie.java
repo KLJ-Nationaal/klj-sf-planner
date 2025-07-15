@@ -35,7 +35,7 @@ public class ReeksDefinitie {
 			if (wrapper != null) {
 				reeksdefinitie.addAll(wrapper.getList());
 			}
-
+			logger.debug("JAXB reeksdefinitie ingelezen, {} reeksen", reeksdefinitie.size());
 		} catch (JAXBException e) {
 			logger.error("JAXB unmarshalling error: {}", e.getMessage(), e);
 		}

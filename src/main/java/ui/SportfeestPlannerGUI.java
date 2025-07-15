@@ -386,7 +386,7 @@ public class SportfeestPlannerGUI extends Application {
 					} catch (NumberFormatException | NullPointerException e) {
 						//veronderstel dat we de cel leegmaken
 						inschr.setTijdslot(null);
-						logger.error("Kan tijdsslot " + newValue + " voor gereserveerd blok niet instellen. Inschrijving: " + inschr);
+						logger.error("Kan tijdsslot {} voor gereserveerd blok niet instellen. Inschrijving: {}", newValue, inschr);
 					}
 				} else {
 					inschr.setRing(inschr.getMogelijkeRingen().stream()

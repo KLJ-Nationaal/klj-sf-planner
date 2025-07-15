@@ -91,6 +91,7 @@ public class WizardImportReeksenController extends WizardImportController {
 							reeks.setRingNaam(conf.getRingNaam());
 							reeks.setExtensie(conf.getExtensie());
 							reeks.setDuur(Math.max(reeks.getDuur(), conf.getDuur()));
+							reeks.setSport(conf.getSport());
 						});
 			}
 		}

@@ -16,42 +16,46 @@ public class RestrictieUtils {
 		sf.getRestricties().addAll(restricties);
 		// Restricties invullen in inschrijvingen
 		restricties.forEach(ro -> {
-			// Afdeling opzoeken
-			Optional<Afdeling> afdeling = sf.getAfdelingen().stream()
-					.filter(afd -> afd.getNaam().equalsIgnoreCase(ro.getAfdeling()))
-					.findAny();
-			if (afdeling.isEmpty()) {
-				logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", ro.getAfdeling());
-				return;
+			try {
+				// Afdeling opzoeken
+				Optional<Afdeling> afdeling = sf.getAfdelingen().stream()
+						.filter(afd -> afd.getNaam().equalsIgnoreCase(ro.getAfdeling()))
+						.findAny();
+				if (afdeling.isEmpty()) {
+					logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", ro.getAfdeling());
+					return;
+				}
+
+				List<Inschrijving> listA = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getA());
+				List<Inschrijving> listB = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getB());
+
+				if (listA.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor A van uitzondering {}", ro);
+				if (listB.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor B van uitzondering {}", ro);
+
+				listA.forEach(inschrijving -> inschrijving.getVerbondenRestricties().addAll(listB));
+				listB.forEach(inschrijving -> inschrijving.getVerbondenRestricties().addAll(listA));
+
+				logger.info("Uitzondering {} toegevoegd, {} x A en {} x B", ro, listA.size(), listB.size());
+			} catch (Exception e) {
+				logger.error("Fout bij het toevoegen van uitzondering {}: {}", ro, e.getLocalizedMessage());
 			}
-
-			List<Inschrijving> listA = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getA());
-			List<Inschrijving> listB = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getB());
-
-			if (listA.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor A van uitzondering {}", ro);
-			if (listB.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor B van uitzondering {}", ro);
-
-			listA.forEach(inschrijving -> inschrijving.getVerbondenRestricties().addAll(listB));
-			listB.forEach(inschrijving -> inschrijving.getVerbondenRestricties().addAll(listA));
-
-			logger.info("Uitzondering {} toegevoegd, {} x A en {} x B", ro, listA.size(), listB.size());
 		});
 	}
 
 	private static List<Inschrijving> getInschrijvingenForRestrictieObject(Afdeling afdeling, RestrictieOptie ro) {
 		// Alle inschrijvingen van deze afdeling
-		Stream<Inschrijving> setA = afdeling.getInschrijvingen().stream();
+		Stream<Inschrijving> set = afdeling.getInschrijvingen().stream();
 		// Filter de sport of discipline er uit
 		if (ro.getObject() instanceof Sport s) {
-			setA = setA.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(s));
+			set = set.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(s));
 		} else {
-			setA = setA.filter(inschrijving -> inschrijving.getDiscipline().getNaam().equals(ro.getObject().getNaam()));
+			set = set.filter(inschrijving -> inschrijving.getDiscipline().getNaam().equals(ro.getObject().getNaam()));
 		}
 		// Indien NIET alle korpsen, dus 1 korps is voldoende
 		// Inschrijvingen met maar één korps hebben korps = 0, met meerdere korpsen begint het vanaf korps = 1
 		if (!ro.getAlleKorpsen())
-			setA = setA.filter(inschrijving -> inschrijving.getKorps() < 2);
-		return setA.toList();
+			set = set.filter(inschrijving -> inschrijving.getKorps() < 2);
+		return set.toList();
 	}
 
 	public static boolean compareRestricties(Sportfeest sf, List<Restrictie> restricties) {

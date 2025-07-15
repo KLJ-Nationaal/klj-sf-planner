@@ -1,5 +1,7 @@
 package domain.importing;
 
+import persistence.Instellingen;
+
 public class WizardRing {
 	private String naam;
 	private int aantalRingen;
@@ -31,8 +33,8 @@ public class WizardRing {
 
 	public int getEinduur() {
 		if (einduur != 0) return einduur;
-		else if (aantalRingen > 1) return Marshalling.TOTALETIJDRINGMETFINALE;
-		else return Marshalling.TOTALETIJD;
+		else if (aantalRingen > 1) return Instellingen.Opties().TOTALETIJDRINGMETFINALE;
+		else return Instellingen.Opties().TOTALETIJD;
 	}
 	public void setEinduur(int einduur) { this.einduur = einduur; }
 
