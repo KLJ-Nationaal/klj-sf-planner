@@ -1,6 +1,6 @@
-package domain.importing;
+package domain;
 
-import domain.Sport;
+import domain.importing.Reeks;
 
 import java.util.Optional;
 

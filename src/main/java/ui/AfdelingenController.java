@@ -8,7 +8,6 @@ import persistence.Visualisatie;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 public class AfdelingenController extends AgendaController<Afdeling> {
 	@FXML
@@ -26,7 +25,7 @@ public class AfdelingenController extends AgendaController<Afdeling> {
 		agenda.columns().clear();
 		agenda.columns().addAll(sportfeest.getAfdelingen().stream()
 				.sorted(Comparator.comparing(Afdeling::getNaam))
-				.collect(Collectors.toList()));
+				.toList());
 		agenda.setAppointmentsProperty(FXCollections.observableArrayList(sportfeest.getInschrijvingen()));
 		agenda.refresh();
 	}

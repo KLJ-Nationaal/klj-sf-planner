@@ -27,11 +27,9 @@ package ui.visualization.jfxtras.util;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 
 /**
  * An ImageView which lets the mouse change so it indicates being clickable
@@ -53,20 +51,14 @@ public class ImageViewButton extends ImageView {
 	private void construct() {
 
 		setPickOnBounds(true);
-		setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (!mouseEvent.isPrimaryButtonDown()) {
-					ImageViewButton.this.setCursor(Cursor.HAND);
-				}
+		setOnMouseEntered(mouseEvent -> {
+			if (!mouseEvent.isPrimaryButtonDown()) {
+				ImageViewButton.this.setCursor(Cursor.HAND);
 			}
 		});
-		setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (!mouseEvent.isPrimaryButtonDown()) {
-					ImageViewButton.this.setCursor(Cursor.DEFAULT);
-				}
+		setOnMouseExited(mouseEvent -> {
+			if (!mouseEvent.isPrimaryButtonDown()) {
+				ImageViewButton.this.setCursor(Cursor.DEFAULT);
 			}
 		});
 	}

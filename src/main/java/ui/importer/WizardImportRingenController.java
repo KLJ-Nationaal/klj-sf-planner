@@ -47,7 +47,7 @@ public class WizardImportRingenController extends WizardImportController {
 	public void initialize() {
 		tblColRing.setCellValueFactory(new PropertyValueFactory<>("naam"));
 		tblColAantalAfdelingen.setCellValueFactory(new PropertyValueFactory<>("aantalAfd"));
-		tblColAfdPerRing.setCellFactory(column -> new TableCell<WizardRing, Void>() {
+		tblColAfdPerRing.setCellFactory(column -> new TableCell<>() {
 			@Override
 			protected void updateItem(Void item, boolean empty) {
 				super.updateItem(item, empty);
@@ -55,7 +55,7 @@ public class WizardImportRingenController extends WizardImportController {
 				if (empty || getTableRow() == null || getTableRow().getItem() == null) {
 					setText(null);
 				} else {
-					WizardRing ring = (WizardRing) getTableRow().getItem();
+					WizardRing ring = getTableRow().getItem();
 
 					if (ring.getAantalRingen() > 0) {
 						double resultaat = 1.0 * ring.getAantalAfd() / ring.getAantalRingen();
@@ -67,7 +67,7 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 		});
 		tblColMaxPerRing.setCellValueFactory(new PropertyValueFactory<>("maxAfdPerRing"));
-		tblColDuur.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
+		tblColDuur.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);
@@ -82,7 +82,7 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 		});
 		tblColDuur.setCellValueFactory(new PropertyValueFactory<>("duur"));
-		tblColAantalRingen.setCellFactory(col -> new EditingCell<WizardRing, Integer>() {
+		tblColAantalRingen.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);
@@ -213,7 +213,7 @@ public class WizardImportRingenController extends WizardImportController {
 								.collect(Collectors.toList())
 						);
 						if (inschrijving.getMogelijkeRingen().size() == 1)
-							inschrijving.setRing(inschrijving.getMogelijkeRingen().get(0));
+							inschrijving.setRing(inschrijving.getMogelijkeRingen().getFirst());
 						if (inschr.getAantal() > 1) inschrijving.setKorps(i + 1);
 						afdeling.getInschrijvingen().add(inschrijving);
 					}
@@ -223,7 +223,7 @@ public class WizardImportRingenController extends WizardImportController {
 		sf.getAfdelingen().forEach(afdeling -> {
 			List<Inschrijving> inschr = afdeling.getInschrijvingen().stream()
 					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("piramide"))
-					.collect(Collectors.toList());
+					.toList();
 			if (inschr.size() > 2) {
 				logger.error("{} heeft meer dan twee inschrijvingen voor de piramides!", afdeling.getNaam());
 			}

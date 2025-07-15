@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.5</version>
         </dependency>
     </dependencies>
 
@@ -100,6 +100,7 @@
                     <exclude>**/*.bat</exclude>
                     <exclude>**/*.sh</exclude>
                 </excludes>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <plugins>

@@ -64,7 +64,7 @@ public class Ring {
 				tijdslots.add(tijdslot);
 			}
 			// laatste tijdslot als ongunstig instellen (liefst niet)
-			tijdslots.get(tijdslots.size() - 1).setOngunstig(true);
+			tijdslots.getLast().setOngunstig(true);
 		}
 	}
 
@@ -85,8 +85,7 @@ public class Ring {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o instanceof Ring) {
-			Ring other = (Ring) o;
+		} else if (o instanceof Ring other) {
 			return getRingIndex() == other.getRingIndex();
 		} else {
 			return false;

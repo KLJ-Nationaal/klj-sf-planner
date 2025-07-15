@@ -198,7 +198,7 @@ class AppointmentMenu<H> extends Rectangle {
 			if (newValue) {
 				appointment.setTijdslot(null);
 			} else {
-				appointment.setTijdslot(appointment.getTijdslots().get(0));
+				appointment.setTijdslot(appointment.getTijdslots().getFirst());
 			}
 			// refresh is done upon popup close
 			layoutHelp.callAppointmentChangedCallback(appointment);

@@ -6,8 +6,7 @@ import org.optaplanner.core.api.score.stream.*;
 
 import java.util.Comparator;
 
-import static org.optaplanner.core.api.score.stream.Joiners.equal;
-import static org.optaplanner.core.api.score.stream.Joiners.overlapping;
+import static org.optaplanner.core.api.score.stream.Joiners.*;
 
 public class SportfeestConstraintProvider implements ConstraintProvider {
 
@@ -21,10 +20,10 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				// SOFT CONSTRAINTS
 				tijdTussenInschrijvingenVerschillendeRing(factory),
 				inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(factory),
-				//TODO:
 				minimaliseerUniformWissels(factory),
 				inschrijvingenDieMoetenSamenvallen(factory),
-				vermijdOngunstigeTijdslots(factory)
+				vermijdOngunstigeTijdslots(factory),
+				restricties(factory),
 		};
 	}
 
@@ -91,7 +90,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.filter((afdeling, ring, discipline, inschrijvingen) -> {
 					inschrijvingen.sort(Comparator.comparing(Inschrijving::getStartTijd));
 					int totaletijd = inschrijvingen.stream().mapToInt(i -> i.getTijdslot().getDuur()).sum();
-					return inschrijvingen.get(0).getStartTijd() < inschrijvingen.get(inschrijvingen.size() - 1).getEindTijd() - totaletijd;
+					return inschrijvingen.getFirst().getStartTijd() < inschrijvingen.getLast().getEindTijd() - totaletijd;
 				})
 				.penalize(HardSoftScore.ofSoft(30))
 				.asConstraint("Inschrijvingen afdeling met zelfde discipline moeten aansluiten");
@@ -107,7 +106,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.ifNotExists(Inschrijving.class,
 						Joiners.equal((i1, i2) -> i1.getAfdeling(), Inschrijving::getAfdeling),
 						Joiners.equal((i1, i2) -> i1.isJongens(), Inschrijving::isJongens),
-						Joiners.filtering((i1, i2, i3) ->
+						filtering((i1, i2, i3) ->
 								i3 != i1 && i3 != i2 &&
 										i3.getStartTijd() > i1.getStartTijd() &&
 										i3.getStartTijd() < i2.getStartTijd())
@@ -138,10 +137,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getAfdeling),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
-				.filter((a, b) -> {
-					//TODO !!!!!
-					return !b.isVerbonden(a) && ((aj && bj) || (am && bm));
-				})
+				.filter((x, y) -> x.getVerbondenRestricties().contains(y))
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Uitzondering");
 	}

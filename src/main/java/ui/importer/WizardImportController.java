@@ -164,7 +164,7 @@ public class WizardImportController {
 
 	public void setFilename(String filename) {
 		model.setFilename(filename);
-		((WizardImportColumnsController) steps.get(0).getProperties().get(CONTROLLER_KEY)).loadFile(filename);
+		((WizardImportColumnsController) steps.getFirst().getProperties().get(CONTROLLER_KEY)).loadFile(filename);
 	}
 
 	public void activate(boolean fromPrevious) {}

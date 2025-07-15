@@ -74,7 +74,7 @@ public interface InschrijvingInterface {
 	default void setWholeDay(Boolean b) {
 		if (b) setTijdslot(null);
 			// if it's not a whole day any longer, assign the first timeslot
-		else setTijdslot((getTijdslot() == null ? getTijdslots().get(0) : getTijdslot()));
+		else setTijdslot((getTijdslot() == null ? getTijdslots().getFirst() : getTijdslot()));
 	}
 
 	default Boolean isDraggable() { return Boolean.TRUE; }

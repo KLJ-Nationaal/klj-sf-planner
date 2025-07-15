@@ -19,7 +19,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Marshalling {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
@@ -226,7 +225,6 @@ public class Marshalling {
 
 	public static void marshallXml(Sportfeest map, String filename) {
 		try {
-			//TODO programmaversie uitschrijven
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -260,7 +258,7 @@ public class Marshalling {
 
 		List<Afdeling> sortedAfdelingen = map.getAfdelingen().stream()
 				.sorted(Comparator.comparing(Afdeling::getNaam))
-				.collect(Collectors.toList());
+				.toList();
 		for (Afdeling afdeling : sortedAfdelingen) {
 			XSSFSheet sheet = wb.createSheet(afdeling.getNaam());
 			PrintSetup printSetup = sheet.getPrintSetup();
@@ -310,7 +308,7 @@ public class Marshalling {
 				List<Inschrijving> inschrijvingList = afdeling.getInschrijvingen().stream()
 						.filter(inschr -> inschr.getTijdslot() != null)
 						.filter(inschr -> inschr.getTijdslot().isIncluded(time))
-						.collect(Collectors.toList());
+						.toList();
 				for (Inschrijving inschrijving : inschrijvingList) {
 					boolean edited = false;
 
@@ -386,7 +384,7 @@ public class Marshalling {
 		//tabblad groepen maken
 		List<String> ringGroepen = new ArrayList<>();
 		for (Discipline discipline : map.getDisciplines().values()) ringGroepen.add(discipline.getRingNaam());
-		List<String> sortedRingGroepen = ringGroepen.stream().distinct().sorted().collect(Collectors.toList());
+		List<String> sortedRingGroepen = ringGroepen.stream().distinct().sorted().toList();
 
 		for (String ringGroep : sortedRingGroepen) {
 			XSSFSheet sheet = wb.createSheet(ringGroep);
@@ -401,9 +399,16 @@ public class Marshalling {
 			List<Ring> sortedRingen = map.getRingen().stream()
 					.filter(rng -> ringGroep.equals(rng.getDisciplines().stream().findFirst().get().getRingNaam()))
 					.sorted(Comparator.comparing(Ring::getVerkorteNotatie))
-					.collect(Collectors.toList());
-			int ringGroepDuur = sortedRingen.get(0).getTijdslots().get(0).getDuur();
-			//TODO: niet 100% veilig (~sortedRingen leeg, ~verschillende lengtes)
+					.toList();
+			if (sortedRingen.isEmpty()) {
+				logger.error("Geen ringen gevonden voor groep {}. Dit zal worden overgeslagen", ringGroep);
+				continue;
+			}
+			int ringGroepDuur = sortedRingen.stream()
+					.flatMap(ring -> ring.getTijdslots().stream())
+					.mapToInt(Tijdslot::getDuur)
+					.min()
+					.orElse(Instellingen.Opties().MINMINUTEN);
 
 			//creeer eerst de rijen
 			int aantalrijen = (int) Math.ceil(
@@ -449,7 +454,7 @@ public class Marshalling {
 						.map(Afdeling::getInschrijvingen)
 						.flatMap(Collection::stream)
 						.filter(inschr -> currentRing.equals(inschr.getRing()))
-						.collect(Collectors.toList());
+						.toList();
 
 				//font voor extensie
 				XSSFFont fontExtensie = wb.createFont();
@@ -530,7 +535,7 @@ public class Marshalling {
 		for (Afdeling afdeling : map.getAfdelingen()) {
 			List<Inschrijving> sortedInschrijvingen = afdeling.getInschrijvingen().stream()
 					.sorted(Comparator.comparing(Inschrijving::getTijdslot))
-					.collect(Collectors.toList());
+					.toList();
 			HashMap<Discipline, Integer> ringCounter = new HashMap<>();
 			for (Inschrijving inschrijving : sortedInschrijvingen) {
 				int count = 1;

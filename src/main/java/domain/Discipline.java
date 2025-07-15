@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public final class Discipline implements RestrictieInterface {
+public final class Discipline {
 	private String naam;
 	private String ringNaam;
 	private String extensie;
@@ -25,7 +25,6 @@ public final class Discipline implements RestrictieInterface {
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) {
 		this.naam = naam;
-		// TODO herbekijken eenmaal het Sport object goed geimplementeerd is
 		meisjes = true;
 		jongens = true;
 		vendeluniform = false;

@@ -1,10 +1,10 @@
 package ui;
 
+import domain.Restrictie;
+import domain.RestrictieClass;
 import domain.RestrictieInterface;
 import domain.Sport;
 import domain.importing.Reeks;
-import domain.importing.RestrictieClass;
-import domain.importing.RestrictieOptie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,21 +28,21 @@ import java.util.function.Consumer;
 
 public class RestrictiesController {
 	@FXML
-	public TableView<RestrictieOptie> tblRestricties;
+	public TableView<Restrictie> tblRestricties;
 	@FXML
-	public TableColumn<RestrictieOptie, String> tblColAfdeling;
+	public TableColumn<Restrictie, String> tblColAfdeling;
 	@FXML
-	public TableColumn<RestrictieOptie, RestrictieClass> tblColTypeA, tblColTypeB;
+	public TableColumn<Restrictie, RestrictieClass> tblColTypeA, tblColTypeB;
 	@FXML
-	public TableColumn<RestrictieOptie, RestrictieInterface> tblColValueA, tblColValueB;
+	public TableColumn<Restrictie, RestrictieInterface> tblColValueA, tblColValueB;
 	@FXML
-	public TableColumn<RestrictieOptie, Boolean> tblColLevelA, tblColLevelB;
+	public TableColumn<Restrictie, Boolean> tblColLevelA, tblColLevelB;
 	@FXML
 	public Button btnOK, btnCancel;
 
-	protected Consumer<List<RestrictieOptie>> callback;
+	protected Consumer<List<Restrictie>> callback;
 
-	private ObservableList<RestrictieOptie> restricties = FXCollections.observableArrayList();
+	private ObservableList<Restrictie> restricties = FXCollections.observableArrayList();
 	private ObservableList<Reeks> reeksen;
 	private ObservableList<Sport> sporten;
 
@@ -55,7 +55,7 @@ public class RestrictiesController {
 		restricties = FXCollections.observableList(Restricties.unMarshall());
 		if (restricties.isEmpty()) {
 			// één nieuwe toevoegen
-			RestrictieOptie r1 = new RestrictieOptie("(nieuw)", Sport.VENDELEN, false, Sport.DANS, false);
+			Restrictie r1 = new Restrictie("(nieuw)", Sport.VENDELEN, false, Sport.DANS, false);
 			restricties.add(r1);
 		}
 
@@ -70,7 +70,7 @@ public class RestrictiesController {
 			}
 			@Override
 			public void commitEditHandler(String newValue) {
-				RestrictieOptie r = getTableRow().getItem();
+				Restrictie r = getTableRow().getItem();
 				r.setAfdeling(newValue);
 			}
 		});
@@ -83,7 +83,7 @@ public class RestrictiesController {
 			}
 		});
 		tblColValueA.setCellValueFactory(x -> x.getValue().aProperty());
-		tblColValueA.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<RestrictieInterface>() {
+		tblColValueA.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<>() {
 			@Override
 			public String toString(RestrictieInterface object) {
 				if (object == null) return null;
@@ -99,7 +99,7 @@ public class RestrictiesController {
 				super.startEdit();
 				if (isEditing()) {
 					// Haal de restrictie voor de huidige rij op
-					RestrictieOptie currentRestrictie = getTableRow().getItem();
+					Restrictie currentRestrictie = getTableRow().getItem();
 					if (currentRestrictie != null && currentRestrictie.getA().getType() != null) {
 						// Bepaal welke lijst getoond moet worden
 						if (currentRestrictie.getA().getType() == RestrictieClass.SPORT) {
@@ -111,7 +111,7 @@ public class RestrictiesController {
 				}
 			}
 		});
-		tblColLevelA.setCellValueFactory(x -> x.getValue().getA().alleRingenProperty());
+		tblColLevelA.setCellValueFactory(x -> x.getValue().getA().alleKorpsenProperty());
 		tblColLevelA.setCellFactory(CheckBoxTableCell.forTableColumn(tblColLevelA));
 		tblColTypeB.setCellValueFactory(x -> x.getValue().getB().typeProperty());
 		tblColTypeB.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableList(Arrays.stream(RestrictieClass.values()).toList())));
@@ -122,7 +122,7 @@ public class RestrictiesController {
 			}
 		});
 		tblColValueB.setCellValueFactory(x -> x.getValue().bProperty());
-		tblColValueB.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<RestrictieInterface>() {
+		tblColValueB.setCellFactory(col -> new ComboBoxTableCell<>(new StringConverter<>() {
 			@Override
 			public String toString(RestrictieInterface object) {
 				if (object == null) return null;
@@ -138,7 +138,7 @@ public class RestrictiesController {
 				super.startEdit();
 				if (isEditing()) {
 					// Haal de restrictie voor de huidige rij op
-					RestrictieOptie currentRestrictie = getTableRow().getItem();
+					Restrictie currentRestrictie = getTableRow().getItem();
 					if (currentRestrictie != null && currentRestrictie.getB().getType() != null) {
 						// Bepaal welke lijst getoond moet worden
 						if (currentRestrictie.getB().getType() == RestrictieClass.SPORT) {
@@ -150,7 +150,7 @@ public class RestrictiesController {
 				}
 			}
 		});
-		tblColLevelB.setCellValueFactory(x -> x.getValue().getB().alleRingenProperty());
+		tblColLevelB.setCellValueFactory(x -> x.getValue().getB().alleKorpsenProperty());
 		tblColLevelB.setCellFactory(CheckBoxTableCell.forTableColumn(tblColLevelB));
 
 		tblRestricties.setItems(restricties);
@@ -159,7 +159,7 @@ public class RestrictiesController {
 
 	@FXML
 	public void AddAction(ActionEvent actionEvent) {
-		tblRestricties.getItems().add(new RestrictieOptie("(nieuw)", Sport.DANS, false, Sport.DANS, false));
+		tblRestricties.getItems().add(new Restrictie("(nieuw)", Sport.DANS, false, Sport.DANS, false));
 	}
 	@FXML
 	public void DeleteAction(ActionEvent actionEvent) {
@@ -168,7 +168,7 @@ public class RestrictiesController {
 	}
 	@FXML
 	public void OkAction(ActionEvent actionEvent) {
-		Restricties.marshall(restricties.stream().sorted(Comparator.comparing(RestrictieOptie::getAfdeling)).toList());
+		Restricties.marshall(restricties.stream().sorted(Comparator.comparing(Restrictie::getAfdeling)).toList());
 		CancelAction(actionEvent);
 		if (callback != null) callback.accept(restricties.stream().toList());
 	}
@@ -178,5 +178,5 @@ public class RestrictiesController {
 		stage.close();
 	}
 
-	public void setCallback(Consumer<List<RestrictieOptie>> callback) { this.callback = callback; }
+	public void setCallback(Consumer<List<Restrictie>> callback) { this.callback = callback; }
 }

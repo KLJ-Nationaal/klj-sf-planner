@@ -106,7 +106,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 
 	@Override
 	protected Task<Sportfeest> createTask() {
-		return new Task<Sportfeest>() {
+		return new Task<>() {
 			@Override
 			public boolean cancel(boolean mayInterruptIfRunning) {
 				return solver.terminateEarly() && super.cancel(mayInterruptIfRunning);

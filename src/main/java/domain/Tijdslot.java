@@ -76,8 +76,7 @@ public class Tijdslot implements Comparable<Tijdslot> {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o instanceof Tijdslot) {
-			Tijdslot other = (Tijdslot) o;
+		} else if (o instanceof Tijdslot other) {
 			return Objects.equals(getRing(), other.getRing()) &&
 					getStartTijd() == other.getStartTijd();
 		} else {

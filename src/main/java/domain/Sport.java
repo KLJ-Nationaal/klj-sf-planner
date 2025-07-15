@@ -1,7 +1,6 @@
 package domain;
 
 import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlID;
 
 @XmlEnum
 public enum Sport implements RestrictieInterface {
@@ -15,7 +14,6 @@ public enum Sport implements RestrictieInterface {
 
 	Sport(String naam) { this.naam = naam; }
 
-	@XmlID
 	public String getNaam() { return naam; }
 
 	@Override

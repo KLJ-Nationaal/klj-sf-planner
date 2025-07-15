@@ -1,23 +1,25 @@
 package domain;
 
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.*;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.VersionInfo;
 
 import java.util.*;
 
 @XmlRootElement(name = "Sportfeest")
 @PlanningSolution
 public class Sportfeest {
+	private static final Logger logger = LoggerFactory.getLogger(Sportfeest.class);
 	private HashSet<Afdeling> afdelingen;
 	private HashSet<Ring> ringen;
 	private HashMap<String, Discipline> disciplines;
+	private HashSet<Restrictie> restricties;
 	private HardSoftScore score;
 	private String locatie;
 	private Date datum;
@@ -57,6 +59,10 @@ public class Sportfeest {
 	public HashSet<Ring> getRingen() { return ringen; }
 	public void setRingen(HashSet<Ring> ringen) { this.ringen = ringen; }
 
+	@XmlElementWrapper(name = "Restricties")
+	@XmlElement(name = "Restrictie")
+	public HashSet<Restrictie> getRestricties() { return restricties; }
+	public void setRestricties(HashSet<Restrictie> restricties) { this.restricties = restricties; }
 
 	@PlanningScore
 	public HardSoftScore getScore() { return score; }
@@ -68,13 +74,17 @@ public class Sportfeest {
 	public Date getDatum() { return datum; }
 	public void setDatum(Date datum) { this.datum = datum; }
 
-	public Sportfeest(HashSet<Afdeling> afdelingen, HashSet<Ring> ringen, HashMap<String, Discipline> disciplines) {
+	@XmlAttribute(name = "ProgrammaVersie")
+	public String getProgramVersion() { return VersionInfo.getVersion(); }
+
+	public Sportfeest(HashSet<Afdeling> afdelingen, HashSet<Ring> ringen, HashMap<String, Discipline> disciplines, HashSet<Restrictie> restricties) {
 		this.afdelingen = afdelingen;
 		this.ringen = ringen;
 		this.disciplines = disciplines;
+		this.restricties = restricties;
 	}
 
 	public Sportfeest() {
-		this(new HashSet<>(), new HashSet<>(), new HashMap<>());
+		this(new HashSet<>(), new HashSet<>(), new HashMap<>(), new HashSet<>());
 	}
 }

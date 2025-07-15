@@ -30,6 +30,7 @@ module kljsfplanner {
 	opens difficulty;
 	opens solver;
 	opens app;
+	opens util;
 
 	exports solver;
 }

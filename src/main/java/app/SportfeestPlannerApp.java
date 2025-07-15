@@ -23,7 +23,7 @@ public class SportfeestPlannerApp {
 		SolverFactory<Sportfeest> solverFactory = SolverFactory.createFromXmlResource("solverConfig.xml");
 		Solver<Sportfeest> solver = solverFactory.buildSolver();
 
-		Sportfeest unsolvedSportfeest = Marshalling.unMarshall("data/ringverdeling.xlsx");
+		Sportfeest unsolvedSportfeest = Marshalling.unmarshallXml("data/adegem-140724-pre.xml");
 
 		Sportfeest solvedSportfeest = solver.solve(unsolvedSportfeest);
 

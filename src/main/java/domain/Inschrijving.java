@@ -13,6 +13,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +27,9 @@ public class Inschrijving implements InschrijvingInterface {
 	private int korps;
 	private List<Ring> mogelijkeRingen;
 	private Inschrijving verbondenInschrijving;
+	private HashSet<Inschrijving> verbondenRestricties;
+
+	public Inschrijving() { verbondenRestricties = new HashSet<>(); }
 
 	@XmlTransient
 	@PlanningId
@@ -78,9 +82,8 @@ public class Inschrijving implements InschrijvingInterface {
 		return tijdslot.getEindTijd();
 	}
 
-	public boolean isJongens() {
-		return discipline.isJongens();
-	}
+	public boolean isJongens() { return discipline.isJongens(); }
+
 	@XmlIDREF
 	public void setMogelijkeRingen(List<Ring> ringen) { this.mogelijkeRingen = ringen; }
 	public List<Ring> getMogelijkeRingen() { return this.mogelijkeRingen; }
@@ -91,6 +94,10 @@ public class Inschrijving implements InschrijvingInterface {
 		if (o.verbondenInschrijving == null) return false;
 		return verbondenInschrijving.id.equals(o.id);
 	}
+
+	@XmlIDREF
+	public void setVerbondenRestricties(HashSet<Inschrijving> verbondenRestricties) { this.verbondenRestricties = verbondenRestricties; }
+	public HashSet<Inschrijving> getVerbondenRestricties() { return this.verbondenRestricties; }
 
 	@Override
 	public boolean equals(Object o) {

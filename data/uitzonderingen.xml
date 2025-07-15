@@ -1,102 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Uitzonderingen version="1">
     <Uitzondering Afdeling="Doorslaar">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>DANS</Sport>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Kluizen">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>DANS</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Kluizen">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Melsele">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Opwijk">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Sint-Gillis-Waas">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleRingen="false">
-            <Discipline>
-                <AfdelingenPerRing>13</AfdelingenPerRing>
-                <Schema>9</Schema>
-                <Toevoeging>muziek</Toevoeging>
-                <Naam>Hoofdgilden muziekreeks</Naam>
-                <Ringnaam>Hoofdgilden</Ringnaam>
-                <Sport>VENDELEN</Sport>
-            </Discipline>
+        <B AlleKorpsen="false">
+            <Discipline>Hoofdgilden muziekreeks</Discipline>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Sint-Gillis-Waas">
-        <A AlleRingen="false">
+        <A AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleRingen="false">
-            <Discipline>
-                <AfdelingenPerRing>13</AfdelingenPerRing>
-                <Schema>9</Schema>
-                <Toevoeging>vrije</Toevoeging>
-                <Naam>Hoofdgilden vrije reeks</Naam>
-                <Ringnaam>Hoofdgilden</Ringnaam>
-                <Sport>VENDELEN</Sport>
-            </Discipline>
+        <B AlleKorpsen="false">
+            <Discipline>Hoofdgilden vrije reeks</Discipline>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Wetteren">
-        <A AlleRingen="false">
-            <Discipline>
-                <AfdelingenPerRing>11</AfdelingenPerRing>
-                <Schema>15</Schema>
-                <Toevoeging></Toevoeging>
-                <Naam>Brechts korpsvendelen</Naam>
-                <Ringnaam>Brechts korpsvendelen</Ringnaam>
-                <Sport>VENDELEN</Sport>
-            </Discipline>
+        <A AlleKorpsen="false">
+            <Discipline>Brechts korpsvendelen</Discipline>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>DANS</Sport>
         </B>
     </Uitzondering>
     <Uitzondering Afdeling="Wetteren">
-        <A AlleRingen="false">
-            <Discipline>
-                <AfdelingenPerRing>11</AfdelingenPerRing>
-                <Schema>15</Schema>
-                <Toevoeging></Toevoeging>
-                <Naam>Brechts korpsvendelen</Naam>
-                <Ringnaam>Brechts korpsvendelen</Ringnaam>
-                <Sport>VENDELEN</Sport>
-            </Discipline>
+        <A AlleKorpsen="false">
+            <Discipline>Brechts korpsvendelen</Discipline>
         </A>
-        <B AlleRingen="false">
+        <B AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </B>
     </Uitzondering>

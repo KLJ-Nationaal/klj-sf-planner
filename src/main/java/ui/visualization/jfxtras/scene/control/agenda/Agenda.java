@@ -66,7 +66,7 @@ public class Agenda<H> extends Control {
 
 	@Override
 	public Skin<?> createDefaultSkin() {
-		return new AgendaSkinAbstract<H>(this) {};
+		return new AgendaSkinAbstract<>(this) {};
 	}
 
 	// ==================================================================================================================
@@ -202,7 +202,7 @@ public class Agenda<H> extends Control {
 	@Override
 	public String toString() {
 		if (!columns.isEmpty()) {
-			Class<?> clazz = columns.get(0).getClass();
+			Class<?> clazz = columns.getFirst().getClass();
 			return String.format("Agenda-%s", clazz.getSimpleName());
 		}
 		return "Agenda";

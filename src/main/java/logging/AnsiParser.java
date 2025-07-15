@@ -38,15 +38,24 @@ public class AnsiParser {
 		if (code == null || code.isEmpty()) return "plain";
 		for (String part : code.split(";")) {
 			switch (part) {
-				case "30": return "black";
-				case "31": return "red";
-				case "32": return "green";
-				case "33": return "yellow";
-				case "34": return "blue";
-				case "35": return "magenta";
-				case "36": return "cyan";
-				case "37": return "white";
-				case "0":  return "plain";
+				case "30":
+					return "black";
+				case "31":
+					return "red";
+				case "32":
+					return "green";
+				case "33":
+					return "yellow";
+				case "34":
+					return "blue";
+				case "35":
+					return "magenta";
+				case "36":
+					return "cyan";
+				case "37":
+					return "white";
+				case "0":
+					return "plain";
 			}
 		}
 		return "plain";

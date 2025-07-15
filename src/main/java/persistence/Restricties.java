@@ -1,7 +1,7 @@
 package persistence;
 
 import ch.qos.logback.classic.Logger;
-import domain.importing.RestrictieOptie;
+import domain.Restrictie;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -23,17 +23,17 @@ public class Restricties {
 
 	@XmlRootElement(name = "Uitzonderingen")
 	private static class RestrictieWrapper {
-		private List<RestrictieOptie> items;
+		private List<Restrictie> items;
 		@XmlAttribute
 		public int version = 1;
 		@XmlElement(name = "Uitzondering")
-		public List<RestrictieOptie> getList() { return items; }
-		public void setList(List<RestrictieOptie> items) { this.items = items; }
+		public List<Restrictie> getList() { return items; }
+		public void setList(List<Restrictie> items) { this.items = items; }
 	}
 
-	public static List<RestrictieOptie> unMarshall() {
+	public static List<Restrictie> unMarshall() {
 		File xmlFile = new File(filename);
-		List<RestrictieOptie> restricties = new ArrayList<>();
+		List<Restrictie> restricties = new ArrayList<>();
 		try {
 			JAXBContext context = JAXBContext.newInstance(RestrictieWrapper.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -50,7 +50,7 @@ public class Restricties {
 		return restricties;
 	}
 
-	public static void marshall(List<RestrictieOptie> restricties) {
+	public static void marshall(List<Restrictie> restricties) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(RestrictieWrapper.class);
 			Marshaller m = context.createMarshaller();

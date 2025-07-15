@@ -8,7 +8,7 @@
     <top>
         <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="80.0"
                     prefWidth="600.0" BorderPane.alignment="CENTER">
-            <Label fx:id="title" layoutX="14.0" layoutY="13.0" style="-fx-font-weight: bold;"
+            <Label layoutX="14.0" layoutY="13.0" style="-fx-font-weight: bold;"
                    text="Analyse van het resultaat">
                 <padding>
                     <Insets bottom="4.0" right="4.0" top="4.0"/>
@@ -25,7 +25,7 @@
         </AnchorPane>
     </top>
     <center>
-        <GridPane fx:id="contentPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                   minHeight="320.0" minWidth="568.0">
             <rowConstraints>
                 <RowConstraints percentHeight="100.0"/>
@@ -40,7 +40,7 @@
         <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="55.0"
                     BorderPane.alignment="CENTER">
             <Separator AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
-            <Button fx:id="btnClose" cancelButton="true" defaultButton="true" mnemonicParsing="false"
+            <Button cancelButton="true" defaultButton="true" mnemonicParsing="false"
                     onAction="#CloseAction" prefWidth="80.0" text="Sluiten" AnchorPane.bottomAnchor="15.0"
                     AnchorPane.rightAnchor="15.0"/>
         </AnchorPane>

@@ -33,7 +33,7 @@ public class WizardImportReeksenController extends WizardImportController {
 	public void initialize() {
 		tblColDiscipline.setCellValueFactory(new PropertyValueFactory<>("naam"));
 		tblColAantal.setCellValueFactory(new PropertyValueFactory<>("aantal"));
-		tblColRing.setCellFactory(col -> new EditingCell<Reeks, String>() {
+		tblColRing.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);
@@ -48,7 +48,7 @@ public class WizardImportReeksenController extends WizardImportController {
 			}
 		});
 		tblColRing.setCellValueFactory(new PropertyValueFactory<>("ringNaam"));
-		tblColExtensie.setCellFactory(col -> new EditingCell<Reeks, String>() {
+		tblColExtensie.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);

@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import domain.*;
-import domain.importing.RestrictieOptie;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -35,6 +34,8 @@ import persistence.Restricties;
 import ui.importer.WizardImportController;
 import ui.importer.WizardModule;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
+import util.RestrictieUtils;
+import util.VersionInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class SportfeestPlannerGUI extends Application {
 	private SportfeestPlannerService sportfeestPlannerService;
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerGUI.class);
 	private final AtomicLong limiter = new AtomicLong(-1);
-	private final Timeline progressUpdater = new Timeline(new KeyFrame(Duration.millis(500), e -> progressUpdate()));
+	private final Timeline progressUpdater = new Timeline(new KeyFrame(Duration.millis(1000), e -> progressUpdate()));
 
 	public static void main(String[] args) { launch(args); }
 
@@ -84,9 +85,9 @@ public class SportfeestPlannerGUI extends Application {
 		logStartupInfo();
 		Instellingen.load();
 		SportfeestPlannerGUI.primaryStage = primaryStage;
-		Parent root = FXMLLoader.load(getClass().getResource("/ui/Main.fxml"));
+		Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ui/Main.fxml")));
 		Scene scene = new Scene(root);
-		scene.getStylesheets().add(getClass().getResource("Main.css").toExternalForm());
+		scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("Main.css")).toExternalForm());
 		primaryStage.setScene(scene);
 		this.setTitle("");
 		primaryStage.show();
@@ -115,7 +116,7 @@ public class SportfeestPlannerGUI extends Application {
 		if (selectedFile != null) {
 			try {
 				Sportfeest sf = Marshalling.unmarshallXml(selectedFile.getCanonicalPath());
-				setNewSportfeest(sf);
+				setNewSportfeestChecked(sf);
 			} catch (IOException e) {
 				logger.error(e.getLocalizedMessage());
 			}
@@ -130,9 +131,26 @@ public class SportfeestPlannerGUI extends Application {
 	private void setNewSportfeestChecked(Sportfeest sf) {
 		setNewSportfeest(sf);
 		try {
-			overwriteRestricties(Restricties.unMarshall());
+			List<Restrictie> restricties = Restricties.unMarshall();
+			if (sf.getRestricties().isEmpty()) {
+				RestrictieUtils.replaceRestricties(sf, restricties);
+			} else if (!RestrictieUtils.compareRestricties(sf, restricties)) {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Uitzonderingen inlezen");
+				alert.setHeaderText("Uitzonderingen zijn niet gelijk");
+				alert.setContentText("De uitzonderingen ingelezen uit deze sportfeestmap komen niet overeen met de algemeen ingestelde uitzonderingen.\n"
+						+ "Wilt u de de uitzonderingen uit de sportfeestmap behouden of de uitzonderingen overschrijven met de algemeen ingestelde uitzonderingen?");
+				ButtonType buttonTypeMap = new ButtonType("Sportfeestmap behouden", ButtonBar.ButtonData.CANCEL_CLOSE);
+				ButtonType buttonTypeAlg = new ButtonType("Algemene uitzonderingen nemen");
+				alert.getButtonTypes().setAll(buttonTypeMap, buttonTypeAlg);
+
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.isPresent() && result.get() == buttonTypeAlg) {
+					RestrictieUtils.replaceRestricties(sf, restricties);
+				}
+			}
 		} catch (Exception e) {
-			logger.error("Fout bij het toevoegen van de uitzonderingen: {}", e.getLocalizedMessage());
+			logger.error("Fout bij het toevoegen/controleren van de uitzonderingen: {}", e.getLocalizedMessage());
 		}
 		if (!isRingenVerdeeld()) {
 			// als nodige ringen nog niet verdeeld zijn, vraag of dat moet gebeuren
@@ -148,64 +166,6 @@ public class SportfeestPlannerGUI extends Application {
 			if (result.isPresent() && result.get() == buttonTypeYes) {
 				RingenInvullen(new ActionEvent());
 			}
-		}
-	}
-	private void overwriteRestricties(List<RestrictieOptie> restrictieOpties) {
-		//TODO converteer reeks naar discipline !!!!!!!!!!!!!!!!
-
-		// eerst alles leegmaken
-		sportfeestPlannerService.getSportfeest().getAfdelingen().forEach(afd -> afd.getRestricties().clear());
-		// nieuwe toevoegen
-		restrictieOpties.stream()
-				.collect(Collectors.groupingBy(RestrictieOptie::getAfdeling))
-				.forEach((afdeling, restricties) -> {
-					sportfeestPlannerService.getSportfeest().getAfdelingen().stream()
-							.filter(afd -> afd.getNaam().equals(afdeling))
-							.findFirst()
-							.ifPresentOrElse(afd -> afd.addRestricties(restricties),
-									() -> logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", afdeling));
-				});
-	}
-
-	private void compareRestricties(List<RestrictieOptie> restrictieOpties) {
-		// controleer dat alle restricties in onze map overeenkomen met de algemene
-		sportfeestPlannerService.getSportfeest().getAfdelingen().forEach(afdeling -> {
-			for (Restrictie<?, ?> restrictie : afdeling.getRestricties()) {
-				boolean found = restrictieOpties.stream().anyMatch(restrictieOptie -> {
-					// afdelingen moeten gelijk zijn
-					if (!restrictieOptie.getAfdeling().equals(afdeling.getNaam())) return false;
-					// zijn de restricties volledig gelijk?
-					if (restrictieOptie.getA().getObject().getNaam().equals(restrictie.a().getNaam())) {
-						if (restrictieOptie.getA().isAlleRingen() == restrictie.alleRingenA() &&
-								restrictieOptie.getB().isAlleRingen() == restrictie.alleRingenB() &&
-								restrictieOptie.getB().getObject().getNaam().equals(restrictie.b().getNaam())) {
-							// deze moet niet meer gechecked worden
-							restrictieOpties.remove(restrictieOptie);
-							return true;
-						}
-					}
-					// restricties zijn mogelijks gewoon omgewisseld
-					if (restrictieOptie.getB().getObject().getNaam().equals(restrictie.a().getNaam())) {
-						if (restrictieOptie.getB().isAlleRingen() == restrictie.alleRingenA() &&
-								restrictieOptie.getA().isAlleRingen() == restrictie.alleRingenB() &&
-								restrictieOptie.getA().getObject().getNaam().equals(restrictie.b().getNaam())) {
-							// deze moet niet meer gechecked worden
-							restrictieOpties.remove(restrictieOptie);
-							return true;
-						}
-					}
-					return false;
-				});
-				if (found) {
-					logger.debug("Restrictie {} voor {} gevonden als algemene restrictie", restrictie, afdeling);
-				} else {
-					logger.warn("Restrictie {} voor {} niet gevonden  als algemene restrictiep", restrictie, afdeling);
-				}
-			}
-		});
-		// overschot zijn algemene restricties die niet in onze map zitten
-		for (RestrictieOptie restrictieOptie : restrictieOpties) {
-			logger.warn("Algemene restrictie {} niet gevonden in sportfeestmap", restrictieOptie);
 		}
 	}
 
@@ -328,9 +288,9 @@ public class SportfeestPlannerGUI extends Application {
 				.values().stream()
 				.sorted(Comparator.comparing((Function<List<Inschrijving>, Integer>) List::size).reversed())
 				.forEach(inschrijvingen -> {
-					Ring leastUsedRing = inschrijvingen.get(0).getMogelijkeRingen().stream()
+					Ring leastUsedRing = inschrijvingen.getFirst().getMogelijkeRingen().stream()
 							.map(ring -> new AbstractMap.SimpleEntry<>(ring, ringverdeling.stream()
-									.filter(inschr -> inschr.getDiscipline().getRingNaam().equals(inschrijvingen.get(0).getDiscipline().getRingNaam()))
+									.filter(inschr -> inschr.getDiscipline().getRingNaam().equals(inschrijvingen.getFirst().getDiscipline().getRingNaam()))
 									.filter(inschr -> inschr.getRing() != null)
 									.collect(groupingBy(Inschrijving::getRing, Collectors.counting()))
 									.getOrDefault(ring, 0L)))
@@ -372,7 +332,7 @@ public class SportfeestPlannerGUI extends Application {
 			Parent root = loader.load();
 
 			RestrictiesController restrictiesController = loader.getController();
-			restrictiesController.setCallback(this::overwriteRestricties);
+			restrictiesController.setCallback(ros -> RestrictieUtils.replaceRestricties(sportfeestPlannerService.getSportfeest(), ros));
 			Stage stage = new Stage();
 			stage.setTitle("Restricties");
 			stage.setScene(new Scene(root));
@@ -389,7 +349,7 @@ public class SportfeestPlannerGUI extends Application {
 		tblColAfdeling.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getAfdeling().getNaam()));
 		tblColDiscipline.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getDiscipline().getNaam()));
 		tblColKorps.setCellValueFactory(inschr -> new SimpleIntegerProperty(inschr.getValue().getKorps()).asObject());
-		tblColKorps.setCellFactory(col -> new TableCell<Inschrijving, Integer>() {
+		tblColKorps.setCellFactory(col -> new TableCell<>() {
 			@Override
 			protected void updateItem(Integer korps, boolean empty) {
 				super.updateItem(korps, empty);
@@ -400,11 +360,11 @@ public class SportfeestPlannerGUI extends Application {
 				}
 			}
 		});
-		tblColRingnaam.setCellValueFactory(inschr -> new SimpleStringProperty(((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getDiscipline().getRingNaam()));
-		tblColRingnummer.setCellFactory(col -> new EditingCell<Inschrijving, String>() {
+		tblColRingnaam.setCellValueFactory(inschr -> new SimpleStringProperty(inschr.getValue().getDiscipline().getRingNaam()));
+		tblColRingnummer.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateItemHandler(String str) {
-				Inschrijving inschrijving = (Inschrijving) getTableRow().getItem();
+				Inschrijving inschrijving = getTableRow().getItem();
 				if (inschrijving != null) {
 					if (inschrijving.getRing() == null) {
 						this.setStyle("-fx-background-color: yellow;");
@@ -415,7 +375,7 @@ public class SportfeestPlannerGUI extends Application {
 			}
 			@Override
 			public void commitEditHandler(String newValue) {
-				Inschrijving inschr = (Inschrijving) getTableRow().getItem();
+				Inschrijving inschr = getTableRow().getItem();
 				inschr.setRing(inschr.getMogelijkeRingen().stream()
 						.filter(ring -> ring.getLetter().equals(newValue.trim()))
 						.findAny().orElse(null)
@@ -423,8 +383,7 @@ public class SportfeestPlannerGUI extends Application {
 			}
 		});
 		tblColRingnummer.setCellValueFactory(inschr -> new SimpleStringProperty(
-				Optional.ofNullable(
-								((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue().getRing())
+				Optional.ofNullable(inschr.getValue().getRing())
 						.map(Ring::getLetter)
 						.orElse("")
 		));
@@ -505,6 +464,7 @@ public class SportfeestPlannerGUI extends Application {
 
 	public static void logStartupInfo() {
 		try {
+			logger.info("SportfeestPlanner versie {}", VersionInfo.getVersion());
 			// Java info
 			logger.info("Java {} {} in {}", System.getProperty("java.version"),
 					System.getProperty("java.vendor"), System.getProperty("java.home"));
