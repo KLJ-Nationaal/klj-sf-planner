@@ -24,7 +24,6 @@ public class Marshalling {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
 
 	public static int getActiveSheet(String filename) {
-		ArrayList<String> columns = new ArrayList<>();
 		try {
 			File excelFile = new File(filename);
 			FileInputStream fis = new FileInputStream(excelFile);
@@ -101,113 +100,7 @@ public class Marshalling {
 		return groepsinschrijvingen;
 	}
 
-	@Deprecated
-	public static Sportfeest unMarshall(String filename) {
-		Sportfeest sf = new Sportfeest();
-
-		try {
-			File excelFile = new File(filename);
-			FileInputStream fis = new FileInputStream(excelFile);
-			XSSFWorkbook workbook = new XSSFWorkbook(fis);
-
-			//lees eerst de ringnamen/minuten in
-			XSSFSheet sheet = workbook.getSheet("Ringen");
-			Iterator<Row> rowIt = sheet.iterator();
-
-			while (rowIt.hasNext()) {
-				Row row = rowIt.next();
-
-				String reeks = row.getCell(0).getStringCellValue();
-				String ringNaam = row.getCell(2).getStringCellValue();
-				int minuten = 30;
-				if (row.getCell(3) != null && row.getCell(3).getCellType() == CellType.NUMERIC) {
-					minuten = (int) row.getCell(3).getNumericCellValue();
-				}
-				String extensie = null;
-				if (row.getCell(4) != null && row.getCell(4).getCellType() == CellType.STRING) {
-					extensie = row.getCell(4).getStringCellValue();
-				}
-
-				if (reeks.length() > 12) { //reeksen hebben altijd een naam met meer dan 12 karakters
-					if (minuten == 30) logger.error("Kon aantal minuten voor discipline {} niet bepalen!", reeks);
-
-					Discipline discipline = new Discipline();
-					discipline.setNaam(reeks);
-					discipline.setRingNaam(ringNaam);
-					discipline.setExtensie(extensie);
-					discipline.setDuur(minuten);
-					sf.getDisciplines().put(reeks, discipline);
-				} else {
-					if (row.getRowNum() > 10) break; //dit is waarschijnlijk het einde van de lijst
-				}
-			}
-
-			//lees nu de inschrijvingen in
-			sheet = workbook.getSheet("Ringverdeling");
-			rowIt = sheet.iterator();
-
-			sf.setLocatie(rowIt.next().getCell(1).getStringCellValue());
-			sf.setDatum(Date.from(rowIt.next().getCell(1).getDateCellValue().toInstant()));
-			rowIt.next();
-			rowIt.next(); //rijen overslaan
-
-			int aantalInschrijvingen = 0;
-
-			while (rowIt.hasNext()) {
-				Row row = rowIt.next();
-
-				String afdelingsNaam = row.getCell(0).getStringCellValue();
-				String disciplineNaam = row.getCell(1).getStringCellValue();
-				int aantal = 1;
-				if (row.getCell(2) != null && row.getCell(2).getCellType() == CellType.NUMERIC) {
-					aantal = (int) row.getCell(2).getNumericCellValue();
-				} else {
-					logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}.", afdelingsNaam, disciplineNaam);
-				}
-				String ringLetter;
-				if (row.getCell(3) != null) {
-					ringLetter = row.getCell(3).getStringCellValue();
-				} else {
-					ringLetter = null;
-				}
-
-				String ringNaam = sf.getDisciplines().get(disciplineNaam).getRingNaam() +
-						(ringLetter == null ? "" : " Ring " + ringLetter);
-				Ring ring = sf.getRingen().stream()
-						.filter(rng -> ringNaam.equals(rng.getNaam()))
-						.findAny()
-						.orElse(new Ring(ringNaam, ringLetter, sf.getRingen().size() + 1));
-				Afdeling afdeling = sf.getAfdelingen().stream()
-						.filter(afd -> afdelingsNaam.equals(afd.getNaam()))
-						.findAny()
-						.orElse(new Afdeling(afdelingsNaam));
-				ring.addDiscipline(sf.getDisciplines().get(disciplineNaam));
-
-				for (int i = 0; i < aantal; i++) {  //aantal korpsen
-					Inschrijving inschrijving = new Inschrijving();
-					inschrijving.setAfdeling(afdeling);
-					inschrijving.setRing(ring);
-					inschrijving.setId(aantalInschrijvingen);
-					inschrijving.setDiscipline(sf.getDisciplines().get(disciplineNaam));
-					if (aantal > 1) inschrijving.setKorps(i + 1);
-					afdeling.getInschrijvingen().add(inschrijving);
-					aantalInschrijvingen++;
-				}
-				sf.getRingen().add(ring);
-				sf.getAfdelingen().add(afdeling);
-			}
-
-			workbook.close();
-			fis.close();
-
-			return sf;
-		} catch (IOException ioe) {
-			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
-		}
-		return new Sportfeest();
-	}
-
-	public static Sportfeest unmarshallXml(String filename) {
+	public static Sportfeest unmarshallXml(String filename){
 		Sportfeest sf = new Sportfeest();
 		try {
 			JAXBContext context = JAXBContext.newInstance(Sportfeest.class);

@@ -12,6 +12,7 @@ public class Ring {
 	private String naam;
 	private String letter;
 	private int index;
+	private int einduur;
 	@XmlElementWrapper(name = "Tijdslots")
 	@XmlElement(name = "Tijdslot")
 	private final List<Tijdslot> tijdslots;
@@ -20,15 +21,19 @@ public class Ring {
 	@XmlElement(name = "Discipline")
 	private final HashSet<Discipline> disciplines;
 
-	public Ring(String ringNaam, String ringLetter, int ringIndex) {
+	public Ring(String ringNaam, String ringLetter, int ringIndex, int einduur) {
 		naam = ringNaam;
 		letter = ringLetter;
 		index = ringIndex;
+		this.einduur = einduur;
 		tijdslots = new ArrayList<>();
 		disciplines = new HashSet<>();
 	}
 
-	public Ring() {
+	public Ring(String ringNaam, String ringLetter, int ringIndex) {
+		this(ringNaam, ringLetter, ringIndex, 0);
+	}
+	public Ring(){
 		this("Ring zonder naam " + Math.random(), "", 0);
 	}
 
@@ -46,6 +51,13 @@ public class Ring {
 	public int getRingIndex() { return index; }
 	public void setRingIndex(int ringIndex) { index = ringIndex; }
 
+	public int getEinduur() {
+		if (einduur != 0) return einduur;
+		else if (Objects.equals(letter, "")) return Marshalling.TOTALETIJDRINGMETFINALE;
+		else return Marshalling.TOTALETIJD;
+	}
+	public void setEinduur(int einduur) { this.einduur = einduur; }
+
 	@XmlTransient
 	public List<Tijdslot> getTijdslots() {
 		return tijdslots;
@@ -62,6 +74,28 @@ public class Ring {
 			for (int i = 0; i < totaletijd; i = i + discipline.getDuur()) {  //TODO: property van maken
 				Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 				tijdslots.add(tijdslot);
+		// tijdslots voor ring maken als ze nog niet bestaan
+		if(tijdslots.isEmpty()) {
+			// als de discipline met gereserveerde blokken werkt, de tijdsslots anders genereren
+			if (discipline.isGereserveerdBlok()) {
+				// touwtrekken op IRSF: eerst vroegste, dan laatste, rest opvullen om dynamisch te zijn
+				int start = 0;
+				int eind = getEinduur();
+				Tijdslot eerste = new Tijdslot(start, discipline.getDuur(), this);
+				tijdslots.add(eerste);
+				start += discipline.getDuur();
+				Tijdslot laatste = new Tijdslot(eind - discipline.getDuur(), discipline.getDuur(), this);
+				tijdslots.add(laatste);
+				eind -= discipline.getDuur();
+				for (; start <= (eind - discipline.getDuur()); eind -= discipline.getDuur()) {
+					Tijdslot tijdslot = new Tijdslot(eind - discipline.getDuur(), discipline.getDuur(), this);
+					tijdslots.add(tijdslot);
+				}
+			} else {
+				for (int i = 0; i < getEinduur(); i = i + discipline.getDuur()) {
+					Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
+					tijdslots.add(tijdslot);
+				}
 			}
 			// laatste tijdslot als ongunstig instellen (liefst niet)
 			tijdslots.getLast().setOngunstig(true);

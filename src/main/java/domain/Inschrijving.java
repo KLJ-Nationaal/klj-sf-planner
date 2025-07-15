@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlIDREF;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -27,6 +28,7 @@ public class Inschrijving implements InschrijvingInterface {
 	private int korps;
 	private List<Ring> mogelijkeRingen;
 	private Inschrijving verbondenInschrijving;
+	private boolean gereserveerdBlok;
 	private HashSet<Inschrijving> verbondenRestricties;
 
 	public Inschrijving() { verbondenRestricties = new HashSet<>(); }
@@ -81,6 +83,10 @@ public class Inschrijving implements InschrijvingInterface {
 		if (tijdslot == null) return 0;
 		return tijdslot.getEindTijd();
 	}
+
+	@PlanningPin
+	public boolean isGereserveerdBlok() { return gereserveerdBlok; }
+	public void setGereserveerdBlok(boolean gereserveerdBlok) { this.gereserveerdBlok = gereserveerdBlok; }
 
 	public boolean isJongens() { return discipline.isJongens(); }
 

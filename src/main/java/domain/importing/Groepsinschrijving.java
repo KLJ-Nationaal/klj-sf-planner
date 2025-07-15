@@ -3,6 +3,8 @@ package domain.importing;
 public class Groepsinschrijving {
 	private String sportfeest;
 	private String afdeling;
+	private String sport;
+	private int aantal;
 
 	public Groepsinschrijving(String sportfeest, String afdeling, String sport, int aantal) {
 		this.sportfeest = sportfeest;
@@ -23,6 +25,4 @@ public class Groepsinschrijving {
 	public int getAantal() { return aantal; }
 	public void setAantal(int aantal) { this.aantal = aantal; }
 
-	private String sport;
-	private int aantal;
 }

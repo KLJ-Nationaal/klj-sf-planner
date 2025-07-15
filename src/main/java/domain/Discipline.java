@@ -17,6 +17,7 @@ public final class Discipline {
 	private boolean vendeluniform;
 	private boolean hoofdgilde;
 	private boolean dans;
+	private boolean gereserveerdBlok;
 	private Sport sport;
 
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Discipline.class);
@@ -30,6 +31,7 @@ public final class Discipline {
 		vendeluniform = false;
 		hoofdgilde = false;
 		dans = false;
+		if(naam.toLowerCase().contains("touwtrekken")) gereserveerdBlok = true;
 		if (naam.toLowerCase().contains("gilden")) {
 			meisjes = false;
 			vendeluniform = true;
@@ -68,6 +70,7 @@ public final class Discipline {
 	public boolean isVendeluniform() { return vendeluniform; }
 	public boolean isHoofdgilde() { return hoofdgilde; }
 	public boolean isDans() { return dans; }
+	public boolean isGereserveerdBlok() { return gereserveerdBlok; }
 
 	public Sport getSport() { return sport; }
 	public void setSport(Sport sport) { this.sport = sport; }

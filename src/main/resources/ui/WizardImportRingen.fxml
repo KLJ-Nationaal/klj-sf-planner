@@ -15,6 +15,7 @@
                 <TableColumn fx:id="tblColDuur" prefWidth="100.0" styleClass="editable-cells" text="Schema (min.)"/>
                 <TableColumn fx:id="tblColAantalRingen" prefWidth="100.0" styleClass="editable-cells"
                              text="Aantal ringen"/>
+                <TableColumn fx:id="tblColEinduur" prefWidth="100.0" styleClass="editable-cells" text="Einde"/>
                 <TableColumn fx:id="tblColAfdPerRing" editable="false" prefWidth="100.0" text="Afd. per ring"/>
                 <TableColumn fx:id="tblColMaxPerRing" editable="false" prefWidth="100.0" text="Max. per ring"/>
             </columns>

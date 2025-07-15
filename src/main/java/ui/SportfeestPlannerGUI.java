@@ -125,7 +125,10 @@ public class SportfeestPlannerGUI extends Application {
 
 	private boolean isRingenVerdeeld() {
 		return ringverdeling.stream()
-				.noneMatch(inschrijving -> inschrijving.getRing() == null);
+				.noneMatch(inschrijving -> {
+					if (inschrijving.isGereserveerdBlok()) return (inschrijving.getTijdslot() == null);
+					return (inschrijving.getRing() == null);
+				});
 	}
 
 	private void setNewSportfeestChecked(Sportfeest sf) {
@@ -366,7 +369,7 @@ public class SportfeestPlannerGUI extends Application {
 			public void updateItemHandler(String str) {
 				Inschrijving inschrijving = getTableRow().getItem();
 				if (inschrijving != null) {
-					if (inschrijving.getRing() == null) {
+					if (inschrijving.getRing() == null || (inschrijving.isGereserveerdBlok() && inschrijving.getTijdslot() == null)) {
 						this.setStyle("-fx-background-color: yellow;");
 					} else {
 						this.setStyle("-fx-background-color: lightgreen;");
@@ -376,10 +379,21 @@ public class SportfeestPlannerGUI extends Application {
 			@Override
 			public void commitEditHandler(String newValue) {
 				Inschrijving inschr = getTableRow().getItem();
-				inschr.setRing(inschr.getMogelijkeRingen().stream()
-						.filter(ring -> ring.getLetter().equals(newValue.trim()))
-						.findAny().orElse(null)
-				);
+				if (inschr.isGereserveerdBlok()) {
+					try {
+						int intValue = Integer.parseInt(newValue);
+						inschr.setTijdslot(inschr.getRing().getTijdslots().get(intValue));
+					} catch (NumberFormatException | NullPointerException e) {
+						//veronderstel dat we de cel leegmaken
+						inschr.setTijdslot(null);
+						logger.error("Kan tijdsslot " + newValue + " voor gereserveerd blok niet instellen. Inschrijving: " + inschr);
+					}
+				} else {
+					inschr.setRing(inschr.getMogelijkeRingen().stream()
+							.filter(ring -> ring.getLetter().equals(newValue.trim()))
+							.findAny().orElse(null)
+					);
+				}
 			}
 		});
 		tblColRingnummer.setCellValueFactory(inschr -> new SimpleStringProperty(
@@ -387,6 +401,19 @@ public class SportfeestPlannerGUI extends Application {
 						.map(Ring::getLetter)
 						.orElse("")
 		));
+		tblColRingnummer.setCellValueFactory(inschr -> {
+			Inschrijving inschrijving = ((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue();
+			if (inschrijving.isGereserveerdBlok()) {
+				return new SimpleStringProperty(
+						(inschrijving.getTijdslot() == null ? "" : String.valueOf(inschrijving.getTijdslots().indexOf(inschrijving.getTijdslot())))
+				);
+			}
+			return new SimpleStringProperty(
+					Optional.ofNullable(inschrijving.getRing())
+							.map(Ring::getLetter)
+							.orElse("")
+			);
+		});
 		tblInschrijvingen.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			if (newSelection != null) {
 				int row = tblInschrijvingen.getSelectionModel().getSelectedIndex();
