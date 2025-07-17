@@ -1,14 +1,14 @@
 package app;
 
+import ai.timefold.solver.core.api.score.ScoreExplanation;
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
+import ai.timefold.solver.core.api.solver.SolutionManager;
+import ai.timefold.solver.core.api.solver.Solver;
+import ai.timefold.solver.core.api.solver.SolverFactory;
 import ch.qos.logback.classic.Logger;
 import domain.Sportfeest;
-import org.optaplanner.core.api.score.ScoreExplanation;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.constraint.ConstraintMatch;
-import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
-import org.optaplanner.core.api.solver.SolutionManager;
-import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
 
@@ -40,7 +40,7 @@ public class SportfeestPlannerApp {
 					c = logger::warn;
 				}
 
-				c.accept("  Voorwaarde: " + cmt.getConstraintName());
+				c.accept("  Voorwaarde: " + cmt.getConstraintRef().constraintName());
 				c.accept("  Gewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount());
 
 				for (ConstraintMatch<?> cm : cmt.getConstraintMatchSet()) {

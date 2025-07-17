@@ -1,8 +1,8 @@
 package domain;
 
+import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
-import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

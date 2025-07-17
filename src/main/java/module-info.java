@@ -5,8 +5,6 @@ module kljsfplanner {
 	requires org.fxmisc.richtext;
 	requires org.fxmisc.flowless;
 	requires org.controlsfx.controls;
-	requires org.optaplanner.core;
-	requires org.optaplanner.core.impl;
 	requires org.apache.commons.lang3;
 	requires java.sql;
 	requires java.desktop;
@@ -19,6 +17,7 @@ module kljsfplanner {
 	requires org.apache.poi.poi;
 	requires org.apache.poi.ooxml;
 	requires java.management;
+	requires ai.timefold.solver.core;
 
 	opens ui;
 	opens ui.importer;

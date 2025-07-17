@@ -22,19 +22,9 @@
     <dependencies>
         <!-- heuristics solver -->
         <dependency>
-            <groupId>org.optaplanner</groupId>
-            <artifactId>optaplanner-core</artifactId>
-            <version>9.44.0.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.optaplanner</groupId>
-                    <artifactId>optaplanner-constraint-drl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.optaplanner</groupId>
-                    <artifactId>optaplanner-constraint-streams-drools</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>ai.timefold.solver</groupId>
+            <artifactId>timefold-solver-core</artifactId>
+            <version>1.24.0</version>
         </dependency>
         <!-- logging -->
         <dependency>

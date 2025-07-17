@@ -1,5 +1,14 @@
 package app;
 
+import ai.timefold.solver.core.api.score.Score;
+import ai.timefold.solver.core.api.score.ScoreExplanation;
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
+import ai.timefold.solver.core.api.solver.SolutionManager;
+import ai.timefold.solver.core.api.solver.Solver;
+import ai.timefold.solver.core.api.solver.SolverFactory;
+import ai.timefold.solver.core.config.solver.SolverConfig;
 import ch.qos.logback.classic.Logger;
 import domain.Sportfeest;
 import javafx.beans.property.LongProperty;
@@ -9,15 +18,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
-import org.optaplanner.core.api.score.Score;
-import org.optaplanner.core.api.score.ScoreExplanation;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.constraint.ConstraintMatch;
-import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
-import org.optaplanner.core.api.solver.SolutionManager;
-import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.core.config.solver.SolverConfig;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
 
@@ -89,7 +89,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 					c = logger::warn;
 				}
 
-				c.accept("  Voorwaarde: " + cmt.getConstraintName());
+				c.accept("  Voorwaarde: " + cmt.getConstraintRef().constraintName());
 				c.accept("  Gewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount());
 
 				for (ConstraintMatch<?> cm : cmt.getConstraintMatchSet()) {

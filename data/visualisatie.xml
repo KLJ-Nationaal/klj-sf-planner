@@ -111,4 +111,64 @@
     <Afdelingsoptie naam="Bazelle-Waas">
         <kleur>#e3baff</kleur>
     </Afdelingsoptie>
+    <Afdelingsoptie naam="Bondsreeks jongens">
+        <kleur>#ffbaff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Vrije ritmiek jongens">
+        <kleur>#cfcfcf</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Keurwimpelen muziekreeks">
+        <kleur>#b0b0b0</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Keurwimpelen vrije reeks">
+        <kleur>#ff0000</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Ertvelde">
+        <kleur>#ff4d00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Nieuwkerken Waas">
+        <kleur>#ff8400</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Sleidinge">
+        <kleur>#ffb700</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Waarschoot">
+        <kleur>#ffd000</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Zomergem">
+        <kleur>#ffea00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Zele-Heikant">
+        <kleur>#fbff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Belsele">
+        <kleur>#e1ff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Lochristi Hijfte Meisjes">
+        <kleur>#aaff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Beervelde">
+        <kleur>#77ff00</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Stekene">
+        <kleur>#00ff40</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Sinaai">
+        <kleur>#00ffa6</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Melsele">
+        <kleur>#00ffd9</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Haasdonk">
+        <kleur>#00eeff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Keurwimpelgroep Bazelle Waas">
+        <kleur>#00d5ff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Keurwimpelgroep Meetjesland">
+        <kleur>#00a2ff</kleur>
+    </Afdelingsoptie>
+    <Afdelingsoptie naam="Hamme">
+        <kleur>#006fff</kleur>
+    </Afdelingsoptie>
 </afdelingsopties>

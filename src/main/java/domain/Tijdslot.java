@@ -1,9 +1,9 @@
 package domain;
 
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
 import persistence.Instellingen;
 import persistence.IntegerAdapter;
 

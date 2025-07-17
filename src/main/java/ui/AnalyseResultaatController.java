@@ -1,10 +1,14 @@
 package ui;
 
+import ai.timefold.solver.core.api.score.ScoreExplanation;
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
+import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
+import ai.timefold.solver.core.api.solver.SolutionManager;
 import domain.Sportfeest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.ColorAdjust;
@@ -14,17 +18,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.optaplanner.core.api.score.ScoreExplanation;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.constraint.ConstraintMatch;
-import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
-import org.optaplanner.core.api.solver.SolutionManager;
 
 import java.util.stream.Collectors;
 
 public class AnalyseResultaatController {
-	@FXML
-	private Label subtitle;
 	@FXML
 	private TreeView<String> treeView;
 
@@ -48,9 +45,10 @@ public class AnalyseResultaatController {
 
 		for (ConstraintMatchTotal<HardSoftScore> cmt : explanation.getConstraintMatchTotalMap().values()) {
 			ImageView icon = getIcon(IconType.WARNING);
-			if (((HardSoftScore) cmt.getScore()).hardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
+			if (cmt.getScore().hardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
+			else if (cmt.getScore().softScore() == 0) icon = getIcon(IconType.INFO);
 			TreeItem<String> constr = new TreeItem<>(
-					"Voorwaarde: " + cmt.getConstraintName() + "\nGewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount(),
+					"Voorwaarde: " + cmt.getConstraintRef().constraintName() + "\nGewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount(),
 					icon);
 			for (ConstraintMatch<HardSoftScore> cm : cmt.getConstraintMatchSet()) {
 				constr.getChildren().add(new TreeItem<>(cm.getIndictedObjectList().stream()

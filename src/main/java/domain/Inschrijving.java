@@ -1,5 +1,10 @@
 package domain;
 
+import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.entity.PlanningPin;
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
+import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import difficulty.InschrijvingDifficultyComparator;
 import difficulty.TijdslotStrengthComparator;
 import jakarta.xml.bind.Unmarshaller;
@@ -7,11 +12,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlIDREF;
 import jakarta.xml.bind.annotation.XmlTransient;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.entity.PlanningPin;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
 import java.util.HashSet;
@@ -46,7 +46,7 @@ public class Inschrijving implements InschrijvingInterface {
 	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
 			strengthComparatorClass = TijdslotStrengthComparator.class,
-			nullable = true)
+			allowsUnassigned = true)
 	public Tijdslot getTijdslot() {
 		return tijdslot;
 	}

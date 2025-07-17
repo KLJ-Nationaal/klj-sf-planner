@@ -42,8 +42,8 @@
             Appender not block the application and just drop the messages -->
     </appender>
 
-    <!-- To override the debug log level from the command line, use the VM option "-Dlogback.level.org.optaplanner=trace" -->
-    <logger name="org.optaplanner" level="${logback.level.org.optaplanner:-debug}"/>
+    <!-- To override the debug log level from the command line, use the VM option "-Dlogback.level.ai.timefold.solver=trace" -->
+    <logger name="ai.timefold.solver" level="${logback.level.ai.timefold.solver:-debug}"/>
 
     <root level="property(LOG_LEVEL)">
         <appender-ref ref="fileAppender"/>

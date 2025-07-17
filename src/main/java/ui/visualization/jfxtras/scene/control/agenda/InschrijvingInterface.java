@@ -1,6 +1,5 @@
 package ui.visualization.jfxtras.scene.control.agenda;
 
-import difficulty.TijdslotStrengthComparator;
 import domain.Afdeling;
 import domain.Discipline;
 import domain.Ring;
@@ -9,16 +8,12 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlIDREF;
 import jakarta.xml.bind.annotation.XmlTransient;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.Comparator;
 import java.util.List;
 
 public interface InschrijvingInterface {
 	@XmlTransient
-	@PlanningId
 	Integer getId();
 	void setId(Integer id);
 
@@ -28,9 +23,6 @@ public interface InschrijvingInterface {
 	void setRef(String s);
 
 	@XmlIDREF
-	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
-			strengthComparatorClass = TijdslotStrengthComparator.class,
-			nullable = true)
 	Tijdslot getTijdslot();
 	void setTijdslot(Tijdslot tijdslot);
 
@@ -49,7 +41,6 @@ public interface InschrijvingInterface {
 	int getKorps();
 	void setKorps(int korps);
 
-	@ValueRangeProvider(id = "Tijdslot")
 	List<Tijdslot> getTijdslots();
 
 	int getStartTijd();

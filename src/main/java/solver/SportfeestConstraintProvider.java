@@ -1,12 +1,12 @@
 package solver;
 
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.stream.*;
 import domain.Inschrijving;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.stream.*;
 
 import java.util.Comparator;
 
-import static org.optaplanner.core.api.score.stream.Joiners.*;
+import static ai.timefold.solver.core.api.score.stream.Joiners.*;
 
 public class SportfeestConstraintProvider implements ConstraintProvider {
 
@@ -32,7 +32,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	// ************************
 
 	private Constraint inschrijvingMoetTijdslotHebben(ConstraintFactory factory) {
-		return factory.forEachIncludingNullVars(Inschrijving.class)
+		return factory.forEachIncludingUnassigned(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getTijdslot() == null)
 				.penalize(HardSoftScore.ofHard(16))
 				.asConstraint("Inschrijving zonder tijdslot");
