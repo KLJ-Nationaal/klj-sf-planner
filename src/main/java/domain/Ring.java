@@ -85,9 +85,9 @@ public class Ring {
 					Tijdslot tijdslot = new Tijdslot(i, discipline.getDuur(), this);
 					tijdslots.add(tijdslot);
 				}
+				// laatste tijdslot als ongunstig instellen (liefst niet)
+				tijdslots.getLast().setOngunstig(true);
 			}
-			// laatste tijdslot als ongunstig instellen (liefst niet)
-			tijdslots.getLast().setOngunstig(true);
 		}
 	}
 

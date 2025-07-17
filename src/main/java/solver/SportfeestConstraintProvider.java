@@ -145,4 +145,10 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Uitzondering");
 	}
+/*
+	private Constraint touwtrekkenOverRegios(ConstraintFactory factory) {
+		return factory.forEach(Inschrijving.class)
+				.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
+				.groupBy(ConstraintCollectors.load)
+	}*/
 }

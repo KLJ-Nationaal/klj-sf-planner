@@ -4,6 +4,7 @@ public class Groepsinschrijving {
 	private String sportfeest;
 	private String afdeling;
 	private String sport;
+	private String regio;
 	private int aantal;
 
 	public Groepsinschrijving(String sportfeest, String afdeling, String sport, int aantal) {
@@ -21,6 +22,9 @@ public class Groepsinschrijving {
 
 	public String getSport() { return sport; }
 	public void setSport(String sport) { this.sport = sport; }
+
+	public String getRegio() { return regio; }
+	public void setRegio(String regio) { this.regio = regio; }
 
 	public int getAantal() { return aantal; }
 	public void setAantal(int aantal) { this.aantal = aantal; }

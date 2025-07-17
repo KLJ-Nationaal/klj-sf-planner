@@ -257,7 +257,7 @@ public class WizardImportRingenController extends WizardImportController {
 					Afdeling afdeling = sf.getAfdelingen().stream()
 							.filter(afd -> inschr.getAfdeling().equals(afd.getNaam()))
 							.findAny()
-							.orElse(new Afdeling(inschr.getAfdeling()));
+							.orElse(new Afdeling(inschr.getAfdeling(), inschr.getRegio()));
 
 					for (int i = 0; i < inschr.getAantal(); i++) {  //aantal korpsen
 						Inschrijving inschrijving = new Inschrijving();

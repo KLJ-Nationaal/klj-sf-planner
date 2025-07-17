@@ -12,6 +12,7 @@ public class WizardData {
 	private final StringProperty title = new SimpleStringProperty();
 	private final StringProperty subtitle = new SimpleStringProperty();
 	private final IntegerProperty colSportfeest = new SimpleIntegerProperty();
+	private final IntegerProperty colRegio = new SimpleIntegerProperty();
 	private final IntegerProperty colAfdeling = new SimpleIntegerProperty();
 	private final IntegerProperty colDiscipline = new SimpleIntegerProperty();
 	private final IntegerProperty colAantal = new SimpleIntegerProperty();
@@ -33,6 +34,10 @@ public class WizardData {
 	public int getColSportfeest() { return colSportfeest.get(); }
 	public IntegerProperty colSportfeestProperty() { return colSportfeest; }
 	public void setColSportfeest(int colSportfeest) { this.colSportfeest.set(colSportfeest); }
+
+	public int getColRegio() { return colRegio.get(); }
+	public IntegerProperty colRegioProperty() { return colRegio; }
+	public void setColRegio(int colRegio) { this.colRegio.set(colRegio); }
 
 	public int getColAfdeling() { return colAfdeling.get(); }
 	public IntegerProperty colAfdelingProperty() { return colAfdeling; }

@@ -13,17 +13,22 @@ import java.util.Objects;
 public class Afdeling {
 	private static final Logger logger = LoggerFactory.getLogger(Afdeling.class);
 	private String naam;
+	private String regio;
 	private List<Inschrijving> inschrijvingen;
 
-	public Afdeling(String afdelingsNaam) {
+	public Afdeling(String afdelingsNaam, String regioNaam) {
 		naam = afdelingsNaam;
+		regio = regioNaam;
 		inschrijvingen = new ArrayList<>();
 	}
 
-	public Afdeling() { this("Afdeling zonder naam " + Math.random()); }
+	public Afdeling() { this("Afdeling zonder naam " + Math.random(), "Onbekende regio"); }
 
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) { this.naam = naam; }
+
+	public String getRegio() { return regio; }
+	public void setRegio(String regio) { this.regio = regio; }
 
 	@XmlElementWrapper(name = "Inschrijvingen")
 	@XmlElement(name = "Inschrijving")
