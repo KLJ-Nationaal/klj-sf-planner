@@ -10,7 +10,9 @@ import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ch.qos.logback.classic.Logger;
+import domain.Sport;
 import domain.Sportfeest;
+import domain.Tijdslot;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -21,6 +23,7 @@ import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
 
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -116,6 +119,16 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 			public boolean isCancelled() { return solver.isTerminateEarly() && super.isCancelled(); }
 
 			protected Sportfeest call() {
+				//TODO: temp workaround
+				Random rand = new Random();
+				sportfeestProperty.get().getInschrijvingen().stream()
+						.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
+						.forEach(inschrijving -> {
+							Tijdslot s = inschrijving.getTijdslots().get(rand.nextInt(0, inschrijving.getTijdslots().size()));
+							logger.debug("{}: {}", inschrijving, s);
+							inschrijving.setTijdslot(s);
+						});
+
 				sportfeestProperty.set(solver.solve(sportfeestProperty.get()));
 				return sportfeestProperty.get();
 			}

@@ -280,7 +280,7 @@ public class WizardImportRingenController extends WizardImportController {
 					}
 					sf.getAfdelingen().add(afdeling);
 				});
-		// verbonden inschrijvingen instellen (voor piramides in verschillende disciplines
+		// verbonden inschrijvingen instellen (voor piramides in verschillende disciplines)
 		sf.getAfdelingen().forEach(afdeling -> {
 			List<Inschrijving> inschr = afdeling.getInschrijvingen().stream()
 					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("piramide"))

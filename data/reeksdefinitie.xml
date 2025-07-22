@@ -211,7 +211,7 @@
         <Toevoeging/>
     </Discipline>
     <Discipline>
-        <Naam>Touwtrekken -16 jongens &amp; gemengd</Naam>
+        <Naam>Touwtrekken -16 jongens</Naam>
         <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
         <Sport>TOUWTREKKEN</Sport>
         <Schema>45</Schema>
@@ -219,7 +219,23 @@
         <Toevoeging>-16</Toevoeging>
     </Discipline>
     <Discipline>
-        <Naam>Touwtrekken +16 jongens &amp; gemengd</Naam>
+        <Naam>Touwtrekken +16 gemengd</Naam>
+        <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
+        <Schema>45</Schema>
+        <AfdelingenPerRing>1000</AfdelingenPerRing>
+        <Toevoeging>+16</Toevoeging>
+    </Discipline>
+    <Discipline>
+        <Naam>Touwtrekken -16 gemengd</Naam>
+        <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
+        <Sport>TOUWTREKKEN</Sport>
+        <Schema>45</Schema>
+        <AfdelingenPerRing>1000</AfdelingenPerRing>
+        <Toevoeging>-16</Toevoeging>
+    </Discipline>
+    <Discipline>
+        <Naam>Touwtrekken +16 jongens</Naam>
         <Ringnaam>Touwtrekken jongens &amp; gemengd</Ringnaam>
         <Sport>TOUWTREKKEN</Sport>
         <Schema>45</Schema>

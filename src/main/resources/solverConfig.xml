@@ -21,7 +21,9 @@
         <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
       </constructionHeuristic>
     -->
-    <constructionHeuristic/>
+    <constructionHeuristic>
+
+    </constructionHeuristic>
     <localSearch>
         <unionMoveSelector>
             <changeMoveSelector/>

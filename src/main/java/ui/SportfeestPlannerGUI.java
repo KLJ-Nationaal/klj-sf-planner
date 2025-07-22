@@ -379,14 +379,17 @@ public class SportfeestPlannerGUI extends Application {
 			@Override
 			public void commitEditHandler(String newValue) {
 				Inschrijving inschr = getTableRow().getItem();
-				if (inschr.isGereserveerdBlok()) {
+				if (inschr.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)) {
 					try {
 						int intValue = Integer.parseInt(newValue);
 						inschr.setTijdslot(inschr.getRing().getTijdslots().get(intValue));
+						inschr.setGereserveerdBlok(true);
 					} catch (NumberFormatException | NullPointerException e) {
 						//veronderstel dat we de cel leegmaken
 						inschr.setTijdslot(null);
-						logger.error("Kan tijdsslot {} voor gereserveerd blok niet instellen. Inschrijving: {}", newValue, inschr);
+						inschr.setGereserveerdBlok(false);
+						if (!newValue.isBlank())
+							logger.error("Kan tijdsslot {} voor gereserveerd blok niet instellen. Inschrijving: {}", newValue, inschr);
 					}
 				} else {
 					inschr.setRing(inschr.getMogelijkeRingen().stream()
@@ -402,8 +405,8 @@ public class SportfeestPlannerGUI extends Application {
 						.orElse("")
 		));
 		tblColRingnummer.setCellValueFactory(inschr -> {
-			Inschrijving inschrijving = ((TableColumn.CellDataFeatures<Inschrijving, String>) inschr).getValue();
-			if (inschrijving.isGereserveerdBlok()) {
+			Inschrijving inschrijving = inschr.getValue();
+			if (inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)) {
 				return new SimpleStringProperty(
 						(inschrijving.getTijdslot() == null ? "" : String.valueOf(inschrijving.getTijdslots().indexOf(inschrijving.getTijdslot())))
 				);

@@ -66,10 +66,10 @@ public class Ring {
 		// tijdslots voor ring maken als ze nog niet bestaan
 		if (tijdslots.isEmpty()) {
 			// als de discipline met gereserveerde blokken werkt, de tijdsslots anders genereren
-			if (discipline.isGereserveerdBlok()) {
+			if (discipline.getSport().equals(Sport.TOUWTREKKEN)) {
 				// touwtrekken op IRSF: eerst vroegste, dan laatste, rest opvullen om dynamisch te zijn
 				int start = 0;
-				int eind = getEinduur();
+				int eind = Math.round(getEinduur() / 15.0f) * 15; //TODO: afronden tot op het kwartiertje, kan beter
 				Tijdslot eerste = new Tijdslot(start, discipline.getDuur(), this);
 				tijdslots.add(eerste);
 				start += discipline.getDuur();

@@ -31,7 +31,6 @@ public final class Discipline {
 		vendeluniform = false;
 		hoofdgilde = false;
 		dans = false;
-		if (naam.toLowerCase().contains("touwtrekken")) gereserveerdBlok = true;
 		if (naam.toLowerCase().contains("gilden")) {
 			meisjes = false;
 			vendeluniform = true;

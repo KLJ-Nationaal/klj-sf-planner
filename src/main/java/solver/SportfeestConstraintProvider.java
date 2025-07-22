@@ -3,6 +3,7 @@ package solver;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.*;
 import domain.Inschrijving;
+import domain.Sport;
 
 import java.util.Comparator;
 
@@ -24,6 +25,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				inschrijvingenDieMoetenSamenvallen(factory),
 				vermijdOngunstigeTijdslots(factory),
 				restricties(factory),
+				touwtrekkenVerdeelRegios(factory),
+				touwtrekkenVerdeelDisciplines(factory),
 		};
 	}
 
@@ -34,7 +37,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	private Constraint inschrijvingMoetTijdslotHebben(ConstraintFactory factory) {
 		return factory.forEachIncludingUnassigned(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getTijdslot() == null)
-				.penalize(HardSoftScore.ofHard(16))
+				.penalize(HardSoftScore.ofHard(32))
 				.asConstraint("Inschrijving zonder tijdslot");
 	}
 
@@ -57,7 +60,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getRing),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
-				.filter((a, b) -> !a.isGereserveerdBlok() && !b.isGereserveerdBlok())
+				.filter((a, b) -> !a.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)
+						&& !b.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.penalize(HardSoftScore.ofHard(8))
 				.asConstraint("Geen twee afdelingen tegelijk in een RING");
 	}
@@ -76,7 +80,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 					boolean bm = b.getDiscipline().isMeisjes();
 					return !a.getDiscipline().equals(b.getDiscipline()) && !b.isVerbonden(a) && ((aj && bj) || (am && bm));
 				})
-				.filter((a, b) -> !a.isGereserveerdBlok() && !b.isGereserveerdBlok())
+				.filter((a, b) -> !a.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)
+						&& !b.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.filter((a, b) -> Math.abs(b.getTijdslot().timeBetween(a.getTijdslot())) < 6)
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Te weinig tijd tussen inschrijvingen");
@@ -84,7 +89,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 
 	private Constraint inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
-				.filter(i -> !i.isGereserveerdBlok())
+				.filter(i -> !i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.groupBy(
 						Inschrijving::getAfdeling,
 						Inschrijving::getRing,
@@ -102,7 +107,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	private Constraint minimaliseerUniformWissels(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(Inschrijving::isJongens)
-				.filter(inschrijving -> !inschrijving.isGereserveerdBlok())
+				.filter(inschrijving -> !inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.join(factory.forEach(Inschrijving.class)
 								.filter(Inschrijving::isJongens),
 						Joiners.equal(Inschrijving::getAfdeling))
@@ -145,10 +150,20 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Uitzondering");
 	}
-/*
-	private Constraint touwtrekkenOverRegios(ConstraintFactory factory) {
+
+	private Constraint touwtrekkenVerdeelRegios(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
-				.groupBy(ConstraintCollectors.load)
-	}*/
+				.groupBy(ConstraintCollectors.loadBalance(inschrijving -> inschrijving.getAfdeling().getRegio()))
+				.penalize(HardSoftScore.ofSoft(1))
+				.asConstraint("Touwtrekken verdelen over de regio's");
+	}
+
+	private Constraint touwtrekkenVerdeelDisciplines(ConstraintFactory factory) {
+		return factory.forEach(Inschrijving.class)
+				.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
+				.groupBy(ConstraintCollectors.loadBalance(Inschrijving::getDiscipline))
+				.penalize(HardSoftScore.ofSoft(1))
+				.asConstraint("Tijdsblokken touwtrekken verdelen over de disciplines (leeftijd en meisjes-jongens)");
+	}
 }

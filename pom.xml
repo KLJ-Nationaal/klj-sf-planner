@@ -6,8 +6,7 @@
 
     <groupId>klj</groupId>
     <artifactId>KljSfPlanner</artifactId>
-    <version>0.5</version>
-
+    <version>0.6</version>
     <properties>
         <package.filename>sf-planner</package.filename>
         <package.modulename>kljsfplanner</package.modulename>
@@ -42,7 +41,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.4.0</version>
+            <version>5.4.1</version>
         </dependency>
         <!-- variable injection for wizard -->
         <dependency>
@@ -148,7 +147,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>package</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -306,7 +305,7 @@
                 <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
