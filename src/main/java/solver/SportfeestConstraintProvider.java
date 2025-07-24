@@ -6,6 +6,7 @@ import domain.Inschrijving;
 import domain.Sport;
 
 import java.util.Comparator;
+import java.util.List;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.*;
 
@@ -154,16 +155,47 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	private Constraint touwtrekkenVerdeelRegios(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
-				.groupBy(ConstraintCollectors.loadBalance(inschrijving -> inschrijving.getAfdeling().getRegio()))
-				.penalize(HardSoftScore.ofSoft(1))
+				.groupBy(
+						i -> List.of(i.getRegio(), i.getRing(), i.getTijdslot()),
+						ConstraintCollectors.count())
+				.groupBy(
+						(key, count) -> List.of(key.get(0), key.get(1)), // Regio + Ring
+						ConstraintCollectors.toList((key, count) -> count))
+				.filter((key, counts) -> {
+					int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+					int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+					return max - min > 0;
+				})
+				.penalize(HardSoftScore.ONE_SOFT,
+						(key, counts) -> {
+							int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+							return (max - min) * (max - min);
+						})
 				.asConstraint("Touwtrekken verdelen over de regio's");
 	}
 
 	private Constraint touwtrekkenVerdeelDisciplines(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
-				.groupBy(ConstraintCollectors.loadBalance(Inschrijving::getDiscipline))
-				.penalize(HardSoftScore.ofSoft(1))
+				.groupBy(
+						i -> List.of(i.getDiscipline(), i.getRing(), i.getTijdslot()),
+						ConstraintCollectors.count())
+				.groupBy(
+						(key, count) -> List.of(key.get(0), key.get(1)), // Discipline + Ring
+						ConstraintCollectors.toList((key, count) -> count))
+				.filter((key, counts) -> {
+					int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+					int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+					return max - min > 0;
+				})
+				.penalize(HardSoftScore.ONE_SOFT,
+						(key, counts) -> {
+							int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+							return (max - min) * (max - min);
+						})
+				//.penalize(HardSoftScore.ofSoft(1))
 				.asConstraint("Tijdsblokken touwtrekken verdelen over de disciplines (leeftijd en meisjes-jongens)");
 	}
 }

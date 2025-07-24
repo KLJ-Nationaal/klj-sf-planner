@@ -71,6 +71,9 @@ public class Inschrijving implements InschrijvingInterface {
 	public int getKorps() { return korps; }
 	public void setKorps(int korps) { this.korps = korps; }
 
+	@XmlTransient
+	public String getRegio() { return afdeling.getRegio(); }
+
 	@ValueRangeProvider(id = "Tijdslot")
 	public List<Tijdslot> getTijdslots() { return ring.getTijdslots(); }
 

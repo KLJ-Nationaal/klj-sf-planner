@@ -84,7 +84,7 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 			@Override
 			public void commitEditHandler(Integer newValue) {
-				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
+				WizardRing wizardRing = getTableRow().getItem();
 				wizardRing.setDuur(newValue);
 			}
 		});
@@ -99,7 +99,7 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 			@Override
 			public void commitEditHandler(Integer newValue) {
-				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
+				WizardRing wizardRing = getTableRow().getItem();
 				wizardRing.setAantalRingen(newValue);
 				tblRingen.refresh(); //update berekende kolommen
 			}
@@ -116,7 +116,7 @@ public class WizardImportRingenController extends WizardImportController {
 			}
 			@Override
 			public void commitEditHandler(String newValue) {
-				WizardRing wizardRing = (WizardRing) getTableRow().getItem();
+				WizardRing wizardRing = getTableRow().getItem();
 				final Pattern pattern = Pattern.compile("(\\d{1,2})\\D*?(\\d{2})");
 				final Matcher matcher = pattern.matcher(newValue);
 				if (matcher.find()) {
@@ -244,7 +244,7 @@ public class WizardImportRingenController extends WizardImportController {
 		// TODO: errors in Marshalling controleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
+				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColRegio(), model.getColAantal());
 		groepsinschrijvingen.stream()
 				.filter(groepsinschrijving -> groepsinschrijving.getSportfeest().equalsIgnoreCase(model.getSportfeest().getValue()))
 				// voor touwtrekken houden we geen rekening met leeftijd, dus verwijder dubbele (-16 & +16)
@@ -255,7 +255,7 @@ public class WizardImportRingenController extends WizardImportController {
 						ArrayList::new))
 				.forEach(inschr -> {
 					Afdeling afdeling = sf.getAfdelingen().stream()
-							.filter(afd -> inschr.getAfdeling().equals(afd.getNaam()))
+							.filter(afd -> afd.getNaam().equals(inschr.getAfdeling()))
 							.findAny()
 							.orElse(new Afdeling(inschr.getAfdeling(), inschr.getRegio()));
 

@@ -24,9 +24,11 @@ public class Afdeling {
 
 	public Afdeling() { this("Afdeling zonder naam " + Math.random(), "Onbekende regio"); }
 
+	@XmlElement(name = "Naam")
 	public String getNaam() { return naam; }
 	public void setNaam(String naam) { this.naam = naam; }
 
+	@XmlElement(name = "Regio")
 	public String getRegio() { return regio; }
 	public void setRegio(String regio) { this.regio = regio; }
 

@@ -78,7 +78,7 @@ public class WizardImportReeksenController extends WizardImportController {
 			// TODO: errors in Marshalling controleren
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColAantal());
+					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColRegio(), model.getColAantal());
 			groepsinschrijvingen.stream()
 					.filter(groepsinschrijving -> groepsinschrijving.getSportfeest().equalsIgnoreCase(model.getSportfeest().getValue()))
 					.collect(Collectors.groupingBy(Groepsinschrijving::getSport, Collectors.summingInt(Groepsinschrijving::getAantal)))

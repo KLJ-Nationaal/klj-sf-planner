@@ -68,9 +68,8 @@ public class WizardImportColumnsController extends WizardImportController {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
-			alert.setContentText("Kolom Regio niet toegewezen");
+			alert.setContentText("Kolom Regio is niet toegewezen. Touwtrekken zal niet gelijk verdeeld worden.");
 			alert.showAndWait();
-			return false;
 		}
 
 		if (txtAfdeling.getValue() == null || txtAfdeling.getValue().isEmpty()) {
@@ -106,7 +105,7 @@ public class WizardImportColumnsController extends WizardImportController {
 	@Submit
 	public void submit() {
 		model.setColSportfeest(txtSportfeest.getSelectionModel().getSelectedIndex());
-		model.setColRegio(txtSportfeest.getSelectionModel().getSelectedIndex());
+		model.setColRegio(txtRegio.getSelectionModel().getSelectedIndex());
 		model.setColAfdeling(txtAfdeling.getSelectionModel().getSelectedIndex());
 		model.setColDiscipline(txtDiscipline.getSelectionModel().getSelectedIndex());
 		model.setColAantal(txtAantal.getSelectionModel().getSelectedIndex());

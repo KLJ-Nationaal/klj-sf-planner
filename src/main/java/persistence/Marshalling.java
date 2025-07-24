@@ -61,7 +61,7 @@ public class Marshalling {
 	}
 
 	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex,
-	                                                                       boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colAantal) {
+	                                                                       boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colRegio, int colAantal) {
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = new ArrayList<>();
 		try {
 			File excelFile = new File(filename);
@@ -78,6 +78,7 @@ public class Marshalling {
 					String sportfeest = row.getCell(colSportfeest).getStringCellValue();
 					String afdeling = row.getCell(colAfdeling).getStringCellValue();
 					String discipline = row.getCell(colDiscipline).getStringCellValue();
+					String regio = row.getCell(colRegio).getStringCellValue();
 					int aantal = 0;
 					if (row.getCell(colAantal).getCellType() == CellType.NUMERIC) {
 						aantal = (int) row.getCell(colAantal).getNumericCellValue();
@@ -88,7 +89,7 @@ public class Marshalling {
 						logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}", afdeling, discipline);
 					}
 
-					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, aantal));
+					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, regio, aantal));
 				} catch (NullPointerException npe) {
 					logger.error("Fout op rij {}: {}", row.getRowNum() + 1, npe.getLocalizedMessage());
 				}
@@ -223,7 +224,7 @@ public class Marshalling {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String dateString = format.format(new Date());
 
-			String sfInfo = "Sportfeest " + map.getLocatie() + " op "
+			String sfInfo = (map.getLocatie().toLowerCase().contains("landjuweel") ? "" : "Sportfeest ") + map.getLocatie() + " op "
 					+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 			Row infoRow = sheet.createRow(1);
 			infoRow.setHeightInPoints(20);

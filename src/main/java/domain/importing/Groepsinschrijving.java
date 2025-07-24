@@ -7,10 +7,11 @@ public class Groepsinschrijving {
 	private String regio;
 	private int aantal;
 
-	public Groepsinschrijving(String sportfeest, String afdeling, String sport, int aantal) {
+	public Groepsinschrijving(String sportfeest, String afdeling, String sport, String regio, int aantal) {
 		this.sportfeest = sportfeest;
 		this.afdeling = afdeling;
 		this.sport = sport;
+		this.regio = regio;
 		this.aantal = aantal;
 	}
 

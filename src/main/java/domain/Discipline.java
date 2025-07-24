@@ -52,6 +52,8 @@ public final class Discipline {
 	public String getVerkorteNaam() {
 		if (naam.toLowerCase().contains("wimpelen"))
 			return naam.replace("reeks", "r.");
+		if (naam.toLowerCase().contains("touwtrekken"))
+			return "Touwtrekken";
 		return naam;
 	}
 

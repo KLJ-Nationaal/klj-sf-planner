@@ -123,6 +123,7 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 				Random rand = new Random();
 				sportfeestProperty.get().getInschrijvingen().stream()
 						.filter(inschrijving -> inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
+						.filter(inschrijving -> inschrijving.getTijdslot() == null)
 						.forEach(inschrijving -> {
 							Tijdslot s = inschrijving.getTijdslots().get(rand.nextInt(0, inschrijving.getTijdslots().size()));
 							logger.debug("{}: {}", inschrijving, s);
