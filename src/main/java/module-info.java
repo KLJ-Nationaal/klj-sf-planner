@@ -18,6 +18,7 @@ module kljsfplanner {
 	requires org.apache.poi.ooxml;
 	requires java.management;
 	requires ai.timefold.solver.core;
+	requires spire.xls.free;
 
 	opens ui;
 	opens ui.importer;

@@ -7,12 +7,14 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.LoggerFactory;
+import util.VersionInfo;
 
 import java.awt.*;
 import java.io.*;
@@ -141,7 +143,6 @@ public class Marshalling {
 		if (fileRingen.exists() && !fileRingen.delete())
 			throw new Exception("Kon bestaand bestand " + fileRingen.getName() + " niet overschrijven. Houd Excel dit bestand misschien open?");
 
-		int rijen = (int) Math.ceil(1.0 * Instellingen.Opties().TABELMINUTEN / Instellingen.Opties().MINMINUTEN / 2) + 3;
 		fixRingNumbersOrder(map);
 
 		//***************************************
@@ -149,11 +150,20 @@ public class Marshalling {
 		//***************************************
 		XSSFWorkbook wb = new XSSFWorkbook();
 		Map<String, CellStyle> styles = createStyles(wb);
+		POIXMLProperties.CoreProperties coreProp = wb.getProperties().getCoreProperties();
+		coreProp.setCreator("KLJ SportfeestPlanner");
+		coreProp.setVersion(VersionInfo.getVersion());
+		coreProp.setTitle(map.getLocatie() + " " + (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum()));
 
+		int rijen = (int) Math.ceil(1.0 * Instellingen.Opties().TABELMINUTEN / Instellingen.Opties().MINMINUTEN / 2) + 2;
 		List<Afdeling> sortedAfdelingen = map.getAfdelingen().stream()
 				.sorted(Comparator.comparing(Afdeling::getNaam))
 				.toList();
 		for (Afdeling afdeling : sortedAfdelingen) {
+			boolean isEnkelMeisjes = (afdeling.getNaam().toLowerCase().contains("meisjes") || afdeling.getNaam().toLowerCase().contains("keurwimpelgroep"))
+					&& afdeling.getInschrijvingen().stream().noneMatch(inschr -> inschr.getDiscipline().isJongens() && !inschr.getDiscipline().isMeisjes());
+			boolean isEnkelJongens = afdeling.getNaam().toLowerCase().contains("jongens")
+					&& afdeling.getInschrijvingen().stream().noneMatch(inschr -> !inschr.getDiscipline().isJongens() && inschr.getDiscipline().isMeisjes());
 			XSSFSheet sheet = wb.createSheet(afdeling.getNaam());
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
@@ -165,39 +175,41 @@ public class Marshalling {
 			Row titleRow = sheet.createRow(0);
 			titleRow.setHeightInPoints(20);
 			Cell titleCell = titleRow.createCell(0);
-			titleCell.setCellValue(afdeling.getNaam() + " meisjes");
+			if (!isEnkelJongens) titleCell.setCellValue(afdeling.getNaam() + (isEnkelMeisjes ? "" : " meisjes"));
 			titleCell.setCellStyle(styles.get("hoofding"));
 			sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$D$1"));
 			titleCell = titleRow.createCell(5);
-			titleCell.setCellValue(afdeling.getNaam() + " jongens");
+			if (!isEnkelMeisjes) titleCell.setCellValue(afdeling.getNaam() + (isEnkelJongens ? "" : " jongens"));
 			titleCell.setCellStyle(styles.get("hoofding"));
 			sheet.addMergedRegion(CellRangeAddress.valueOf("$F$1:$I$1"));
 
 			//de rest opmaken
+			final int starttijdkolom2 = Instellingen.Opties().MINMINUTEN * (rijen - 2);
+			SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+			Date d = df.parse(Instellingen.Opties().STARTTIJD);
+			Calendar cal1 = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance();
 			for (int i = 2; i < rijen; i++) {
 				Row row = sheet.createRow(i);
-				SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-				Date d = df.parse(Instellingen.Opties().STARTTIJD);
-				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(d);
 				cal1.add(Calendar.MINUTE, Instellingen.Opties().MINMINUTEN * (i - 2));
-				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(d);
-				cal2.add(Calendar.MINUTE, Instellingen.Opties().MINMINUTEN * (i - 2) + (Instellingen.Opties().TABELMINUTEN / 2 + 3));
+				cal2.add(Calendar.MINUTE, Instellingen.Opties().MINMINUTEN * (i - 2) + starttijdkolom2);
 				for (int col = 0; col < 9; col++) {
 					Cell cell = row.createCell(col);
 					if (col == 0 || col == 5) cell.setCellValue(df.format(cal1.getTime()));
 					if (col == 2 || col == 7) cell.setCellValue(df.format(cal2.getTime()));
 					if (col == 0 || col == 5 || col == 2 || col == 7) cell.setCellStyle(styles.get("tijd"));
 					if (col == 1 || col == 6 || col == 3 || col == 8) cell.setCellStyle(styles.get("ring"));
-					if (i == (rijen - 1) && (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
+					if ((Instellingen.Opties().MINMINUTEN * (i - 2) + starttijdkolom2) > Instellingen.Opties().TABELMINUTEN
+							&& (col == 2 || col == 7 || col == 3 || col == 8)) cell.setCellStyle(styles.get("volledigzwart"));
 				}
 			}
 
 			//gegevens invullen
 			for (int i = 0; i <= Instellingen.Opties().TABELMINUTEN; i = i + Instellingen.Opties().MINMINUTEN) {
-				int row = 2 + (i % (Instellingen.Opties().TABELMINUTEN / 2 + 3)) / 3;
-				int column = (i > (Instellingen.Opties().TABELMINUTEN / 2) ? 3 : 1);
+				int row = 2 + (i % starttijdkolom2) / Instellingen.Opties().MINMINUTEN;
+				int column = (i >= starttijdkolom2 ? 3 : 1);
 				final int time = i;
 				List<Inschrijving> inschrijvingList = afdeling.getInschrijvingen().stream()
 						.filter(inschr -> inschr.getTijdslot() != null)
@@ -206,10 +218,10 @@ public class Marshalling {
 				for (Inschrijving inschrijving : inschrijvingList) {
 					boolean edited = false;
 
-					if (inschrijving.getDiscipline().isMeisjes()) {
+					if (inschrijving.getDiscipline().isMeisjes() && !isEnkelJongens) {
 						edited = setCellInschrijvingForAfdeling(styles, sheet.getRow(row), column, i, inschrijving);
 					}
-					if (inschrijving.getDiscipline().isJongens()) {
+					if (inschrijving.getDiscipline().isJongens() && !isEnkelMeisjes) {
 						edited = setCellInschrijvingForAfdeling(styles, sheet.getRow(row), column + 5, i, inschrijving);
 					}
 
@@ -221,9 +233,6 @@ public class Marshalling {
 			}
 
 			//SF informatie
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			String dateString = format.format(new Date());
-
 			String sfInfo = (map.getLocatie().toLowerCase().contains("landjuweel") ? "" : "Sportfeest ") + map.getLocatie() + " op "
 					+ (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum());
 			Row infoRow = sheet.createRow(1);
@@ -274,6 +283,10 @@ public class Marshalling {
 		//********************************************
 		wb = new XSSFWorkbook();
 		styles = createStyles(wb);
+		coreProp = wb.getProperties().getCoreProperties();
+		coreProp.setCreator("KLJ SportfeestPlanner");
+		coreProp.setVersion(VersionInfo.getVersion());
+		coreProp.setTitle(map.getLocatie() + " " + (new SimpleDateFormat("d/MM/yyyy")).format(map.getDatum()));
 
 		//tabblad groepen maken
 		List<String> ringGroepen = new ArrayList<>();
@@ -449,7 +462,7 @@ public class Marshalling {
 			cell = row.getCell(column - 1);
 			cell.setCellStyle(styles.get("tijdonderleeg"));
 			cell = row.getCell(column);
-			cell.setCellValue((!cell.getStringCellValue().isEmpty() ? cell.getStringCellValue() + " " : "")
+			cell.setCellValue((!cell.getStringCellValue().isEmpty() ? cell.getStringCellValue() + ", " : "")
 					+ inschrijving.getDiscipline().getVerkorteNaam()
 					+ (inschrijving.getKorps() > 0 ? " " + inschrijving.getKorps() : "")
 					+ Optional
