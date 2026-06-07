@@ -7,6 +7,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Marshalling {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(Marshalling.class);
@@ -62,8 +64,9 @@ public class Marshalling {
 		return columns;
 	}
 
-	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex,
-	                                                                       boolean hasTitles, int colSportfeest, int colAfdeling, int colDiscipline, int colRegio, int colAantal) {
+	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex, boolean hasTitles,
+	                                                                       int colAfdeling, int colDansen, int colPiramide, int colWimpelen,
+	                                                                       int colVendelen, int colTouwtrekken) {
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = new ArrayList<>();
 		try {
 			File excelFile = new File(filename);
@@ -77,21 +80,51 @@ public class Marshalling {
 			while (rowIt.hasNext()) {
 				Row row = rowIt.next();
 				try {
-					String sportfeest = row.getCell(colSportfeest).getStringCellValue();
-					String afdeling = row.getCell(colAfdeling).getStringCellValue();
-					String discipline = row.getCell(colDiscipline).getStringCellValue();
-					String regio = row.getCell(colRegio).getStringCellValue();
-					int aantal = 0;
-					if (row.getCell(colAantal).getCellType() == CellType.NUMERIC) {
-						aantal = (int) row.getCell(colAantal).getNumericCellValue();
-					} else if (row.getCell(colAantal).getCellType() == CellType.STRING) {
-						aantal = Integer.parseInt(row.getCell(colAantal).getStringCellValue());
-					}
-					if (aantal == 0) {
-						logger.error("Kon aantal inschrijvingen niet lezen voor afdeling {}, discipline {}", afdeling, discipline);
-					}
+					String afd = row.getCell(colAfdeling).getStringCellValue()
+							.strip()
+							.toLowerCase().replace("klj ", "");
+					final String afdeling = WordUtils.capitalizeFully(afd, ' ', '-', '&');
 
-					groepsinschrijvingen.add(new Groepsinschrijving(sportfeest, afdeling, discipline, regio, aantal));
+					if (colVendelen > -1 && row.getCell(colVendelen) != null)
+						try {
+							splitDisciplines(row.getCell(colVendelen).getStringCellValue()).forEach(
+									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
+							);
+						} catch (Exception e) {
+							logger.error("Fout op rij {}, kolom {} (Vendelen): {}", row.getRowNum() + 1, colVendelen, e.getLocalizedMessage());
+						}
+					if (colDansen > -1 && row.getCell(colDansen) != null)
+						try {
+							splitDisciplines(row.getCell(colDansen).getStringCellValue()).forEach(
+									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
+							);
+						} catch (Exception e) {
+							logger.error("Fout op rij {}, kolom {} (Dansen): {}", row.getRowNum() + 1, colDansen, e.getLocalizedMessage());
+						}
+					if (colPiramide > -1 && row.getCell(colPiramide) != null)
+						try {
+							splitDisciplines(row.getCell(colPiramide).getStringCellValue()).forEach(
+									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
+							);
+						} catch (Exception e) {
+							logger.error("Fout op rij {}, kolom {} (Piramide): {}", row.getRowNum() + 1, colPiramide, e.getLocalizedMessage());
+						}
+					if (colTouwtrekken > -1 && row.getCell(colTouwtrekken) != null)
+						try {
+							splitDisciplines(row.getCell(colTouwtrekken).getStringCellValue()).forEach(
+									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
+							);
+						} catch (Exception e) {
+							logger.error("Fout op rij {}, kolom {} (Touwtrekken): {}", row.getRowNum() + 1, colTouwtrekken, e.getLocalizedMessage());
+						}
+					if (colWimpelen > -1 && row.getCell(colWimpelen) != null)
+						try {
+							splitDisciplines(row.getCell(colWimpelen).getStringCellValue()).forEach(
+									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
+							);
+						} catch (Exception e) {
+							logger.error("Fout op rij {}, kolom {} (Wimpelen): {}", row.getRowNum() + 1, colWimpelen, e.getLocalizedMessage());
+						}
 				} catch (NullPointerException npe) {
 					logger.error("Fout op rij {}: {}", row.getRowNum() + 1, npe.getLocalizedMessage());
 				}
@@ -101,6 +134,14 @@ public class Marshalling {
 			logger.error("KON DATA XLSX NIET INLEZEN", ioe);
 		}
 		return groepsinschrijvingen;
+	}
+
+	private static Map<String, Integer> splitDisciplines(String cell) {
+		return Arrays.stream(cell.split(",")).map(String::strip)
+				.collect(Collectors.groupingBy(
+						element -> element,
+						Collectors.summingInt(element -> 1)
+				));
 	}
 
 	public static Sportfeest unmarshallXml(String filename){

@@ -11,14 +11,14 @@ public class WizardData {
 
 	private final StringProperty title = new SimpleStringProperty();
 	private final StringProperty subtitle = new SimpleStringProperty();
-	private final IntegerProperty colSportfeest = new SimpleIntegerProperty();
-	private final IntegerProperty colRegio = new SimpleIntegerProperty();
+	private final IntegerProperty colDansen = new SimpleIntegerProperty();
+	private final IntegerProperty colPiramide = new SimpleIntegerProperty();
 	private final IntegerProperty colAfdeling = new SimpleIntegerProperty();
-	private final IntegerProperty colDiscipline = new SimpleIntegerProperty();
-	private final IntegerProperty colAantal = new SimpleIntegerProperty();
+	private final IntegerProperty colWimpelen = new SimpleIntegerProperty();
+	private final IntegerProperty colVendelen = new SimpleIntegerProperty();
+	private final IntegerProperty colTouwtrekken = new SimpleIntegerProperty();
 	private final BooleanProperty colHeaders = new SimpleBooleanProperty();
 	private String filename;
-	private final StringProperty sportfeest = new SimpleStringProperty();
 	private final StringProperty sfTitel = new SimpleStringProperty();
 	private final Property<LocalDate> sfDatum = new SimpleObjectProperty<>();
 	private ObservableList<Reeks> reeksen = FXCollections.observableArrayList();
@@ -31,25 +31,29 @@ public class WizardData {
 	public StringProperty subtitleProperty() { return subtitle; }
 	public void setSubtitle(String field2) { this.subtitle.set(field2); }
 
-	public int getColSportfeest() { return colSportfeest.get(); }
-	public IntegerProperty colSportfeestProperty() { return colSportfeest; }
-	public void setColSportfeest(int colSportfeest) { this.colSportfeest.set(colSportfeest); }
-
-	public int getColRegio() { return colRegio.get(); }
-	public IntegerProperty colRegioProperty() { return colRegio; }
-	public void setColRegio(int colRegio) { this.colRegio.set(colRegio); }
-
 	public int getColAfdeling() { return colAfdeling.get(); }
 	public IntegerProperty colAfdelingProperty() { return colAfdeling; }
 	public void setColAfdeling(int colAfdeling) { this.colAfdeling.set(colAfdeling); }
 
-	public int getColDiscipline() { return colDiscipline.get(); }
-	public IntegerProperty colDisciplineProperty() { return colDiscipline; }
-	public void setColDiscipline(int colDiscipline) { this.colDiscipline.set(colDiscipline); }
+	public int getColDansen() { return colDansen.get(); }
+	public IntegerProperty colDansenProperty() { return colDansen; }
+	public void setColDansen(int colDansen) { this.colDansen.set(colDansen); }
 
-	public int getColAantal() { return colAantal.get(); }
-	public IntegerProperty colAantalProperty() { return colAantal; }
-	public void setColAantal(int colAantal) { this.colAantal.set(colAantal); }
+	public int getColPiramide() { return colPiramide.get(); }
+	public IntegerProperty colPiramideProperty() { return colPiramide; }
+	public void setColPiramide(int colPiramide) { this.colPiramide.set(colPiramide); }
+
+	public int getColWimpelen() { return colWimpelen.get(); }
+	public IntegerProperty colWimpelenProperty() { return colWimpelen; }
+	public void setColWimpelen(int colWimpelen) { this.colWimpelen.set(colWimpelen); }
+
+	public int getColVendelen() { return colVendelen.get(); }
+	public IntegerProperty colVendelenProperty() { return colVendelen; }
+	public void setColVendelen(int colVendelen) { this.colVendelen.set(colVendelen); }
+
+	public int getColTouwtrekken() { return colTouwtrekken.get(); }
+	public IntegerProperty colTouwtrekkenProperty() { return colTouwtrekken; }
+	public void setColTouwtrekken(int colTouwtrekken) { this.colTouwtrekken.set(colTouwtrekken); }
 
 	public boolean getColHeaders() { return colHeaders.get(); }
 	public BooleanProperty colHeadersProperty() { return colHeaders; }
@@ -66,10 +70,6 @@ public class WizardData {
 	public void setSfTitel(String sfTitel) { this.sfTitel.set(sfTitel); }
 	public StringProperty sfTitelProperty() { return sfTitel; }
 	public String getSfTitel() { return sfTitel.get(); }
-
-	public void setSportfeest(String sportfeest) { this.sportfeest.set(sportfeest); }
-	public StringProperty sportfeestProperty() { return sportfeest; }
-	public StringProperty getSportfeest() { return sportfeest; }
 
 	public void setSfDatum(Date sfDatum) { this.sfDatum.setValue(new java.sql.Date(sfDatum.getTime()).toLocalDate()); }
 	public Property<LocalDate> sfDatumProperty() { return sfDatum; }

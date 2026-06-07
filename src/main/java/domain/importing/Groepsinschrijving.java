@@ -1,31 +1,21 @@
 package domain.importing;
 
 public class Groepsinschrijving {
-	private String sportfeest;
 	private String afdeling;
-	private String sport;
-	private String regio;
+	private String discipline;
 	private int aantal;
 
-	public Groepsinschrijving(String sportfeest, String afdeling, String sport, String regio, int aantal) {
-		this.sportfeest = sportfeest;
+	public Groepsinschrijving(String afdeling, String discipline, int aantal) {
 		this.afdeling = afdeling;
-		this.sport = sport;
-		this.regio = regio;
+		this.discipline = discipline;
 		this.aantal = aantal;
 	}
-
-	public String getSportfeest() { return sportfeest; }
-	public void setSportfeest(String sportfeest) { this.sportfeest = sportfeest; }
 
 	public String getAfdeling() { return afdeling; }
 	public void setAfdeling(String afdeling) { this.afdeling = afdeling; }
 
-	public String getSport() { return sport; }
-	public void setSport(String sport) { this.sport = sport; }
-
-	public String getRegio() { return regio; }
-	public void setRegio(String regio) { this.regio = regio; }
+	public String getDiscipline() { return discipline; }
+	public void setDiscipline(String discipline) { this.discipline = discipline; }
 
 	public int getAantal() { return aantal; }
 	public void setAantal(int aantal) { this.aantal = aantal; }

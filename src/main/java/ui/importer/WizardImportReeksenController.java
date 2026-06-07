@@ -78,10 +78,10 @@ public class WizardImportReeksenController extends WizardImportController {
 			// TODO: errors in Marshalling controleren
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-					model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColRegio(), model.getColAantal());
+					model.getColAfdeling(), model.getColDansen(), model.getColPiramide(), model.getColWimpelen(),
+					model.getColVendelen(), model.getColTouwtrekken());
 			groepsinschrijvingen.stream()
-					.filter(groepsinschrijving -> groepsinschrijving.getSportfeest().equalsIgnoreCase(model.getSportfeest().getValue()))
-					.collect(Collectors.groupingBy(Groepsinschrijving::getSport, Collectors.summingInt(Groepsinschrijving::getAantal)))
+					.collect(Collectors.groupingBy(Groepsinschrijving::getDiscipline, Collectors.summingInt(Groepsinschrijving::getAantal)))
 					.forEach((discipline, aantal) -> model.getReeksen().add(new Reeks(discipline, aantal)));
 			model.getReeksen().sort(Comparator.comparing(Reeks::getNaam));
 			for (Reeks conf : ReeksDefinitie.unMarshall()) {

@@ -14,6 +14,7 @@ import jakarta.xml.bind.annotation.XmlIDREF;
 import jakarta.xml.bind.annotation.XmlTransient;
 import ui.visualization.jfxtras.scene.control.agenda.InschrijvingInterface;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ public class Inschrijving implements InschrijvingInterface {
 	private Discipline discipline;
 	private int korps;
 	private List<Ring> mogelijkeRingen;
-	private Inschrijving verbondenInschrijving;
+	private List<Inschrijving> verbondenInschrijvingen;
 	private boolean gereserveerdBlok;
 	private HashSet<Inschrijving> verbondenRestricties;
 
@@ -65,8 +66,22 @@ public class Inschrijving implements InschrijvingInterface {
 	public void setDiscipline(Discipline discipline) { this.discipline = discipline; }
 
 	@XmlIDREF
-	public Inschrijving getVerbondenInschrijving() { return verbondenInschrijving; }
-	public void setVerbondenInschrijving(Inschrijving inschrijving) { this.verbondenInschrijving = inschrijving; }
+	public List<Inschrijving> getVerbondenInschrijvingen() { return verbondenInschrijvingen; }
+	public void setVerbondenInschrijvingen(List<Inschrijving> inschrijving) { this.verbondenInschrijvingen = inschrijving; }
+	public void addVerbondenInschrijving(Inschrijving inschrijving) {
+		if (this.verbondenInschrijvingen == null) { verbondenInschrijvingen = new ArrayList<>(); }
+		this.verbondenInschrijvingen.add(inschrijving);
+	}
+
+	public boolean isVerbonden(Inschrijving o) {
+		if (this == o) return false;
+		if (verbondenInschrijvingen == null) return false;
+		if (o.verbondenInschrijvingen == null) return false;
+		for (Inschrijving i : verbondenInschrijvingen) {
+			if (i.id.equals(o.id)) return true;
+		}
+		return false;
+	}
 
 	public int getKorps() { return korps; }
 	public void setKorps(int korps) { this.korps = korps; }
@@ -97,13 +112,6 @@ public class Inschrijving implements InschrijvingInterface {
 	public void setMogelijkeRingen(List<Ring> ringen) { this.mogelijkeRingen = ringen; }
 	public List<Ring> getMogelijkeRingen() { return this.mogelijkeRingen; }
 
-	public boolean isVerbonden(Inschrijving o) {
-		if (this == o) return false;
-		if (verbondenInschrijving == null) return false;
-		if (o.verbondenInschrijving == null) return false;
-		return verbondenInschrijving.id.equals(o.id);
-	}
-
 	@XmlIDREF
 	public void setVerbondenRestricties(HashSet<Inschrijving> verbondenRestricties) { this.verbondenRestricties = verbondenRestricties; }
 	public HashSet<Inschrijving> getVerbondenRestricties() { return this.verbondenRestricties; }
@@ -124,7 +132,7 @@ public class Inschrijving implements InschrijvingInterface {
 	@Override
 	public String toString() {
 		return "[" + id + "] " + afdeling.getNaam() + (korps > 0 ? " " + korps : "")
-				+ (ring == null ? "" : " in " + ring.getVerkorteNotatie());
+				+ (ring == null ? "" : " in " + ring);
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {

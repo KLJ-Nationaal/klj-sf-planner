@@ -244,24 +244,24 @@ public class WizardImportRingenController extends WizardImportController {
 		// TODO: errors in Marshalling controleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-				model.getColSportfeest(), model.getColAfdeling(), model.getColDiscipline(), model.getColRegio(), model.getColAantal());
+				model.getColAfdeling(), model.getColDansen(), model.getColPiramide(), model.getColWimpelen(),
+				model.getColVendelen(), model.getColTouwtrekken());
 		groepsinschrijvingen.stream()
-				.filter(groepsinschrijving -> groepsinschrijving.getSportfeest().equalsIgnoreCase(model.getSportfeest().getValue()))
 				// voor touwtrekken houden we geen rekening met leeftijd, dus verwijder dubbele (-16 & +16)
 				.collect(Collectors.collectingAndThen(
 						toCollection(() -> new TreeSet<>(
 								Comparator.comparing(Groepsinschrijving::getAfdeling)
-										.thenComparing(s -> s.getSport().replace(" -16", "").replace(" +16", "")))),
+										.thenComparing(s -> s.getDiscipline().replace(" -16", "").replace(" +16", "")))),
 						ArrayList::new))
 				.forEach(inschr -> {
 					Afdeling afdeling = sf.getAfdelingen().stream()
 							.filter(afd -> afd.getNaam().equals(inschr.getAfdeling()))
 							.findAny()
-							.orElse(new Afdeling(inschr.getAfdeling(), inschr.getRegio()));
+							.orElse(new Afdeling(inschr.getAfdeling(), ""));
 
 					for (int i = 0; i < inschr.getAantal(); i++) {  //aantal korpsen
 						Inschrijving inschrijving = new Inschrijving();
-						String sport = inschr.getSport().replace(" -16", "").replace(" +16", "");
+						String sport = inschr.getDiscipline().replace(" -16", "").replace(" +16", "");
 						inschrijving.setAfdeling(afdeling);
 						inschrijving.setId(aantal.getAndAdd(1));
 						sf.getDisciplines().values().stream()
@@ -289,10 +289,29 @@ public class WizardImportRingenController extends WizardImportController {
 				logger.error("{} heeft meer dan twee inschrijvingen voor de piramides!", afdeling.getNaam());
 			}
 			if (inschr.size() > 1 & inschr.stream().map(Inschrijving::getRing).count() > 1) {
-				inschr.get(0).setVerbondenInschrijving(inschr.get(1));
-				inschr.get(1).setVerbondenInschrijving(inschr.get(0));
+				inschr.get(0).addVerbondenInschrijving(inschr.get(1));
+				inschr.get(1).addVerbondenInschrijving(inschr.get(0));
 			}
 
+			inschr = afdeling.getInschrijvingen().stream()
+					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("touwtrekken"))
+					.toList();
+			if (inschr.size() > 3) {
+				logger.error("{} heeft meer dan drie inschrijvingen voor het touwtrekken!", afdeling.getNaam());
+			}
+			if (inschr.size() == 2) {
+				inschr.get(0).addVerbondenInschrijving(inschr.get(1));
+				inschr.get(1).addVerbondenInschrijving(inschr.get(0));
+			} else if (inschr.size() > 2) {
+				inschr.get(0).addVerbondenInschrijving(inschr.get(1));
+				inschr.get(0).addVerbondenInschrijving(inschr.get(2));
+				inschr.get(1).addVerbondenInschrijving(inschr.get(0));
+				inschr.get(1).addVerbondenInschrijving(inschr.get(2));
+				inschr.get(2).addVerbondenInschrijving(inschr.get(0));
+				inschr.get(2).addVerbondenInschrijving(inschr.get(1));
+			}
+
+/*
 			// extra fix voor touwtrekken: verwijder meisjes/jongens indien gemengd aanwezig bij touwtrekken (of voeg gemengd toe)
 			inschr = afdeling.getInschrijvingen().stream()
 					.filter(inschrijving -> inschrijving.getDiscipline().getNaam().toLowerCase().contains("touwtrekken"))
@@ -329,6 +348,7 @@ public class WizardImportRingenController extends WizardImportController {
 						.toList();
 				afdeling.getInschrijvingen().removeAll(jongensweg);
 			}
+			*/
 		});
 
 		if (dataCallback != null) dataCallback.accept(sf);
