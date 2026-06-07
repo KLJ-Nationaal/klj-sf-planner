@@ -4,6 +4,7 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.*;
 import domain.Inschrijving;
 import domain.Sport;
+import domain.Tijdslot;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,8 +27,9 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				inschrijvingenDieMoetenSamenvallen(factory),
 				vermijdOngunstigeTijdslots(factory),
 				restricties(factory),
-				touwtrekkenVerdeelRegios(factory),
-				touwtrekkenVerdeelDisciplines(factory),
+				touwtrekkenVerdeelTijdslots(factory),
+				//touwtrekkenVerdeelRegios(factory),
+				//touwtrekkenVerdeelDisciplines(factory),
 		};
 	}
 
@@ -110,7 +112,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.filter(Inschrijving::isJongens)
 				.filter(inschrijving -> !inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.join(factory.forEach(Inschrijving.class)
-								.filter(Inschrijving::isJongens),
+								.filter(Inschrijving::isJongens)
+								.filter(inschrijving -> !inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)),
 						Joiners.equal(Inschrijving::getAfdeling))
 				.filter((i1, i2) -> i1.getStartTijd() < i2.getStartTijd())
 				.ifNotExists(Inschrijving.class,
@@ -150,6 +153,42 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.filter((x, y) -> x.getVerbondenRestricties().contains(y))
 				.penalize(HardSoftScore.ofSoft(5))
 				.asConstraint("Uitzondering");
+	}
+
+	private Constraint touwtrekkenVerdeelTijdslots(ConstraintFactory factory) {
+		// Stream 1: Tijdslots with NO TOUWTREKKEN inschrijving → count = 0
+		// (assumes Tijdslot has a getRing() method)
+		var zeroSlots = factory
+				.forEach(Tijdslot.class)
+				.ifNotExists(Inschrijving.class,
+						Joiners.equal(Tijdslot::getRing, Inschrijving::getRing),
+						Joiners.equal(t -> t, Inschrijving::getTijdslot),
+						Joiners.filtering((t, i) -> i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)))
+				.map(Tijdslot::getRing, t -> t, t -> 0);
+
+		// Stream 2: Tijdslots WITH actual TOUWTREKKEN counts
+		var actualSlots = factory
+				.forEach(Inschrijving.class)
+				.filter(i -> i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
+				.groupBy(Inschrijving::getRing, Inschrijving::getTijdslot, ConstraintCollectors.count());
+
+		return zeroSlots
+				.concat(actualSlots)  // mutually exclusive, so no overlap
+				.groupBy(
+						(ring, tijdslot, count) -> ring,
+						ConstraintCollectors.toList((ring, tijdslot, count) -> count))
+				.filter((ring, counts) -> {
+					int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+					int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+					return max - min > 1;
+				})
+				.penalize(HardSoftScore.ONE_SOFT,
+						(ring, counts) -> {
+							int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
+							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
+							return (max - min) * (max - min);
+						})
+				.asConstraint("Touwtrekken verdelen over de tijdslots");
 	}
 
 	private Constraint touwtrekkenVerdeelRegios(ConstraintFactory factory) {

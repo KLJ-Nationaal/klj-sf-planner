@@ -7,17 +7,19 @@
             xmlns:fx="http://javafx.com/fxml" fx:controller="ui.importer.WizardImportColumnsController">
     <center>
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
-            <Label layoutX="14.0" layoutY="14.0" text="Sportfeest"/>
-            <ChoiceBox fx:id="txtSportfeest" layoutX="184.0" layoutY="10.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="44.0" text="Regio"/>
-            <ChoiceBox fx:id="txtRegio" layoutX="184.0" layoutY="40.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="74.0" text="Afdeling"/>
-            <ChoiceBox fx:id="txtAfdeling" layoutX="184.0" layoutY="70.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="104.0" text="Discipline"/>
-            <ChoiceBox fx:id="txtDiscipline" layoutX="184.0" layoutY="100.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="134.0" text="Aantal groepen"/>
-            <ChoiceBox fx:id="txtAantal" layoutX="184.0" layoutY="130.0" prefWidth="200.0"/>
-            <CheckBox fx:id="chkKopteksten" layoutX="14.0" layoutY="170.0" mnemonicParsing="false" selected="true"
+            <Label layoutX="14.0" layoutY="14.0" text="Afdeling"/>
+            <ChoiceBox fx:id="txtAfdeling" layoutX="184.0" layoutY="10.0" prefWidth="200.0"/>
+            <Label layoutX="14.0" layoutY="44.0" text="Piramide"/>
+            <ChoiceBox fx:id="txtPiramide" layoutX="184.0" layoutY="40.0" prefWidth="200.0"/>
+            <Label layoutX="14.0" layoutY="74.0" text="Dansen"/>
+            <ChoiceBox fx:id="txtDansen" layoutX="184.0" layoutY="70.0" prefWidth="200.0"/>
+            <Label layoutX="14.0" layoutY="104.0" text="Wimpelen"/>
+            <ChoiceBox fx:id="txtWimpelen" layoutX="184.0" layoutY="100.0" prefWidth="200.0"/>
+            <Label layoutX="14.0" layoutY="134.0" text="Vendelen"/>
+            <ChoiceBox fx:id="txtVendelen" layoutX="184.0" layoutY="130.0" prefWidth="200.0"/>
+            <Label layoutX="14.0" layoutY="164.0" text="Touwtrekken"/>
+            <ChoiceBox fx:id="txtTouwtrekken" layoutX="184.0" layoutY="160.0" prefWidth="200.0"/>
+            <CheckBox fx:id="chkKopteksten" layoutX="14.0" layoutY="200.0" mnemonicParsing="false" selected="true"
                       text="Tabel bevat kopteksten"/>
         </AnchorPane>
     </center>

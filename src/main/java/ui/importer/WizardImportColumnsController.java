@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class WizardImportColumnsController extends WizardImportController {
 	@FXML
-	private ChoiceBox<String> txtSportfeest, txtRegio, txtAfdeling, txtDiscipline, txtAantal;
+	private ChoiceBox<String> txtDansen, txtPiramide, txtAfdeling, txtWimpelen, txtVendelen, txtTouwtrekken;
 	@FXML
 	private CheckBox chkKopteksten;
 
@@ -38,39 +38,22 @@ public class WizardImportColumnsController extends WizardImportController {
 		ArrayList<String> groepsinschrijvingenFirstLine = Marshalling.getGroepsinschrijvingenFirstLine(model.getFilename(),
 				Marshalling.getActiveSheet(model.getFilename()));
 		columns.addAll(groepsinschrijvingenFirstLine);
-		txtSportfeest.setItems(columns);
-		txtRegio.setItems(columns);
 		txtAfdeling.setItems(columns);
-		txtDiscipline.setItems(columns);
-		txtAantal.setItems(columns);
-		txtSportfeest.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("sportfeest")
-				|| s.toLowerCase().startsWith("cursus")).findFirst().orElse(""));
-		txtRegio.setValue(columns.stream().filter(s -> s.toLowerCase().contains("regio")).findFirst().orElse(""));
-		txtAfdeling.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("afdeling")).findFirst().orElse(""));
-		txtDiscipline.setValue(columns.stream().filter(s -> s.equalsIgnoreCase("discipline")
-				|| s.equalsIgnoreCase("sport")).findFirst().orElse(""));
-		txtAantal.setValue(columns.stream().filter(s -> s.toLowerCase().contains("aantal")).findFirst().orElse(""));
+		txtDansen.setItems(columns);
+		txtPiramide.setItems(columns);
+		txtWimpelen.setItems(columns);
+		txtVendelen.setItems(columns);
+		txtTouwtrekken.setItems(columns);
+		txtAfdeling.setValue(columns.stream().filter(s -> s.toLowerCase().contains("afdeling")).findFirst().orElse(""));
+		txtDansen.setValue(columns.stream().filter(s -> s.toLowerCase().contains("dansen")).findFirst().orElse(""));
+		txtPiramide.setValue(columns.stream().filter(s -> s.toLowerCase().contains("piramide")).findFirst().orElse(""));
+		txtWimpelen.setValue(columns.stream().filter(s -> s.toLowerCase().contains("wimpelen")).findFirst().orElse(""));
+		txtVendelen.setValue(columns.stream().filter(s -> s.toLowerCase().contains("vendelen")).findFirst().orElse(""));
+		txtTouwtrekken.setValue(columns.stream().filter(s -> s.toLowerCase().contains("touwtrekken")).findFirst().orElse(""));
 	}
 
 	@Validate
 	public boolean validate() {
-
-		if (txtSportfeest.getValue() == null || txtSportfeest.getValue().isEmpty()) {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Kolommen");
-			alert.setHeaderText("Niet toegewezen kolom");
-			alert.setContentText("Kolom Sportfeest niet toegewezen");
-			alert.showAndWait();
-			return false;
-		}
-
-		if (txtRegio.getValue() == null || txtRegio.getValue().isEmpty()) {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Kolommen");
-			alert.setHeaderText("Niet toegewezen kolom");
-			alert.setContentText("Kolom Regio is niet toegewezen. Touwtrekken zal niet gelijk verdeeld worden.");
-			alert.showAndWait();
-		}
 
 		if (txtAfdeling.getValue() == null || txtAfdeling.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -81,20 +64,37 @@ public class WizardImportColumnsController extends WizardImportController {
 			return false;
 		}
 
-		if (txtDiscipline.getValue() == null || txtDiscipline.getValue().isEmpty()) {
+		if (txtDansen.getValue() == null || txtDansen.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
-			alert.setContentText("Kolom Discipline niet toegewezen");
+			alert.setContentText("Kolom Dansen niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}
 
-		if (txtAantal.getValue() == null || txtAantal.getValue().isEmpty()) {
+		if (txtPiramide.getValue() == null || txtPiramide.getValue().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Kolommen");
 			alert.setHeaderText("Niet toegewezen kolom");
-			alert.setContentText("Kolom Aantal niet toegewezen");
+			alert.setContentText("Kolom Piramide is niet toegewezen. Touwtrekken zal niet gelijk verdeeld worden.");
+			alert.showAndWait();
+		}
+
+		if (txtWimpelen.getValue() == null || txtWimpelen.getValue().isEmpty()) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Kolommen");
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Wimpelen niet toegewezen");
+			alert.showAndWait();
+			return false;
+		}
+
+		if (txtVendelen.getValue() == null || txtVendelen.getValue().isEmpty()) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Kolommen");
+			alert.setHeaderText("Niet toegewezen kolom");
+			alert.setContentText("Kolom Vendelen niet toegewezen");
 			alert.showAndWait();
 			return false;
 		}
@@ -104,11 +104,12 @@ public class WizardImportColumnsController extends WizardImportController {
 
 	@Submit
 	public void submit() {
-		model.setColSportfeest(txtSportfeest.getSelectionModel().getSelectedIndex());
-		model.setColRegio(txtRegio.getSelectionModel().getSelectedIndex());
 		model.setColAfdeling(txtAfdeling.getSelectionModel().getSelectedIndex());
-		model.setColDiscipline(txtDiscipline.getSelectionModel().getSelectedIndex());
-		model.setColAantal(txtAantal.getSelectionModel().getSelectedIndex());
+		model.setColDansen(txtDansen.getSelectionModel().getSelectedIndex());
+		model.setColPiramide(txtPiramide.getSelectionModel().getSelectedIndex());
+		model.setColWimpelen(txtWimpelen.getSelectionModel().getSelectedIndex());
+		model.setColVendelen(txtVendelen.getSelectionModel().getSelectedIndex());
+		model.setColTouwtrekken(txtTouwtrekken.getSelectionModel().getSelectedIndex());
 		model.setColHeaders(chkKopteksten.isSelected());
 	}
 }

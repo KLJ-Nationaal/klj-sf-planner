@@ -24,17 +24,17 @@ public class Instellingen {
 		@XmlElement(name = "MinMinuten")
 		public int MINMINUTEN = 3;
 		@XmlElement(name = "TotaleTijd")
-		public int TOTALETIJD = 176;
+		public int TOTALETIJD = 236;
 		@XmlElement(name = "TotaleTijdMetFinale")
-		public int TOTALETIJDRINGMETFINALE = 150;
+		public int TOTALETIJDRINGMETFINALE = 206;
 		@XmlElement(name = "TabelMinuten")
-		public int TABELMINUTEN = 180;
+		public int TABELMINUTEN = 240;
 		@XmlElement(name = "RijHoogte")
 		public int ROW_HEIGHT = 18;
 		@XmlElement(name = "StartTijd")
 		public String STARTTIJD = "08:00";
 		@XmlElement(name = "OplossingTijdslimiet")
-		public int SOLVERTIMELIMIT = 20;
+		public int SOLVERTIMELIMIT = 120;
 	}
 
 	public static synchronized Opties Opties() {

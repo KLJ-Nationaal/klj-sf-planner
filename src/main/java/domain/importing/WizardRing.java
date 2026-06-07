@@ -28,12 +28,12 @@ public class WizardRing {
 	public int getAantalAfd() { return aantalAfd; }
 	public void setAantalAfd(int aantal) { this.aantalAfd = aantal; }
 
-	public int getAfdPerRing() { return afdPerRing;	}
-	public void setAfdPerRing(int afdPerRing) {	this.afdPerRing = afdPerRing; }
+	public int getAfdPerRing() { return afdPerRing; }
+	public void setAfdPerRing(int afdPerRing) { this.afdPerRing = afdPerRing; }
 
 	public int getEinduur() {
 		if (einduur != 0) return einduur;
-		else if (aantalRingen > 1) return Instellingen.Opties().TOTALETIJDRINGMETFINALE;
+		else if (aantalRingen > 1 || naam.toLowerCase().contains("touwtrekken")) return Instellingen.Opties().TOTALETIJDRINGMETFINALE;
 		else return Instellingen.Opties().TOTALETIJD;
 	}
 	public void setEinduur(int einduur) { this.einduur = einduur; }

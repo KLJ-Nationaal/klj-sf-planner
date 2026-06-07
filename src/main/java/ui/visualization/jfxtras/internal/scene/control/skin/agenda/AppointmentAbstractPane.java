@@ -264,7 +264,7 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 			this.setTijdslot(inschrijving.getTijdslot());
 			this.setKorps(inschrijving.getKorps());
 			this.setMogelijkeRingen(inschrijving.getMogelijkeRingen());
-			this.setVerbondenInschrijving(((Inschrijving) inschrijving).getVerbondenInschrijving());
+			this.setVerbondenInschrijvingen(((Inschrijving) inschrijving).getVerbondenInschrijvingen());
 			this.setRing(inschrijving.getRing());
 		}
 	}

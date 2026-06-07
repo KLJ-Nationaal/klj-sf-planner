@@ -67,17 +67,8 @@ public class Ring {
 		if (tijdslots.isEmpty()) {
 			// als de discipline met gereserveerde blokken werkt, de tijdsslots anders genereren
 			if (discipline.getSport().equals(Sport.TOUWTREKKEN)) {
-				// touwtrekken op IRSF: eerst vroegste, dan laatste, rest opvullen om dynamisch te zijn
-				int start = 0;
-				int eind = Math.round(getEinduur() / 15.0f) * 15; //TODO: afronden tot op het kwartiertje, kan beter
-				Tijdslot eerste = new Tijdslot(start, discipline.getDuur(), this);
-				tijdslots.add(eerste);
-				start += discipline.getDuur();
-				Tijdslot laatste = new Tijdslot(eind - discipline.getDuur(), discipline.getDuur(), this);
-				tijdslots.add(laatste);
-				eind -= discipline.getDuur();
-				for (; start <= (eind - discipline.getDuur()); eind -= discipline.getDuur()) {
-					Tijdslot tijdslot = new Tijdslot(eind - discipline.getDuur(), discipline.getDuur(), this);
+				for (int start = 0; start <= getEinduur() - discipline.getDuur(); start += discipline.getDuur()) {
+					Tijdslot tijdslot = new Tijdslot(start, discipline.getDuur(), this);
 					tijdslots.add(tijdslot);
 				}
 			} else {
