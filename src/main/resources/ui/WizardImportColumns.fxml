@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.CheckListView?>
 <BorderPane prefHeight="300.0" prefWidth="600.0"
             xmlns:fx="http://javafx.com/fxml" fx:controller="ui.importer.WizardImportColumnsController">
     <center>
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
             <Label layoutX="14.0" layoutY="14.0" text="Afdeling"/>
-            <ChoiceBox fx:id="txtAfdeling" layoutX="184.0" layoutY="10.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="44.0" text="Piramide"/>
-            <ChoiceBox fx:id="txtPiramide" layoutX="184.0" layoutY="40.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="74.0" text="Dansen"/>
-            <ChoiceBox fx:id="txtDansen" layoutX="184.0" layoutY="70.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="104.0" text="Wimpelen"/>
-            <ChoiceBox fx:id="txtWimpelen" layoutX="184.0" layoutY="100.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="134.0" text="Vendelen"/>
-            <ChoiceBox fx:id="txtVendelen" layoutX="184.0" layoutY="130.0" prefWidth="200.0"/>
-            <Label layoutX="14.0" layoutY="164.0" text="Touwtrekken"/>
-            <ChoiceBox fx:id="txtTouwtrekken" layoutX="184.0" layoutY="160.0" prefWidth="200.0"/>
-            <CheckBox fx:id="chkKopteksten" layoutX="14.0" layoutY="200.0" mnemonicParsing="false" selected="true"
-                      text="Tabel bevat kopteksten"/>
+            <ChoiceBox fx:id="txtAfdeling" layoutX="184.0" layoutY="10.0" prefWidth="300.0"
+                       AnchorPane.leftAnchor="184.0" AnchorPane.rightAnchor="15.0"/>
+            <Label layoutX="14.0" layoutY="44.0" text="Disciplines"/>
+            <CheckListView fx:id="txtDisciplines" layoutX="184.0" layoutY="40.0" prefWidth="300.0" prefHeight="250"
+                           AnchorPane.topAnchor="40.0" AnchorPane.leftAnchor="184.0"
+                           AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"/>
         </AnchorPane>
     </center>
 </BorderPane>

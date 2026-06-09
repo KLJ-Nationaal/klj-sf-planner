@@ -77,9 +77,8 @@ public class WizardImportReeksenController extends WizardImportController {
 			model.getReeksen().clear();
 			// TODO: errors in Marshalling controleren
 			ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
-					Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-					model.getColAfdeling(), model.getColDansen(), model.getColPiramide(), model.getColWimpelen(),
-					model.getColVendelen(), model.getColTouwtrekken());
+					Marshalling.getActiveSheet(model.getFilename()),
+					model.getColAfdeling(), model.getColDisciplines());
 			groepsinschrijvingen.stream()
 					.collect(Collectors.groupingBy(Groepsinschrijving::getDiscipline, Collectors.summingInt(Groepsinschrijving::getAantal)))
 					.forEach((discipline, aantal) -> model.getReeksen().add(new Reeks(discipline, aantal)));

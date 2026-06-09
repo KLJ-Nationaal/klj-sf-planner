@@ -64,9 +64,8 @@ public class Marshalling {
 		return columns;
 	}
 
-	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex, boolean hasTitles,
-	                                                                       int colAfdeling, int colDansen, int colPiramide, int colWimpelen,
-	                                                                       int colVendelen, int colTouwtrekken) {
+	public static ArrayList<Groepsinschrijving> importGroepsinschrijvingen(String filename, int worksheetIndex,
+	                                                                       int colAfdeling, List<Integer> colDisciplines) {
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = new ArrayList<>();
 		try {
 			File excelFile = new File(filename);
@@ -75,7 +74,7 @@ public class Marshalling {
 			XSSFSheet sheet = workbook.getSheetAt(worksheetIndex);
 			Iterator<Row> rowIt = sheet.iterator();
 
-			if (hasTitles) rowIt.next();
+			Row headers = rowIt.next();
 
 			while (rowIt.hasNext()) {
 				Row row = rowIt.next();
@@ -85,46 +84,20 @@ public class Marshalling {
 							.toLowerCase().replace("klj ", "");
 					final String afdeling = WordUtils.capitalizeFully(afd, ' ', '-', '&');
 
-					if (colVendelen > -1 && row.getCell(colVendelen) != null)
+					for (Integer colDiscipline : colDisciplines) {
 						try {
-							splitDisciplines(row.getCell(colVendelen).getStringCellValue()).forEach(
-									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
-							);
+							if (row.getCell(colDiscipline) != null) {
+								String discipline = headers.getCell(colDiscipline)
+										.getStringCellValue()
+										.replaceAll("\\(.*", "")
+										.strip();
+								int aantal = (int) row.getCell(colDiscipline).getNumericCellValue();
+								if (aantal > 0) groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal));
+							}
 						} catch (Exception e) {
-							logger.error("Fout op rij {}, kolom {} (Vendelen): {}", row.getRowNum() + 1, colVendelen, e.getLocalizedMessage());
+							logger.error("Fout op rij {}, kolom {} (Dansen): {}", row.getRowNum() + 1, colDisciplines, e.getLocalizedMessage());
 						}
-					if (colDansen > -1 && row.getCell(colDansen) != null)
-						try {
-							splitDisciplines(row.getCell(colDansen).getStringCellValue()).forEach(
-									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
-							);
-						} catch (Exception e) {
-							logger.error("Fout op rij {}, kolom {} (Dansen): {}", row.getRowNum() + 1, colDansen, e.getLocalizedMessage());
-						}
-					if (colPiramide > -1 && row.getCell(colPiramide) != null)
-						try {
-							splitDisciplines(row.getCell(colPiramide).getStringCellValue()).forEach(
-									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
-							);
-						} catch (Exception e) {
-							logger.error("Fout op rij {}, kolom {} (Piramide): {}", row.getRowNum() + 1, colPiramide, e.getLocalizedMessage());
-						}
-					if (colTouwtrekken > -1 && row.getCell(colTouwtrekken) != null)
-						try {
-							splitDisciplines(row.getCell(colTouwtrekken).getStringCellValue()).forEach(
-									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
-							);
-						} catch (Exception e) {
-							logger.error("Fout op rij {}, kolom {} (Touwtrekken): {}", row.getRowNum() + 1, colTouwtrekken, e.getLocalizedMessage());
-						}
-					if (colWimpelen > -1 && row.getCell(colWimpelen) != null)
-						try {
-							splitDisciplines(row.getCell(colWimpelen).getStringCellValue()).forEach(
-									(discipline, aantal) -> groepsinschrijvingen.add(new Groepsinschrijving(afdeling, discipline, aantal))
-							);
-						} catch (Exception e) {
-							logger.error("Fout op rij {}, kolom {} (Wimpelen): {}", row.getRowNum() + 1, colWimpelen, e.getLocalizedMessage());
-						}
+					}
 				} catch (NullPointerException npe) {
 					logger.error("Fout op rij {}: {}", row.getRowNum() + 1, npe.getLocalizedMessage());
 				}

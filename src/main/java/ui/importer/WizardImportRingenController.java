@@ -243,9 +243,7 @@ public class WizardImportRingenController extends WizardImportController {
 		final AtomicInteger aantal = new AtomicInteger(0);
 		// TODO: errors in Marshalling controleren
 		ArrayList<Groepsinschrijving> groepsinschrijvingen = Marshalling.importGroepsinschrijvingen(model.getFilename(),
-				Marshalling.getActiveSheet(model.getFilename()), model.getColHeaders(),
-				model.getColAfdeling(), model.getColDansen(), model.getColPiramide(), model.getColWimpelen(),
-				model.getColVendelen(), model.getColTouwtrekken());
+				Marshalling.getActiveSheet(model.getFilename()), model.getColAfdeling(), model.getColDisciplines());
 		groepsinschrijvingen.stream()
 				// voor touwtrekken houden we geen rekening met leeftijd, dus verwijder dubbele (-16 & +16)
 				.collect(Collectors.collectingAndThen(
