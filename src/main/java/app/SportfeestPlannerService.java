@@ -129,9 +129,9 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 							logger.debug("{}: {}", inschrijving, s);
 							inschrijving.setTijdslot(s);
 						});
-
-				sportfeestProperty.set(solver.solve(sportfeestProperty.get()));
-				return sportfeestProperty.get();
+				final Sportfeest newSf = solver.solve(sportfeestProperty.get());
+				sportfeestProperty.set(newSf);
+				return newSf;
 			}
 		};
 	}

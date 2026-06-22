@@ -4,6 +4,7 @@ import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionPrope
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
+import ai.timefold.solver.core.api.domain.solution.cloner.DeepPlanningClone;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import jakarta.xml.bind.annotation.*;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class Sportfeest {
 	private String locatie;
 	private Date datum;
 
+	@DeepPlanningClone
 	@XmlElementWrapper(name = "Afdelingen")
 	@XmlElement(name = "Afdeling")
 	public HashSet<Afdeling> getAfdelingen() { return afdelingen; }
@@ -37,6 +39,10 @@ public class Sportfeest {
 			all.addAll(afdeling.getInschrijvingen());
 		}
 		return all;
+	}
+	public void setInschrijvingen(List<Inschrijving> inschrijvingen) {
+		// Timefold vereist een setter, maar wij negeren de input
+		// want de bron van waarheid zit in Afdeling
 	}
 
 	@ProblemFactCollectionProperty

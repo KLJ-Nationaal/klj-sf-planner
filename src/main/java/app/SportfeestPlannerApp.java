@@ -2,18 +2,17 @@ package app;
 
 import ai.timefold.solver.core.api.score.ScoreExplanation;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ch.qos.logback.classic.Logger;
+import domain.Inschrijving;
 import domain.Sportfeest;
 import org.slf4j.LoggerFactory;
 import persistence.Marshalling;
 
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class SportfeestPlannerApp {
@@ -23,7 +22,14 @@ public class SportfeestPlannerApp {
 		SolverFactory<Sportfeest> solverFactory = SolverFactory.createFromXmlResource("solverConfig.xml");
 		Solver<Sportfeest> solver = solverFactory.buildSolver();
 
-		Sportfeest unsolvedSportfeest = Marshalling.unmarshallXml("data/adegem-140724-pre.xml");
+		Sportfeest unsolvedSportfeest = Marshalling.unmarshallXml("data/test.xml");
+
+		Set<Object> seen = new HashSet<>();
+		for (Inschrijving i : unsolvedSportfeest.getInschrijvingen()) {
+			if (!seen.add(System.identityHashCode(i) + i.toString())) {
+				System.out.println("DUPLICAAT: " + i);
+			}
+		}
 
 		Sportfeest solvedSportfeest = solver.solve(unsolvedSportfeest);
 
@@ -34,6 +40,9 @@ public class SportfeestPlannerApp {
 		try {
 			SolutionManager<Sportfeest, HardSoftScore> solutionManager = SolutionManager.create(solverFactory);
 			ScoreExplanation<Sportfeest, HardSoftScore> explanation = solutionManager.explain(solvedSportfeest);
+
+			logger.info("Score: {}", solvedSportfeest.getScore().toString());
+			/*
 			for (ConstraintMatchTotal<?> cmt : explanation.getConstraintMatchTotalMap().values()) {
 				Consumer<String> c = logger::info;
 				if (((HardSoftScore) cmt.getScore()).hardScore() != 0) {
@@ -49,12 +58,7 @@ public class SportfeestPlannerApp {
 							.collect(Collectors.joining(", ")));
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
-			Marshalling.marshall(solvedSportfeest, "data/uurschema");
+			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

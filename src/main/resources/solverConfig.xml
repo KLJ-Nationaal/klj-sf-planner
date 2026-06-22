@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--solver xmlns="https://www.optaplanner.org/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="https://www.optaplanner.org/xsd/solver https://www.optaplanner.org/xsd/solver/solver.xsd"-->
 <solver>
-    <!--<environmentMode>FULL_ASSERT</environmentMode>--><!-- To slowly prove there are no bugs in this code -->
-    <!--<moveThreadCount>AUTO</moveThreadCount>--><!-- To solve faster by saturating multiple CPU cores -->
-
     <solutionClass>domain.Sportfeest</solutionClass>
     <entityClass>domain.Inschrijving</entityClass>
+    <!-- debug only -->
+    <!--<environmentMode>FULL_ASSERT</environmentMode>-->
 
     <scoreDirectorFactory>
         <constraintProviderClass>solver.SportfeestConstraintProvider</constraintProviderClass>
@@ -16,11 +13,7 @@
     <termination>
         <bestScoreLimit>0hard/0soft</bestScoreLimit>
     </termination>
-    <!--
-      <constructionHeuristic>
-        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
-      </constructionHeuristic>
-    -->
+
     <constructionHeuristic>
 
     </constructionHeuristic>
@@ -32,28 +25,10 @@
         </unionMoveSelector>
 
         <termination>
-            <secondsSpentLimit>120</secondsSpentLimit>
+            <secondsSpentLimit>20</secondsSpentLimit>
         </termination>
-        <localSearchType>TABU_SEARCH</localSearchType>
+        <localSearchType>
+            LATE_ACCEPTANCE
+        </localSearchType>
     </localSearch>
-    <!--
-  <localSearch>
-    <unionMoveSelector>
-      <changeMoveSelector>
-        <selectionOrder>ORIGINAL</selectionOrder>
-      </changeMoveSelector>
-      <swapMoveSelector/>
-      <pillarSwapMoveSelector/>
-      <moveListFactory>
-        <moveListFactoryClass>org.optaplanner.examples.pas.solver.move.factory.BedDesignationPillarPartSwapMoveFactory</moveListFactoryClass>
-      </moveListFactory>
-    </unionMoveSelector>
-    <acceptor>
-      <entityTabuSize>7</entityTabuSize>
-    </acceptor>
-    <forager>
-      <acceptedCountLimit>1000</acceptedCountLimit>
-    </forager>
-  </localSearch>
-  -->
 </solver>

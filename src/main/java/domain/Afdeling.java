@@ -1,5 +1,6 @@
 package domain;
 
+import ai.timefold.solver.core.api.domain.solution.cloner.DeepPlanningClone;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@DeepPlanningClone
 public class Afdeling {
 	private static final Logger logger = LoggerFactory.getLogger(Afdeling.class);
 	private String naam;
@@ -32,6 +34,7 @@ public class Afdeling {
 	public String getRegio() { return regio; }
 	public void setRegio(String regio) { this.regio = regio; }
 
+	@DeepPlanningClone
 	@XmlElementWrapper(name = "Inschrijvingen")
 	@XmlElement(name = "Inschrijving")
 	@ValueRangeProvider(id = "Inschrijving")

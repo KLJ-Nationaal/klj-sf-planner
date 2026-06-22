@@ -31,7 +31,7 @@
         <dependency>
             <groupId>ai.timefold.solver</groupId>
             <artifactId>timefold-solver-core</artifactId>
-            <version>1.24.0</version>
+            <version>1.31.0</version>
         </dependency>
         <!-- logging -->
         <dependency>

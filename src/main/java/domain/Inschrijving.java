@@ -3,6 +3,7 @@ package domain;
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+import ai.timefold.solver.core.api.domain.solution.cloner.DeepPlanningClone;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import difficulty.InschrijvingDifficultyComparator;
@@ -19,7 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-@PlanningEntity(difficultyComparatorClass = InschrijvingDifficultyComparator.class)
+@DeepPlanningClone
+@PlanningEntity(comparatorClass = InschrijvingDifficultyComparator.class)
 public class Inschrijving implements InschrijvingInterface {
 	private Integer id;
 	private Afdeling afdeling;
@@ -28,8 +30,10 @@ public class Inschrijving implements InschrijvingInterface {
 	private Discipline discipline;
 	private int korps;
 	private List<Ring> mogelijkeRingen;
+	@DeepPlanningClone
 	private List<Inschrijving> verbondenInschrijvingen;
 	private boolean gereserveerdBlok;
+	@DeepPlanningClone
 	private HashSet<Inschrijving> verbondenRestricties;
 
 	public Inschrijving() { verbondenRestricties = new HashSet<>(); }
@@ -46,7 +50,7 @@ public class Inschrijving implements InschrijvingInterface {
 
 	@XmlIDREF
 	@PlanningVariable(valueRangeProviderRefs = {"Tijdslot"},
-			strengthComparatorClass = TijdslotStrengthComparator.class,
+			comparatorClass = TijdslotStrengthComparator.class,
 			allowsUnassigned = true)
 	public Tijdslot getTijdslot() {
 		return tijdslot;

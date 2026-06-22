@@ -182,7 +182,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 					int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
 					return max - min > 1;
 				})
-				.penalize(HardSoftScore.ONE_SOFT,
+				.penalize(HardSoftScore.ofSoft(6),
 						(ring, counts) -> {
 							int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
 							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
