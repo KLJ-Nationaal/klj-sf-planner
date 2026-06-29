@@ -73,9 +73,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 		}
 
 		@Override
-		public void flush() {
-
-		}
+		public void flush() {}
 
 		private final AtomicBoolean uiTaskPending = new AtomicBoolean(false);
 
@@ -99,7 +97,7 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 			StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
 			boolean hasContent = false;
 			for (Pair<String, String> segment : segments) {
-				String s = segment.getKey();
+				String s = segment.getKey().replace("\r", "");
 				if (!s.isEmpty()) {
 					sb.append(s);
 					spansBuilder.add(Collections.singleton(segment.getValue()), s.length());
@@ -116,12 +114,16 @@ public class TextAreaLogAppender<E> extends OutputStreamAppender<E> {
 
 			Platform.runLater(() -> {
 				try {
+					//for (Pair<String, String> segment : segments) {
+					//	textArea.append(segment.getKey(), segment.getValue());
+					//}
 					int insertAt = textArea.getLength();
-					textArea.appendText(fullText);
+					textArea.insertText(insertAt, fullText);
 					textArea.setStyleSpans(insertAt, spans);
+
 					if (textArea.getLength() > MAX_AREA_CHARS) {
-						// Trim to 50% so we don't re-trim every single flush
-						textArea.deleteText(0, textArea.getLength() - (MAX_AREA_CHARS / 2));
+						// Trim to 75% so we don't re-trim every single flush
+						textArea.deleteText(0, textArea.getLength() - (MAX_AREA_CHARS / 4));
 					}
 				} finally {
 					uiTaskPending.set(false); // always release, even on exception

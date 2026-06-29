@@ -4,4 +4,5 @@ import domain.importing.Reeks;
 
 public sealed interface RestrictieInterface permits Sport, Reeks {
 	String getNaam();
+	boolean equals(Object obj);
 }

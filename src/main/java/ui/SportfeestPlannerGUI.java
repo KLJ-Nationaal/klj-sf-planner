@@ -316,7 +316,7 @@ public class SportfeestPlannerGUI extends Application {
 			Parent root = loader.load();
 
 			AnalyseResultaatController analyseResultaatController = loader.getController();
-			analyseResultaatController.setSportfeest(sportfeestPlannerService.getSportfeest(), sportfeestPlannerService.getSolutionManager());
+			analyseResultaatController.setSportfeest(sportfeestPlannerService.getSportfeest(), sportfeestPlannerService.getSolverFactory());
 			Stage stage = new Stage();
 			stage.setTitle("Score en analyse resultaat");
 			stage.setScene(new Scene(root));
@@ -475,9 +475,9 @@ public class SportfeestPlannerGUI extends Application {
 	}
 
 	private Void refreshAgendas(InschrijvingInterface inschrijving) {
-		System.out.println("Callback veranderd:" + inschrijving);
 		ringenController.refresh();
 		afdelingenController.refresh();
+		txtStatusLabel.setText(sportfeestPlannerService.getSolutionManager().update(sportfeestPlannerService.getSportfeest()).toString());
 		return null;
 	}
 
@@ -524,6 +524,8 @@ public class SportfeestPlannerGUI extends Application {
 					(totalMemory - freeMemory) / 1024 / 1024,
 					totalMemory / 1024 / 1024,
 					maxMemory / 1024 / 1024);
+
+			logger.info("Log level: {}", logger.getEffectiveLevel().toString());
 
 		} catch (Exception e) {
 			logger.error("Failed to log system information", e);

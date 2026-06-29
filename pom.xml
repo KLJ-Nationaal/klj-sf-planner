@@ -6,7 +6,7 @@
 
     <groupId>klj</groupId>
     <artifactId>KljSfPlanner</artifactId>
-    <version>0.7</version>
+    <version>0.8</version>
     <properties>
         <package.filename>sf-planner</package.filename>
         <package.modulename>kljsfplanner</package.modulename>
@@ -31,7 +31,12 @@
         <dependency>
             <groupId>ai.timefold.solver</groupId>
             <artifactId>timefold-solver-core</artifactId>
-            <version>1.31.0</version>
+            <version>1.33.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ai.timefold.solver</groupId>
+            <artifactId>timefold-solver-test</artifactId>
+            <version>1.33.0</version>
         </dependency>
         <!-- logging -->
         <dependency>
@@ -107,6 +112,23 @@
             </resource>
         </resources>
         <plugins>
+            <!-- TODO: delete this dir (not working now) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>target\build\sf-planner</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -171,6 +193,11 @@
                                 <resource>
                                     <directory>${basedir}/data</directory>
                                     <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>**/*.xlsx</exclude>
+                                        <exclude>**/*.zip</exclude>
+                                        <exclude>**/*/*</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>

@@ -1,10 +1,7 @@
 package app;
 
 import ai.timefold.solver.core.api.score.Score;
-import ai.timefold.solver.core.api.score.ScoreExplanation;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
@@ -22,15 +19,15 @@ import javafx.concurrent.Task;
 import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
 import persistence.Instellingen;
+import solver.ConstraintAnalyzer;
 
 import java.util.Random;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class SportfeestPlannerService extends Service<Sportfeest> {
 	private final SolverConfig solverConfig = SolverConfig.createFromXmlResource("solverConfig.xml");
 	private final Solver<Sportfeest> solver;
 	private final SolutionManager<Sportfeest, HardSoftScore> solutionManager;
+	private final SolverFactory<Sportfeest> solverFactory;
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(SportfeestPlannerService.class);
 
 	private final ObjectProperty<Sportfeest> sportfeestProperty = new SimpleObjectProperty<>(this, "sportfeest");
@@ -49,13 +46,15 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 		solverConfig.getPhaseConfigList().stream()
 				.filter(pc -> pc.getTerminationConfig() != null)
 				.forEach(pc -> pc.getTerminationConfig().setSecondsSpentLimit((long) Instellingen.Opties().SOLVERTIMELIMIT));
-		SolverFactory<Sportfeest> solverFactory = SolverFactory.create(solverConfig);
+		solverFactory = SolverFactory.create(solverConfig);
 		solutionManager = SolutionManager.create(solverFactory);
 		solver = solverFactory.buildSolver();
 		solver.addEventListener(event -> {
 			sportfeestProperty.set(event.getNewBestSolution());
 			scoreProperty.set(event.getNewBestScore());
 			timeMillisSpentProperty.set(event.getTimeMillisSpent());
+			logger.info("{} Betere oplossing gevonden, verlopen tijd: {}s, beste score: {}", event.getProducerId().toString(),
+					Math.round((float) event.getTimeMillisSpent() / 100) / 10f, event.getNewBestScore().toString());
 		});
 	}
 
@@ -75,38 +74,33 @@ public class SportfeestPlannerService extends Service<Sportfeest> {
 	public SolutionManager<Sportfeest, HardSoftScore> getSolutionManager() {
 		return solutionManager;
 	}
+	public SolverFactory<Sportfeest> getSolverFactory() { return solverFactory; }
 
-	@Override
-	protected void succeeded() {
-		super.succeeded();
-		logger.info("Einde van de berekening");
+	public void printResults() {
 		logger.info("Score: {}", sportfeestProperty.get().getScore().toString());
 		if (!sportfeestProperty.get().getScore().isFeasible()) logger.warn("DEZE OPLOSSING IS NIET HAALBAAR!");
 
 		try {
-			ScoreExplanation<Sportfeest, HardSoftScore> explanation = solutionManager.explain(sportfeestProperty.get());
-
-			for (ConstraintMatchTotal<?> cmt : explanation.getConstraintMatchTotalMap().values()) {
-				Consumer<String> c = logger::info;
-				if (((HardSoftScore) cmt.getScore()).hardScore() != 0) {
-					c = logger::warn;
-				}
-
-				c.accept("  Voorwaarde: " + cmt.getConstraintRef().constraintName());
-				c.accept("  Gewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount());
-
-				for (ConstraintMatch<?> cm : cmt.getConstraintMatchSet()) {
-					c.accept("    " + cm.getIndictedObjectList().stream()
-							.map(Object::toString)
-							.collect(Collectors.joining(", ")));
-				}
-			}
+			var analyzer = new ConstraintAnalyzer(solverFactory);
+			analyzer.analyze(sportfeestProperty.get()).printSummary();
 		} catch (Exception e) {
 			logger.warn("Fout bij het analyseren van de score: {}", e.getLocalizedMessage(), e);
 		}
-
 	}
 
+	@Override
+	protected void succeeded() {
+		super.succeeded();
+		logger.info("Berekening voltooid");
+		printResults();
+	}
+
+	@Override
+	protected void cancelled() {
+		super.cancelled();
+		logger.info("Berekening gestopt");
+		printResults();
+	}
 	@Override
 	protected Task<Sportfeest> createTask() {
 		return new Task<>() {

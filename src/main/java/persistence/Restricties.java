@@ -25,7 +25,7 @@ public class Restricties {
 	private static class RestrictieWrapper {
 		private List<Restrictie> items;
 		@XmlAttribute
-		public int version = 1;
+		public int version = 2;
 		@XmlElement(name = "Uitzondering")
 		public List<Restrictie> getList() { return items; }
 		public void setList(List<Restrictie> items) { this.items = items; }
@@ -41,6 +41,16 @@ public class Restricties {
 			RestrictieWrapper wrapper = (RestrictieWrapper) unmarshaller.unmarshal(xmlFile);
 			if (wrapper != null) {
 				restricties.addAll(wrapper.getList());
+
+				if (wrapper.version == 1) {
+					logger.warn("{} op versie 1, converteren naar versie 2.", filename);
+					restricties.forEach(restrictie -> {
+						if (restrictie.getA().getAfdeling().isEmpty()) restrictie.getA().setAfdeling(restrictie.getAfdeling());
+						if (restrictie.getB().getAfdeling().isEmpty()) restrictie.getB().setAfdeling(restrictie.getAfdeling());
+						restrictie.setAfdeling("");
+					});
+					wrapper.version = 2;
+				}
 			}
 			logger.info("Bestand {} ingelezen", xmlFile.getName());
 		} catch (JAXBException e) {

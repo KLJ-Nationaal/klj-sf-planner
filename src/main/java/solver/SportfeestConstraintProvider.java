@@ -2,16 +2,57 @@ package solver;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.*;
-import domain.Inschrijving;
-import domain.Sport;
-import domain.Tijdslot;
+import domain.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.*;
 
 public class SportfeestConstraintProvider implements ConstraintProvider {
+	public record SingleJustificationWithReason(Inschrijving inschrijving, String reason) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return inschrijving + "  [" + reason + "]";
+		}
+	}
+
+	public record SingleJustification(Inschrijving inschrijving) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return inschrijving.toString();
+		}
+	}
+
+	public record SingleCountJustification(Afdeling afdeling, Integer count) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return afdeling.toString() + " (" + count + "x)";
+		}
+	}
+
+	public record SingleCountsJustification(Object o, List<Integer> counts) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return o.toString() + " (" + counts.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")";
+		}
+	}
+
+	public record PairJustification(Inschrijving a, Inschrijving b) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return a + "  +  " + b;
+		}
+	}
+
+	public record DoubleJustification(Afdeling afdeling, Ring ring) implements ConstraintJustification {
+		@Override
+		public String toString() {
+			return afdeling + " in " + ring;
+		}
+	}
 
 	@Override
 	public Constraint[] defineConstraints(ConstraintFactory factory) {
@@ -37,14 +78,16 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	// *** HARD CONSTRAINTS ***
 	// ************************
 
-	private Constraint inschrijvingMoetTijdslotHebben(ConstraintFactory factory) {
+	Constraint inschrijvingMoetTijdslotHebben(ConstraintFactory factory) {
 		return factory.forEachIncludingUnassigned(Inschrijving.class)
 				.filter(inschrijving -> inschrijving.getTijdslot() == null)
 				.penalize(HardSoftScore.ofHard(32))
+
+				.justifyWith((a, score) -> new SingleJustification(a))
 				.asConstraint("Inschrijving zonder tijdslot");
 	}
 
-	private Constraint geenDubbeleInschrijvingVanAfdelingZelfdeTijd(ConstraintFactory factory) {
+	Constraint geenDubbeleInschrijvingVanAfdelingZelfdeTijd(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getAfdeling),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
@@ -56,16 +99,18 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 					return !b.isVerbonden(a) && ((aj && bj) || (am && bm));
 				})
 				.penalize(HardSoftScore.ofHard(10))
+				.justifyWith((a, b, score) -> new PairJustification(a, b))
 				.asConstraint("Twee inschrijvingen van een AFDELING vallen op het zelfde moment");
 	}
 
-	private Constraint geenDubbeleRingZelfdeTijd(ConstraintFactory factory) {
+	Constraint geenDubbeleRingZelfdeTijd(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getRing),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
 				.filter((a, b) -> !a.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)
 						&& !b.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.penalize(HardSoftScore.ofHard(8))
+				.justifyWith((a, b, score) -> new PairJustification(a, b))
 				.asConstraint("Geen twee afdelingen tegelijk in een RING");
 	}
 
@@ -73,7 +118,7 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 	// *** SOFT CONSTRAINTS ***
 	// ************************
 
-	private Constraint tijdTussenInschrijvingenVerschillendeRing(ConstraintFactory factory) {
+	Constraint tijdTussenInschrijvingenVerschillendeRing(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getAfdeling))
 				.filter((a, b) -> {
@@ -87,10 +132,11 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 						&& !b.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.filter((a, b) -> Math.abs(b.getTijdslot().timeBetween(a.getTijdslot())) < 6)
 				.penalize(HardSoftScore.ofSoft(5))
+				.justifyWith((a, b, score) -> new PairJustification(a, b))
 				.asConstraint("Te weinig tijd tussen inschrijvingen");
 	}
 
-	private Constraint inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(ConstraintFactory factory) {
+	Constraint inschrijvingenDisciplineZelfdeAfdelingMoetenAansluiten(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(i -> !i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.groupBy(
@@ -104,10 +150,11 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 					return inschrijvingen.getFirst().getStartTijd() < inschrijvingen.getLast().getEindTijd() - totaletijd;
 				})
 				.penalize(HardSoftScore.ofSoft(30))
+				.justifyWith((afdeling, ring, discipline, inschrijvingen, score) -> new DoubleJustification(afdeling, ring))
 				.asConstraint("Inschrijvingen afdeling met zelfde discipline moeten aansluiten");
 	}
 
-	private Constraint minimaliseerUniformWissels(ConstraintFactory factory) {
+	Constraint minimaliseerUniformWissels(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(Inschrijving::isJongens)
 				.filter(inschrijving -> !inschrijving.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
@@ -128,36 +175,38 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 				.groupBy((i1, i2) -> i1.getAfdeling(), ConstraintCollectors.countBi())
 				.filter((afdeling, wissels) -> wissels > 1)
 				.penalize(HardSoftScore.ofSoft(1), (afdeling, wissels) -> (int) Math.pow(wissels, 1.8))
+				.justifyWith((afdeling, count, hardSoftScore) -> new SingleCountJustification(afdeling, count))
 				.asConstraint("Minimaliseer uniformwissels");
 	}
 
-	private Constraint inschrijvingenDieMoetenSamenvallen(ConstraintFactory factory) {
+	Constraint inschrijvingenDieMoetenSamenvallen(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getAfdeling))
 				.filter((a, b) -> (a.getRing() != b.getRing()) && a.isVerbonden(b) && a.getStartTijd() != b.getStartTijd())
 				.penalize(HardSoftScore.ofSoft(70))
+				.justifyWith((a, b, hardSoftScore) -> new PairJustification(a, b))
 				.asConstraint("Inschrijvingen die op hetzelfde moment moeten beginnen");
 	}
 
-	private Constraint vermijdOngunstigeTijdslots(ConstraintFactory factory) {
+	Constraint vermijdOngunstigeTijdslots(ConstraintFactory factory) {
 		return factory.forEach(Inschrijving.class)
 				.filter(i -> i.getTijdslot().isOngunstig())
 				.penalize(HardSoftScore.ofSoft(1))
+				.justifyWith((inschrijving, hardSoftScore) -> new SingleJustification(inschrijving))
 				.asConstraint("Ongunstig tijdslot");
 	}
 
-	private Constraint restricties(ConstraintFactory factory) {
+	Constraint restricties(ConstraintFactory factory) {
 		return factory.forEachUniquePair(Inschrijving.class,
 						equal(Inschrijving::getAfdeling),
 						overlapping(Inschrijving::getStartTijd, Inschrijving::getEindTijd))
 				.filter((x, y) -> x.getVerbondenRestricties().contains(y))
 				.penalize(HardSoftScore.ofSoft(5))
+				.justifyWith((a, b, hardSoftScore) -> new PairJustification(a, b))
 				.asConstraint("Uitzondering");
 	}
 
 	private Constraint touwtrekkenVerdeelTijdslots(ConstraintFactory factory) {
-		// Stream 1: Tijdslots with NO TOUWTREKKEN inschrijving → count = 0
-		// (assumes Tijdslot has a getRing() method)
 		var zeroSlots = factory
 				.forEach(Tijdslot.class)
 				.ifNotExists(Inschrijving.class,
@@ -166,28 +215,35 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 						Joiners.filtering((t, i) -> i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN)))
 				.map(Tijdslot::getRing, t -> t, t -> 0);
 
-		// Stream 2: Tijdslots WITH actual TOUWTREKKEN counts
 		var actualSlots = factory
 				.forEach(Inschrijving.class)
 				.filter(i -> i.getDiscipline().getSport().equals(Sport.TOUWTREKKEN))
 				.groupBy(Inschrijving::getRing, Inschrijving::getTijdslot, ConstraintCollectors.count());
 
 		return zeroSlots
-				.concat(actualSlots)  // mutually exclusive, so no overlap
+				.concat(actualSlots)
 				.groupBy(
 						(ring, tijdslot, count) -> ring,
-						ConstraintCollectors.toList((ring, tijdslot, count) -> count))
+						// Bewaar tijdslot + count als paar zodat we kunnen sorteren
+						ConstraintCollectors.toList((ring, tijdslot, count) -> Map.entry(tijdslot, count)))
+				// Sorteer op tijdslot en extract daarna alleen de counts
+				.map((ring, entries) -> ring,
+						(ring, entries) -> entries.stream()
+								.sorted(Comparator.comparing(Map.Entry::getKey))
+								.map(Map.Entry::getValue)
+								.toList())
 				.filter((ring, counts) -> {
 					int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
 					int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
 					return max - min > 1;
 				})
-				.penalize(HardSoftScore.ofSoft(6),
+				.penalize(HardSoftScore.ofSoft(8),
 						(ring, counts) -> {
 							int max = counts.stream().mapToInt(Integer::intValue).max().orElse(0);
 							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
 							return (max - min) * (max - min);
 						})
+				.justifyWith((ring, counts, score) -> new SingleCountsJustification(ring, counts))
 				.asConstraint("Touwtrekken verdelen over de tijdslots");
 	}
 
@@ -211,6 +267,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
 							return (max - min) * (max - min);
 						})
+				//TODO: functie in justifyWith is niet de juiste (geen list)
+				.justifyWith((objects, integers, hardSoftScore) -> new SingleCountsJustification(objects, integers))
 				.asConstraint("Touwtrekken verdelen over de regio's");
 	}
 
@@ -234,7 +292,8 @@ public class SportfeestConstraintProvider implements ConstraintProvider {
 							int min = counts.stream().mapToInt(Integer::intValue).min().orElse(0);
 							return (max - min) * (max - min);
 						})
-				//.penalize(HardSoftScore.ofSoft(1))
+				//TODO: functie in justifyWith is niet de juiste (geen list)
+				.justifyWith((objects, integers, hardSoftScore) -> new SingleCountsJustification(objects, integers))
 				.asConstraint("Tijdsblokken touwtrekken verdelen over de disciplines (leeftijd en meisjes-jongens)");
 	}
 }

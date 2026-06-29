@@ -18,16 +18,23 @@ public class RestrictieUtils {
 		restricties.forEach(ro -> {
 			try {
 				// Afdeling opzoeken
-				Optional<Afdeling> afdeling = sf.getAfdelingen().stream()
-						.filter(afd -> afd.getNaam().equalsIgnoreCase(ro.getAfdeling()))
+				Optional<Afdeling> afdelingA = sf.getAfdelingen().stream()
+						.filter(afd -> afd.getNaam().equalsIgnoreCase(ro.getA().getAfdeling()))
 						.findAny();
-				if (afdeling.isEmpty()) {
-					logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", ro.getAfdeling());
+				if (afdelingA.isEmpty()) {
+					logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", ro.getA().getAfdeling());
+					return;
+				}
+				Optional<Afdeling> afdelingB = sf.getAfdelingen().stream()
+						.filter(afd -> afd.getNaam().equalsIgnoreCase(ro.getB().getAfdeling()))
+						.findAny();
+				if (afdelingB.isEmpty()) {
+					logger.warn("Afdeling {} niet gevonden bij het toevoegen van restricties", ro.getB().getAfdeling());
 					return;
 				}
 
-				List<Inschrijving> listA = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getA());
-				List<Inschrijving> listB = getInschrijvingenForRestrictieObject(afdeling.get(), ro.getB());
+				List<Inschrijving> listA = getInschrijvingenForRestrictieObject(afdelingA.get(), ro.getA());
+				List<Inschrijving> listB = getInschrijvingenForRestrictieObject(afdelingB.get(), ro.getB());
 
 				if (listA.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor A van uitzondering {}", ro);
 				if (listB.isEmpty()) logger.warn("Geen inschrijvingen gevonden voor B van uitzondering {}", ro);

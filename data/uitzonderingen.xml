@@ -1,75 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Uitzonderingen version="1">
-    <Uitzondering Afdeling="Doorslaar">
-        <A AlleKorpsen="false">
+<Uitzonderingen version="2">
+    <Uitzondering Afdeling="">
+        <A Afdeling="Adegem" AlleKorpsen="false">
             <Sport>DANS</Sport>
         </A>
-        <B AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
+        <B Afdeling="Adegem" AlleKorpsen="false">
+            <Sport>WIMPELEN</Sport>
         </B>
     </Uitzondering>
-    <Uitzondering Afdeling="Kluizen">
-        <A AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
+    <Uitzondering>
+        <A Afdeling="Bovenlokale keurwimpelgroep Bazelle-Waas" AlleKorpsen="false">
+            <Sport>WIMPELEN</Sport>
         </A>
-        <B AlleKorpsen="false">
+        <B Afdeling="Temse-Velle" AlleKorpsen="false">
             <Sport>DANS</Sport>
         </B>
     </Uitzondering>
-    <Uitzondering Afdeling="Kluizen">
-        <A AlleKorpsen="false">
+    <Uitzondering>
+        <A Afdeling="Bovenlokale keurwimpelgroep Bazelle-Waas" AlleKorpsen="false">
+            <Sport>WIMPELEN</Sport>
+        </A>
+        <B Afdeling="Bazel" AlleKorpsen="false">
+            <Sport>DANS</Sport>
+        </B>
+    </Uitzondering>
+    <Uitzondering>
+        <A Afdeling="Bovenlokale keurwimpelgroep Bazelle-Waas" AlleKorpsen="false">
+            <Sport>WIMPELEN</Sport>
+        </A>
+        <B Afdeling="Nieuwkerken-Waas" AlleKorpsen="false">
+            <Discipline>Vrije ritmiek meisjes</Discipline>
+        </B>
+    </Uitzondering>
+    <Uitzondering Afdeling="">
+        <A Afdeling="Kluizen" AlleKorpsen="false">
             <Sport>VENDELEN</Sport>
         </A>
-        <B AlleKorpsen="false">
+        <B Afdeling="Kluizen" AlleKorpsen="false">
+            <Sport>DANS</Sport>
+        </B>
+    </Uitzondering>
+    <Uitzondering Afdeling="">
+        <A Afdeling="Kluizen" AlleKorpsen="false">
+            <Sport>VENDELEN</Sport>
+        </A>
+        <B Afdeling="Kluizen" AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </B>
     </Uitzondering>
-    <Uitzondering Afdeling="Melsele">
-        <A AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
-        </A>
-        <B AlleKorpsen="false">
-            <Sport>WIMPELEN</Sport>
-        </B>
-    </Uitzondering>
-    <Uitzondering Afdeling="Opwijk">
-        <A AlleKorpsen="false">
+    <Uitzondering Afdeling="">
+        <A Afdeling="Moerbeke-Waas" AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
         </A>
-        <B AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
-        </B>
-    </Uitzondering>
-    <Uitzondering Afdeling="Sint-Gillis-Waas">
-        <A AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
-        </A>
-        <B AlleKorpsen="false">
-            <Discipline>Hoofdgilden muziekreeks</Discipline>
-        </B>
-    </Uitzondering>
-    <Uitzondering Afdeling="Sint-Gillis-Waas">
-        <A AlleKorpsen="false">
-            <Sport>VENDELEN</Sport>
-        </A>
-        <B AlleKorpsen="false">
-            <Discipline>Hoofdgilden vrije reeks</Discipline>
-        </B>
-    </Uitzondering>
-    <Uitzondering Afdeling="Wetteren">
-        <A AlleKorpsen="false">
+        <B Afdeling="Moerbeke-Waas" AlleKorpsen="false">
             <Discipline>Brechts korpsvendelen</Discipline>
-        </A>
-        <B AlleKorpsen="false">
-            <Sport>DANS</Sport>
         </B>
     </Uitzondering>
-    <Uitzondering Afdeling="Wetteren">
-        <A AlleKorpsen="false">
-            <Discipline>Brechts korpsvendelen</Discipline>
-        </A>
-        <B AlleKorpsen="false">
+    <Uitzondering Afdeling="">
+        <A Afdeling="Wetteren" AlleKorpsen="false">
             <Sport>WIMPELEN</Sport>
+        </A>
+        <B Afdeling="Wetteren" AlleKorpsen="false">
+            <Sport>VENDELEN</Sport>
         </B>
     </Uitzondering>
 </Uitzonderingen>

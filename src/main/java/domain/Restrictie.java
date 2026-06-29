@@ -16,17 +16,18 @@ public class Restrictie {
 
 	public Restrictie() {} // default constructor nodig voor XML marshalling
 
-	public Restrictie(String afdeling, RestrictieInterface a, boolean alleKorpsenA, RestrictieInterface b, boolean alleKorpsenB) {
-		this.afdeling.setValue(afdeling);
+	public Restrictie(String afdelingA, RestrictieInterface a, boolean alleKorpsenA, String afdelingB, RestrictieInterface b, boolean alleKorpsenB) {
+		this.A.setAfdeling(afdelingA);
 		this.A.setObject(a);
 		this.A.setAlleKorpsen(alleKorpsenA);
+		this.B.setAfdeling(afdelingB);
 		this.B.setObject(b);
 		this.B.setAlleKorpsen(alleKorpsenB);
 	}
 
+	@Deprecated
 	@XmlAttribute(name = "Afdeling")
 	public String getAfdeling() { return afdeling.get(); }
-	public StringProperty afdelingProperty() { return afdeling; }
 	public void setAfdeling(String afdeling) { this.afdeling.setValue(afdeling); }
 
 	@XmlElement(name = "A")
@@ -43,16 +44,16 @@ public class Restrictie {
 	public final boolean equals(Object o) {
 		if (!(o instanceof Restrictie that)) return false;
 
-		return afdeling.equals(that.afdeling) && Objects.equals(A, that.A) && Objects.equals(B, that.B);
+		return Objects.equals(A, that.A) && Objects.equals(B, that.B);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(afdeling, A, B);
+		return Objects.hash(A, B);
 	}
 
 	@Override
 	public String toString() {
-		return afdeling.getValue() + ": " + A + " en " + B;
+		return A + " en " + B;
 	}
 }

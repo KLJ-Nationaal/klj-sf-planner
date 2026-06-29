@@ -1,10 +1,7 @@
 package ui;
 
-import ai.timefold.solver.core.api.score.ScoreExplanation;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
-import ai.timefold.solver.core.api.score.constraint.ConstraintMatchTotal;
-import ai.timefold.solver.core.api.solver.SolutionManager;
+import ai.timefold.solver.core.api.solver.SolverFactory;
+import ch.qos.logback.classic.Logger;
 import domain.Sportfeest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,12 +15,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.util.stream.Collectors;
+import org.slf4j.LoggerFactory;
+import solver.ConstraintAnalyzer;
 
 public class AnalyseResultaatController {
 	@FXML
 	private TreeView<String> treeView;
+
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(AnalyseResultaatController.class);
 
 	private final static class IconType {
 		private final static int EXCLAMATION = 0;
@@ -35,25 +34,27 @@ public class AnalyseResultaatController {
 	public void initialize() {
 	}
 
-	public void setSportfeest(Sportfeest sportfeest, SolutionManager<Sportfeest, HardSoftScore> solutionManager) {
-		ScoreExplanation<Sportfeest, HardSoftScore> explanation = solutionManager.explain(sportfeest);
-		sportfeest.setScore(explanation.getScore());
+	public void setSportfeest(Sportfeest sportfeest, SolverFactory<Sportfeest> solverFactory) {
+		var analyzer = new ConstraintAnalyzer(solverFactory);
+		var analysisResult = analyzer.analyze(sportfeest);
 		TreeItem<String> root = new TreeItem<>("Score: " + sportfeest.getScore().toString());
 		if (!sportfeest.getScore().isFeasible()) {
 			root.getChildren().add(new TreeItem<>("DEZE OPLOSSING IS NIET HAALBAAR!", getIcon(IconType.EXCLAMATION)));
 		}
 
-		for (ConstraintMatchTotal<HardSoftScore> cmt : explanation.getConstraintMatchTotalMap().values()) {
+		// sanity check
+		if (!analysisResult.totalScore().equals(sportfeest.getScore())) {
+			logger.error("Verschil tussen de scores van de solver en de analyzer ({} en {}). Dit mag niet voorkomen! ", sportfeest.getScore(), analysisResult.totalScore());
+		}
+		for (var constraintResult : analysisResult.constraints()) {
 			ImageView icon = getIcon(IconType.WARNING);
-			if (cmt.getScore().hardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
-			else if (cmt.getScore().softScore() == 0) icon = getIcon(IconType.INFO);
+			if (constraintResult.totalScore().hardScore() != 0) icon = getIcon(IconType.EXCLAMATION);
+			else if (constraintResult.totalScore().softScore() == 0) icon = getIcon(IconType.INFO);
 			TreeItem<String> constr = new TreeItem<>(
-					"Voorwaarde: " + cmt.getConstraintRef().constraintName() + "\nGewicht: " + cmt.getScore() + ", Aantal keer: " + cmt.getConstraintMatchCount(),
+					"Voorwaarde: " + constraintResult.name() + "\nGewicht: " + constraintResult.totalScore() + ", Aantal keer: " + constraintResult.matchCount(),
 					icon);
-			for (ConstraintMatch<HardSoftScore> cm : cmt.getConstraintMatchSet()) {
-				constr.getChildren().add(new TreeItem<>(cm.getIndictedObjectList().stream()
-						.map(Object::toString)
-						.collect(Collectors.joining(", "))));
+			for (var matchResult : constraintResult.matches()) {
+				constr.getChildren().add(new TreeItem<>(matchResult.toString()));
 			}
 			root.getChildren().add(constr);
 		}

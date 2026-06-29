@@ -19,6 +19,7 @@ module kljsfplanner {
 	requires java.management;
 	requires ai.timefold.solver.core;
 	requires spire.xls.free;
+	requires ai.timefold.solver.test;
 
 	opens ui;
 	opens ui.importer;
@@ -33,4 +34,5 @@ module kljsfplanner {
 	opens util;
 
 	exports solver;
+	exports domain;
 }

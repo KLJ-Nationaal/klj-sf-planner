@@ -49,6 +49,10 @@ import java.util.Objects;
 abstract class AppointmentAbstractPane<H> extends Pane {
 	private final static Logger logger = (Logger) LoggerFactory.getLogger(AppointmentAbstractPane.class);
 
+	// We need to keep a reference to the ListChangeListener, otherwise it gets garbage collected and the WeakListChangeListener doesn't work
+	@SuppressWarnings("FieldCanBeLocal")
+	private final ListChangeListener<InschrijvingInterface> listChangeListener;
+
 	AppointmentAbstractPane(InschrijvingInterface appointment, LayoutHelp<H> layoutHelp) {
 		this.appointment = appointment;
 		this.layoutHelp = layoutHelp;
@@ -61,14 +65,15 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 			color = layoutHelp.skinnable.getItemColorFactory().call(appointment);
 		}
 		setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
-		layoutHelp.divergentSelectedProperty.addListener((observable, oldValue, newValue) -> {
-			Object col = layoutHelp.skinnable.getItemValueFactory().call(appointment);
-			if (newValue.isEmpty() | col.equals(newValue)) {
-				setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
-			} else {
-				setStyle("-fx-background-color: #efefef; -fx-border-color: " + color + "; -fx-border-width: 1px; -fx-fill: efefef;");
-			}
-		});
+		layoutHelp.divergentSelectedProperty.addListener(
+				(observable, oldValue, newValue) -> {
+					Object series = layoutHelp.skinnable.getItemValueFactory().call(appointment);
+					if (observable.getValue().isEmpty() | newValue.contains(series)) {
+						setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
+					} else {
+						setStyle("-fx-background-color: #efefef; -fx-border-color: " + color + "; -fx-border-width: 1px; -fx-fill: efefef;");
+					}
+				});
 
 		// tooltip
 		if (layoutHelp.skinnable.getItemValueFactory() != null) {
@@ -79,7 +84,7 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 		setupDragging();
 
 		// react to changes in the selected appointments
-		ListChangeListener<InschrijvingInterface> listChangeListener = changes -> setOrRemoveSelected();
+		listChangeListener = changes -> setOrRemoveSelected();
 		layoutHelp.skinnable.selectedAppointments().addListener(new WeakListChangeListener<>(listChangeListener));
 	}
 
@@ -89,18 +94,22 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 	protected String color;
 
 	private void setOrRemoveSelected() {
-		// remove class if not selected
-		if (getStyleClass().contains(SELECTED) // visually selected
-				&& !layoutHelp.skinnable.selectedAppointments().contains(appointment) // but no longer in the selected collection
-		) {
-			getStyleClass().remove(SELECTED);
-		}
+		if (!layoutHelp.skinnable.selectedAppointments().isEmpty() && !layoutHelp.divergentSelectedProperty.isEmpty()) {
+			// remove class if not selected
+			if (getStyleClass().contains(SELECTED) // visually selected
+					&& !layoutHelp.skinnable.selectedAppointments().contains(appointment) // but no longer in the selected collection
+			) {
+				getStyleClass().remove(SELECTED);
+				setStyle("-fx-background-color: #efefef; -fx-border-color: " + color + "; -fx-border-width: 1px; -fx-fill: efefef;");
+			}
 
-		// add class if selected
-		if (!getStyleClass().contains(SELECTED) // visually not selected
-				&& layoutHelp.skinnable.selectedAppointments().contains(appointment) // but still in the selected collection
-		) {
-			getStyleClass().add(SELECTED);
+			// add class if selected
+			if (!getStyleClass().contains(SELECTED) // visually not selected
+					&& layoutHelp.skinnable.selectedAppointments().contains(appointment) // but still in the selected collection
+			) {
+				getStyleClass().add(SELECTED);
+				setStyle("-fx-background-color: " + color + "; -fx-fill: " + color + ";");
+			}
 		}
 	}
 
@@ -311,27 +320,32 @@ abstract class AppointmentAbstractPane<H> extends Pane {
 	}
 
 	private void handleSelect(MouseEvent mouseEvent) {
-		// if not shift pressed, clear the selection
-		if (!mouseEvent.isShiftDown() && !mouseEvent.isControlDown()) {
-			layoutHelp.skinnable.selectedAppointments().clear();
-		}
-
-		//double click
+		// double click: select
 		if (mouseEvent.getClickCount() > 1) {
-			if (layoutHelp.divergentSelectedProperty.getValue().equals(layoutHelp.skinnable.getItemValueFactory().call(appointment))) {
-				layoutHelp.divergentSelectedProperty.setValue("");
+			String series = layoutHelp.skinnable.getItemValueFactory().call(appointment);
+			if (layoutHelp.divergentSelectedProperty.contains(series)) {
+				// remove if it is already selected
+				layoutHelp.divergentSelectedProperty.remove(series);
 			} else {
-				layoutHelp.divergentSelectedProperty.setValue(layoutHelp.skinnable.getItemValueFactory().call(appointment));
+				// if not ctrl/shift pressed, clear the selection
+				if (!mouseEvent.isShiftDown() && !mouseEvent.isControlDown()) {
+					layoutHelp.divergentSelectedProperty.clear();
+					layoutHelp.skinnable.selectedAppointments().clear();
+				}
+				// add to the selected
+				layoutHelp.divergentSelectedProperty.add(series);
 			}
-		}
-
-		// add to selection if not already added
-		if (!layoutHelp.skinnable.selectedAppointments().contains(appointment)) {
-			layoutHelp.skinnable.selectedAppointments().add(appointment);
-		}
-		// pressing control allows to toggle
-		else if (mouseEvent.isControlDown()) {
-			layoutHelp.skinnable.selectedAppointments().remove(appointment);
+		} else {
+			// if not ctrl/shift pressed, clear the selection
+			if (mouseEvent.isShiftDown() || mouseEvent.isControlDown()) {
+				// add to selection if not already added
+				if (!layoutHelp.skinnable.selectedAppointments().contains(appointment)) {
+					layoutHelp.skinnable.selectedAppointments().add(appointment);
+				} else {
+					// already selected, thus remove
+					layoutHelp.skinnable.selectedAppointments().remove(appointment);
+				}
+			}
 		}
 	}
 

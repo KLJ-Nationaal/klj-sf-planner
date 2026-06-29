@@ -9,9 +9,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import persistence.RestrictieReeksAdapter;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class RestrictieOptie {
+	private final StringProperty afdeling = new SimpleStringProperty("");
 	private final ObjectProperty<RestrictieInterface> object = new SimpleObjectProperty<>();
 	private final BooleanProperty alleKorpsen = new SimpleBooleanProperty(false);
 	private final ObjectProperty<RestrictieClass> type = new SimpleObjectProperty<>();
@@ -26,11 +28,17 @@ public class RestrictieOptie {
 				this.object));
 	}
 
-	public RestrictieOptie(RestrictieInterface object, boolean alleKorpsen) {
+	public RestrictieOptie(String afdeling, RestrictieInterface object, boolean alleKorpsen) {
 		this();
+		this.afdeling.set(afdeling);
 		this.object.setValue(object);
 		this.alleKorpsen.setValue(alleKorpsen);
 	}
+
+	@XmlAttribute(name = "Afdeling")
+	public String getAfdeling() { return afdeling.get(); }
+	public StringProperty afdelingProperty() { return afdeling; }
+	public void setAfdeling(String afdeling) { this.afdeling.set(afdeling); }
 
 	@XmlElement(name = "Discipline")
 	@XmlJavaTypeAdapter(RestrictieReeksAdapter.class)
@@ -56,7 +64,16 @@ public class RestrictieOptie {
 	public ReadOnlyObjectProperty<RestrictieClass> typeProperty() { return type; }
 
 	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof RestrictieOptie that)) return false;
+
+		return Objects.equals(afdeling.get(), that.afdeling.get())
+				&& Objects.equals(object.get(), that.object.get())
+				&& Objects.equals(alleKorpsen.get(), that.alleKorpsen.get())
+				&& Objects.equals(type.get(), that.type.get());
+	}
+	@Override
 	public String toString() {
-		return getObject() + (getAlleKorpsen() ? " (alle korpsen)" : "");
+		return getAfdeling() + "/" + getObject() + (getAlleKorpsen() ? " (alle korpsen)" : "");
 	}
 }

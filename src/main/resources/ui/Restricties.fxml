@@ -39,10 +39,10 @@
                 <center>
                     <TableView fx:id="tblRestricties" editable="true" maxHeight="1.7976931348623157E308">
                         <columns>
-                            <TableColumn fx:id="tblColAfdeling" prefWidth="220.0" styleClass="editable-cells"
-                                         text="Afdeling"/>
                             <TableColumn text="A">
                                 <columns>
+                                    <TableColumn fx:id="tblColAfdelingA" prefWidth="220.0" styleClass="editable-cells"
+                                                 text="Afdeling"/>
                                     <TableColumn fx:id="tblColTypeA" prefWidth="70.0" styleClass="editable-cells"
                                                  text="Type"/>
                                     <TableColumn fx:id="tblColValueA" prefWidth="220.0" styleClass="editable-cells"
@@ -53,6 +53,8 @@
                             </TableColumn>
                             <TableColumn text="B">
                                 <columns>
+                                    <TableColumn fx:id="tblColAfdelingB" prefWidth="220.0" styleClass="editable-cells"
+                                                 text="Afdeling"/>
                                     <TableColumn fx:id="tblColTypeB" prefWidth="70.0" styleClass="editable-cells"
                                                  text="Type"/>
                                     <TableColumn fx:id="tblColValueB" prefWidth="220.0" styleClass="editable-cells"

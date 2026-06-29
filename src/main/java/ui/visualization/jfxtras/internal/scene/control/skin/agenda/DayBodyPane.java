@@ -64,7 +64,7 @@ public class DayBodyPane<H> extends Pane {
 		widthProperty().addListener((observable) -> relayout());
 		heightProperty().addListener((observable) -> relayout());
 
-		setupMouseDrag();
+		setupMouseBehavior();
 
 		// for testing
 		columnValueObjectProperty.addListener((observable) -> setId("DayBody" + columnValueObjectProperty.get()));
@@ -74,7 +74,7 @@ public class DayBodyPane<H> extends Pane {
 	/**
 	 *
 	 */
-	private void setupMouseDrag() {
+	private void setupMouseBehavior() {
 
 		// start new appointment
 		setOnMousePressed((mouseEvent) -> {
@@ -82,14 +82,12 @@ public class DayBodyPane<H> extends Pane {
 			if (!mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 				return;
 			}
-
-			if (!layoutHelp.divergentSelectedProperty.getValue().isEmpty()) {
-				layoutHelp.divergentSelectedProperty.setValue("");
-			}
-
 			// this event should not be processed by the appointment area
 			mouseEvent.consume();
+
+			// clear selection
 			layoutHelp.skinnable.selectedAppointments().clear();
+			layoutHelp.divergentSelectedProperty.clear();
 		});
 	}
 

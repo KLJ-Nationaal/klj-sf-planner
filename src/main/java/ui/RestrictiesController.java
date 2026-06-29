@@ -15,7 +15,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import persistence.ReeksDefinitie;
@@ -30,7 +29,7 @@ public class RestrictiesController {
 	@FXML
 	public TableView<Restrictie> tblRestricties;
 	@FXML
-	public TableColumn<Restrictie, String> tblColAfdeling;
+	public TableColumn<Restrictie, String> tblColAfdelingA, tblColAfdelingB;
 	@FXML
 	public TableColumn<Restrictie, RestrictieClass> tblColTypeA, tblColTypeB;
 	@FXML
@@ -55,12 +54,12 @@ public class RestrictiesController {
 		restricties = FXCollections.observableList(Restricties.unMarshall());
 		if (restricties.isEmpty()) {
 			// één nieuwe toevoegen
-			Restrictie r1 = new Restrictie("(nieuw)", Sport.VENDELEN, false, Sport.DANS, false);
+			Restrictie r1 = new Restrictie("(nieuw)", Sport.VENDELEN, false, "(nieuw)", Sport.DANS, false);
 			restricties.add(r1);
 		}
 
-		tblColAfdeling.setCellValueFactory(new PropertyValueFactory<>("afdeling"));
-		tblColAfdeling.setCellFactory(col -> new EditingCell<>() {
+		tblColAfdelingA.setCellValueFactory(x -> x.getValue().getA().afdelingProperty());
+		tblColAfdelingA.setCellFactory(col -> new EditingCell<>() {
 			@Override
 			public void updateIndex(int i) {
 				super.updateIndex(i);
@@ -71,7 +70,7 @@ public class RestrictiesController {
 			@Override
 			public void commitEditHandler(String newValue) {
 				Restrictie r = getTableRow().getItem();
-				r.setAfdeling(newValue);
+				r.getA().setAfdeling(newValue);
 			}
 		});
 		tblColTypeA.setCellValueFactory(x -> x.getValue().getA().typeProperty());
@@ -113,6 +112,21 @@ public class RestrictiesController {
 		});
 		tblColLevelA.setCellValueFactory(x -> x.getValue().getA().alleKorpsenProperty());
 		tblColLevelA.setCellFactory(CheckBoxTableCell.forTableColumn(tblColLevelA));
+		tblColAfdelingB.setCellValueFactory(x -> x.getValue().getB().afdelingProperty());
+		tblColAfdelingB.setCellFactory(col -> new EditingCell<>() {
+			@Override
+			public void updateIndex(int i) {
+				super.updateIndex(i);
+				if (i >= 0) {
+					this.getStyleClass().add("editable-cell");
+				}
+			}
+			@Override
+			public void commitEditHandler(String newValue) {
+				Restrictie r = getTableRow().getItem();
+				r.getB().setAfdeling(newValue);
+			}
+		});
 		tblColTypeB.setCellValueFactory(x -> x.getValue().getB().typeProperty());
 		tblColTypeB.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableList(Arrays.stream(RestrictieClass.values()).toList())));
 		tblColTypeB.setOnEditCommit(event -> {
@@ -159,7 +173,7 @@ public class RestrictiesController {
 
 	@FXML
 	public void AddAction(ActionEvent actionEvent) {
-		tblRestricties.getItems().add(new Restrictie("(nieuw)", Sport.DANS, false, Sport.DANS, false));
+		tblRestricties.getItems().add(new Restrictie("(nieuw)", Sport.DANS, false, "(nieuw)", Sport.DANS, false));
 	}
 	@FXML
 	public void DeleteAction(ActionEvent actionEvent) {
@@ -168,7 +182,7 @@ public class RestrictiesController {
 	}
 	@FXML
 	public void OkAction(ActionEvent actionEvent) {
-		Restricties.marshall(restricties.stream().sorted(Comparator.comparing(Restrictie::getAfdeling)).toList());
+		Restricties.marshall(restricties.stream().sorted(Comparator.comparing(x -> x.getA().getAfdeling())).toList());
 		CancelAction(actionEvent);
 		if (callback != null) callback.accept(restricties.stream().toList());
 	}

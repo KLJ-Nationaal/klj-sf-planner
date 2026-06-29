@@ -29,6 +29,7 @@ package ui.visualization.jfxtras.internal.scene.control.skin.agenda;
 import ch.qos.logback.classic.Logger;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -102,7 +103,7 @@ public class LayoutHelp<H> {
 	final DoubleProperty dayHeightProperty = new SimpleDoubleProperty(0);
 	final DoubleProperty durationInMSPerPixelProperty = new SimpleDoubleProperty(0);
 	final DoubleProperty hourHeightProperty = new SimpleDoubleProperty(0);
-	final StringProperty divergentSelectedProperty = new SimpleStringProperty("");
+	final ListProperty<String> divergentSelectedProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
 	final DateTimeFormatter timeDateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 	String formatTime(int minutes) {
